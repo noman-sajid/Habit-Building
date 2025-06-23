@@ -9,10 +9,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Routes
+const userRoutes = require('./routes/userRoutes');
+
 // Basic test route
 app.get('/', (req, res) => {
   res.send('API is running...');
 });
+
+app.use('/api/users', userRoutes);
 
 
 mongoose.connect(process.env.MONGO_URI, )
