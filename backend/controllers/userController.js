@@ -77,8 +77,25 @@ const loginUser = async (req, res) => {
     }
   };
 
+
+// GET /api/users/profile
+const getProfile = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(req.user);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error while fetching profile' });
+  }
+};
+
+
   module.exports = {
     registerUser,
-    loginUser
+    loginUser,
+     getProfile
   };
 
