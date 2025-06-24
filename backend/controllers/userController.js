@@ -7,6 +7,13 @@ const sendToken = require("../utils/jwtToken");
 
 // POST /api/users/register
 const registerUser = async (req, res) => {
+
+   const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+    folder: "avatars",
+    width: 150,
+    crop: "scale",
+  });
+
   const { name, email, password } = req.body;
 
   try {
@@ -21,11 +28,16 @@ const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create user
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword
-    });
+     const user = await User.create({
+    name,
+    email,
+    password: hashedPassword,
+    avatar: {
+      public_id: myCloud.public_id,
+      url: myCloud.secure_url,
+    },
+  });
+
 
     // Create token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
