@@ -1,6 +1,9 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const ErrorHander = require("../utils/errorhander");
+const catchAsyncErrors = require("../middleware/catchAsyncErrors");
+const sendToken = require("../utils/jwtToken");
 
 // POST /api/users/register
 const registerUser = async (req, res) => {
@@ -42,54 +45,41 @@ const registerUser = async (req, res) => {
   }
 };
 
-const loginUser = async (req, res) => {
-    const { email, password } = req.body;
-  
-    try {
-      // Check if user exists
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res.status(400).json({ message: 'Invalid email or password' });
-      }
-  
-      // Compare password
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(400).json({ message: 'Invalid email or password' });
-      }
-  
-      // Create token
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-        expiresIn: '7d'
-      });
-  
-      // Respond
-      res.status(200).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        token
-      });
-  
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ message: 'Server error during login' });
-    }
-  };
+
+//Post /api/users/login
+const loginUser = catchAsyncErrors(async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // checking if user has given password and email both
+
+  if (!email || !password) {
+    return next(new ErrorHander("Please Enter Email & Password", 400));
+  }
+
+  const user = await User.findOne({ email }).select("+password");
+
+  if (!user) {
+    return next(new ErrorHander("Invalid email or password", 401));
+  }
+
+  const isPasswordMatched = await user.comparePassword(password);
+
+  if (!isPasswordMatched) {
+    return next(new ErrorHander("Invalid email or password", 401));
+  }
+
+  sendToken(user, 200, res);
+});
 
 
 // GET /api/users/profile
 const getProfile = async (req, res) => {
-  try {
-    if (!req.user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
+ const user = await User.findById(req.user.id);
 
-    res.status(200).json(req.user);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error while fetching profile' });
-  }
+  res.status(200).json({
+    success: true,
+    user,
+  });
 };
 
 
