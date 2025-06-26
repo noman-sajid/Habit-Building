@@ -4,51 +4,102 @@ const jwt = require('jsonwebtoken');
 const ErrorHander = require("../utils/errorhander");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const sendToken = require("../utils/jwtToken");
+const cloudinary = require('../config/cloudinary');
 
 // POST /api/users/register
+// const registerUser = async (req, res) => {
+
+//    const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+//     folder: "avatars",
+//     width: 150,
+//     crop: "scale",
+//   });
+
+//   const { name, email, password } = req.body;
+
+//   try {
+//     // Check if user exists
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) {
+//       return res.status(400).json({ message: 'User already exists' });
+//     }
+
+//     // Hash password
+//     const salt = await bcrypt.genSalt(10);
+//     const hashedPassword = await bcrypt.hash(password, salt);
+
+//     // Create user
+//      const user = await User.create({
+//     name,
+//     email,
+//     password: hashedPassword,
+//     avatar: {
+//       public_id: myCloud.public_id,
+//       url: myCloud.secure_url,
+//     },
+//   });
+
+
+//     // Create token
+//     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+//       expiresIn: '7d'
+//     });
+
+//     // Respond with user data (excluding password)
+//     res.status(201).json({
+//       _id: user._id,
+//       name: user.name,
+//       email: user.email,
+//       token
+//     });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ message: 'Server error during registration' });
+//   }
+// };
+
 const registerUser = async (req, res) => {
-
-   const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-    folder: "avatars",
-    width: 150,
-    crop: "scale",
-  });
-
   const { name, email, password } = req.body;
 
   try {
-    // Check if user exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'avatars',
+      width: 150,
+      crop: 'scale'
+    });
 
-    // Create user
-     const user = await User.create({
-    name,
-    email,
-    password: hashedPassword,
-    avatar: {
-      public_id: myCloud.public_id,
-      url: myCloud.secure_url,
-    },
-  });
+ 
 
 
-    // Create token
+    const user = await User.create({
+      name,
+      email,
+      password,
+      avatar: {
+        public_id: result.public_id,
+        url: result.secure_url
+      }
+    });
+
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '7d'
     });
 
-    // Respond with user data (excluding password)
-    res.status(201).json({
+    res.status(201).cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    }).json({
       _id: user._id,
       name: user.name,
       email: user.email,
+      avatar: user.avatar,
       token
     });
   } catch (err) {

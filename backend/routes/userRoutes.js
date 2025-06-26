@@ -4,11 +4,14 @@ const { registerUser,
      logout,
       getProfile
  } = require('../controllers/userController');
+ const upload = require('../middleware/multer');
  const { protect } = require('../middleware/authMiddleware');
+
 const router = express.Router();
 
 // POST /api/users/register
-router.post('/register', registerUser);
+router.post('/register', upload.single('avatar'), registerUser);
+
 //Login
 router.post('/login', loginUser);
 

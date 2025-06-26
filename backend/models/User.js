@@ -23,16 +23,16 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Password is required'],
       minlength: 6
     },
-    avatar: {
-      public_id: {
-        type: String,
-        required: true,
-      },
-      url: {
-        type: String,
-        required: true,
-      },
+     avatar: {
+    public_id: {
+      type: String,
+      required: true
     },
+    url: {
+      type: String,
+      required: true
+    }
+  },
     habits: [
       {
         type: mongoose.Schema.Types.ObjectId,
