@@ -5,6 +5,7 @@ const ErrorHander = require("../utils/errorhander");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const sendToken = require("../utils/jwtToken");
 const cloudinary = require('../config/cloudinary');
+const sendEmail = require('../utils/sendEmail');
 
 // POST /api/users/register
 // const registerUser = async (req, res) => {
@@ -158,11 +159,51 @@ const getProfile = async (req, res) => {
   });
 };
 
+// Reset Password
+
+const forgotPassword = async (req, res, next) => {
+  const { email } = req.body;
+
+  const user = await User.findOne({ email });
+  if (!user) {
+    return res.status(404).json({ message: 'User not found with this email' });
+  }
+
+  // Get reset token and save to DB
+  const resetToken = user.getResetPasswordToken();
+  await user.save({ validateBeforeSave: false });
+
+  const resetUrl = `${req.protocol}://${req.get('host')}/api/users/reset/${resetToken}`;
+  const message = `You requested a password reset.\n\nClick to reset: ${resetUrl}\n\nIf you didn't request it, ignore this email.`;
+
+  try {
+    await sendEmail({
+      email: user.email,
+      subject: 'Password Reset',
+      message,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `Email sent to ${user.email}`,
+    });
+  } catch (error) {
+    // Clean up if email fails
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+
+    return res.status(500).json({ message: 'Email could not be sent' });
+  }
+};
+
+
 
   module.exports = {
     registerUser,
     loginUser,
     logout,
-     getProfile
+     getProfile,
+     forgotPassword,
   };
 
