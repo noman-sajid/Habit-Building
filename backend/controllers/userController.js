@@ -6,6 +6,7 @@ const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const sendToken = require("../utils/jwtToken");
 const cloudinary = require('../config/cloudinary');
 const sendEmail = require('../utils/sendEmail');
+const crypto = require('crypto');
 
 // POST /api/users/register
 // const registerUser = async (req, res) => {
@@ -198,6 +199,118 @@ const forgotPassword = async (req, res, next) => {
 };
 
 
+// PUT /api/users/reset/:token
+// const resetPassword = async (req, res, next) => {
+//   // Hash the token to compare with DB
+//   const resetPasswordToken = crypto
+//     .createHash('sha256')
+//     .update(req.params.token)
+//     .digest('hex');
+
+//   const user = await User.findOne({
+//     resetPasswordToken,
+//     resetPasswordExpire: { $gt: Date.now() },
+//   });
+
+//   if (!user) {
+//     return res.status(400).json({ message: 'Invalid or expired reset token' });
+//   }
+
+//   const { password, confirmPassword } = req.body;
+
+//   if (!password || !confirmPassword) {
+//     return res.status(400).json({ message: 'Please provide both fields' });
+//   }
+
+//   if (password !== confirmPassword) {
+//     return res.status(400).json({ message: 'Passwords do not match' });
+//   }
+
+//   // Hash and save new password
+//   const salt = await bcrypt.genSalt(10);
+//   user.password = await bcrypt.hash(password, salt);
+
+//   // Clear reset fields
+//   user.resetPasswordToken = undefined;
+//   user.resetPasswordExpire = undefined;
+
+//   await user.save();
+
+//   // Optionally log user in after reset
+//   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+//     expiresIn: '7d',
+//   });
+
+//  res.status(200).cookie('token', token, {
+//   httpOnly: true,
+//   secure: process.env.NODE_ENV === 'production',
+//   sameSite: 'strict',
+//   maxAge: 7 * 24 * 60 * 60 * 1000,
+// }).json({
+//   success: true,
+//   message: 'Password reset successful',
+//   token,
+//   // For testing only — remove before deployment
+//   plainPassword: password
+// });
+
+// };
+
+const resetPassword = async (req, res, next) => {
+  // Hash the token to compare with DB
+  const resetPasswordToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    resetPasswordToken,
+    resetPasswordExpire: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).json({ message: 'Invalid or expired reset token' });
+  }
+
+  const { password, confirmPassword } = req.body;
+
+  if (!password || !confirmPassword) {
+    return res.status(400).json({ message: 'Please provide both fields' });
+  }
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: 'Passwords do not match' });
+  }
+
+  // ✅ Just assign — Mongoose will hash it via pre-save middleware
+  user.password = password;
+
+  // Clear reset fields
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpire = undefined;
+
+  await user.save();
+
+  // Optionally log user in after reset
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: '7d',
+  });
+
+  res.status(200).cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'strict',
+    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+  }).json({
+    success: true,
+    message: 'Password reset successful',
+    token,
+    // 🚨 For testing only — remove this in production!
+    plainPassword: password
+  });
+};
+
+
 
   module.exports = {
     registerUser,
@@ -205,5 +318,6 @@ const forgotPassword = async (req, res, next) => {
     logout,
      getProfile,
      forgotPassword,
+     resetPassword
   };
 

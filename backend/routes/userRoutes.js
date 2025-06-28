@@ -3,7 +3,8 @@ const { registerUser,
      loginUser,
      logout,
       getProfile,
-      forgotPassword
+      forgotPassword,
+      resetPassword
  } = require('../controllers/userController');
  const upload = require('../middleware/multer');
  const { protect } = require('../middleware/authMiddleware');
@@ -21,5 +22,7 @@ router.get('/logout', logout);
 router.route('/profile').get(protect, getProfile);
 
 router.post('/forgot-password', forgotPassword);
+
+router.put('/reset/:token', resetPassword);
 
 module.exports = router;
