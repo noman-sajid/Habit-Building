@@ -152,7 +152,8 @@ const logout = catchAsyncErrors(async (req, res, next) => {
 
 // GET /api/users/profile
 const getProfile = async (req, res) => {
- const user = await User.findById(req.user.id);
+const user = await User.findById(req.user._id).populate('habits');
+
 
   res.status(200).json({
     success: true,
