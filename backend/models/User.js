@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require("bcryptjs");
-
+const Habit = require('../models/Habit');
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 

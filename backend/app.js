@@ -16,6 +16,7 @@ app.use(cookieParser());
 
 // Routes
 const userRoutes = require('./routes/userRoutes');
+const habitRoutes = require('./routes/habitRoutes');
 
 // Basic test route
 app.get('/', (req, res) => {
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 
 
 app.use('/api/users', userRoutes);
+app.use('/api/habits', habitRoutes);
 
 
 
