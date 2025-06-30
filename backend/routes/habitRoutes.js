@@ -1,5 +1,9 @@
 const express = require('express');
-const { createHabit, getUserHabits, updateHabit } = require('../controllers/habitController');
+const { createHabit,
+        getUserHabits,
+        updateHabit,
+        markHabitComplete
+      } = require('../controllers/habitController');
 const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
@@ -13,5 +17,9 @@ router.get('/', protect, getUserHabits);
 
 // PUT /api/habits/:id - Update a habit
 router.put("/:id", protect, updateHabit);
+
+// PATCH /api/habits/:id/complete - Mark a habit as complete
+router.patch("/:id/complete", protect, markHabitComplete);
+
 
 module.exports = router;
