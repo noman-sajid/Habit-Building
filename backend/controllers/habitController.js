@@ -230,6 +230,47 @@ const deleteHabit = async (req, res) => {
 };
 
 
+// GET /api/habits/summary
+const getHabitSummary = async (req, res) => {
+  try {
+    const habits = await Habit.find({ user: req.user._id });
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    let totalHabits = habits.length;
+    let completedToday = 0;
+    let currentStreaks = 0;
+    let maxStreaks = 0;
+
+    habits.forEach(habit => {
+      // Check if completed today
+      const doneToday = habit.completedDates.some(date => {
+        const d = new Date(date);
+        d.setHours(0, 0, 0, 0);
+        return d.getTime() === today.getTime();
+      });
+      if (doneToday) completedToday++;
+
+      // Track streaks
+      if (habit.streak) currentStreaks += habit.streak;
+      if (habit.maxStreak) maxStreaks += habit.maxStreak;
+    });
+
+    res.status(200).json({
+      success: true,
+      summary: {
+        totalHabits,
+        completedToday,
+        currentStreaks,
+        maxStreaks,
+      },
+    });
+  } catch (error) {
+    console.error("Summary Error:", error);
+    res.status(500).json({ success: false, message: 'Server Error' });
+  }
+};
 
 
 
@@ -241,5 +282,6 @@ module.exports = {
   getUserHabits,
   updateHabit,
   markHabitComplete,
-  deleteHabit
+  deleteHabit,
+  getHabitSummary
 };
