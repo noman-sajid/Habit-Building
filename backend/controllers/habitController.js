@@ -47,7 +47,39 @@ const getUserHabits = async (req, res) => {
   }
 };
 
+// PUT /api/habits/:id
+const updateHabit = async (req, res) => {
+  const habitId = req.params.id;
+  const { title, description, frequency } = req.body;
+
+  try {
+    let habit = await Habit.findOne({ _id: habitId, user: req.user._id });
+
+    if (!habit) {
+      return res.status(404).json({ success: false, message: "Habit not found or unauthorized" });
+    }
+
+    // Update fields
+    if (title) habit.title = title;
+    if (description) habit.description = description;
+    if (frequency) habit.frequency = frequency;
+
+    await habit.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Habit updated successfully",
+      habit,
+    });
+  } catch (error) {
+    console.error("Update Habit Error:", error);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+
 module.exports = {
   createHabit,
   getUserHabits,
+  updateHabit
 };
