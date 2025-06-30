@@ -79,16 +79,71 @@ const updateHabit = async (req, res) => {
 
 
 // PATCH /api/habits/:id/complete
+// const markHabitComplete = async (req, res) => {
+//   const habitId = req.params.id;
+//   const today = new Date();
+//   today.setHours(0, 0, 0, 0); // Normalize to midnight for comparison
+
+//   try {
+//     const habit = await Habit.findOne({ _id: habitId, user: req.user._id });
+
+//     if (!habit) {
+//       return res.status(404).json({ success: false, message: "Habit not found or unauthorized" });
+//     }
+
+//     const alreadyCompletedToday = habit.completedDates.some(date => {
+//       const d = new Date(date);
+//       d.setHours(0, 0, 0, 0);
+//       return d.getTime() === today.getTime();
+//     });
+
+//     if (alreadyCompletedToday) {
+//       return res.status(400).json({ success: false, message: "Habit already marked as complete today" });
+//     }
+
+//     // Update completion data
+//     habit.completedDates.push(today);
+
+//     const yesterday = new Date(today);
+//     yesterday.setDate(yesterday.getDate() - 1);
+
+//     const last = habit.lastCompleted ? new Date(habit.lastCompleted) : null;
+//     if (last && last.toDateString() === yesterday.toDateString()) {
+//       habit.streak += 1;
+//     } else {
+//       habit.streak = 1;
+//     }
+
+//     habit.lastCompleted = today;
+
+//     await habit.save();
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Habit marked as complete for today",
+//       habit
+//     });
+
+//   } catch (error) {
+//     console.error("Complete Habit Error:", error);
+//     res.status(500).json({ success: false, message: "Server Error" });
+//   }
+// };
+
+// PATCH /api/habits/:id/complete
 const markHabitComplete = async (req, res) => {
   const habitId = req.params.id;
   const today = new Date();
-  today.setHours(0, 0, 0, 0); // Normalize to midnight for comparison
+  today.setHours(0, 0, 0, 0); // Normalize to midnight
 
   try {
     const habit = await Habit.findOne({ _id: habitId, user: req.user._id });
 
     if (!habit) {
-      return res.status(404).json({ success: false, message: "Habit not found or unauthorized" });
+      return res.status(404).json({
+        success: false,
+        message: "Habit not found or unauthorized"
+      });
     }
 
     const alreadyCompletedToday = habit.completedDates.some(date => {
@@ -98,16 +153,20 @@ const markHabitComplete = async (req, res) => {
     });
 
     if (alreadyCompletedToday) {
-      return res.status(400).json({ success: false, message: "Habit already marked as complete today" });
+      return res.status(400).json({
+        success: false,
+        message: "Habit already marked as complete today"
+      });
     }
 
-    // Update completion data
+    // Push today's date
     habit.completedDates.push(today);
 
     const yesterday = new Date(today);
     yesterday.setDate(yesterday.getDate() - 1);
 
     const last = habit.lastCompleted ? new Date(habit.lastCompleted) : null;
+
     if (last && last.toDateString() === yesterday.toDateString()) {
       habit.streak += 1;
     } else {
@@ -115,6 +174,11 @@ const markHabitComplete = async (req, res) => {
     }
 
     habit.lastCompleted = today;
+
+    // ✅ Update maxStreak if current streak is greater
+    if (habit.streak > habit.maxStreak) {
+      habit.maxStreak = habit.streak;
+    }
 
     await habit.save();
 
@@ -126,7 +190,10 @@ const markHabitComplete = async (req, res) => {
 
   } catch (error) {
     console.error("Complete Habit Error:", error);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json({
+      success: false,
+      message: "Server Error"
+    });
   }
 };
 
@@ -161,6 +228,10 @@ const deleteHabit = async (req, res) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+
+
+
 
 
 

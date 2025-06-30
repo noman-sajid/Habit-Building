@@ -29,6 +29,10 @@ const habitSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  maxStreak: {
+  type: Number,
+  default: 0,
+},
   lastCompleted: {
     type: Date,
   },
