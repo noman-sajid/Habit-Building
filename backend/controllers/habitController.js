@@ -132,9 +132,43 @@ const markHabitComplete = async (req, res) => {
 
 
 
+// DELETE /api/habits/:id
+const deleteHabit = async (req, res) => {
+  const habitId = req.params.id;
+
+  try {
+    const habit = await Habit.findOne({ _id: habitId, user: req.user._id });
+
+    if (!habit) {
+      return res.status(404).json({ success: false, message: "Habit not found or unauthorized" });
+    }
+
+    // Remove habit from User model
+    await User.findByIdAndUpdate(req.user._id, {
+      $pull: { habits: habitId }
+    });
+
+    // Delete the habit
+    await Habit.findByIdAndDelete(habitId);
+
+    res.status(200).json({
+      success: true,
+      message: "Habit deleted successfully"
+    });
+
+  } catch (error) {
+    console.error("Delete Habit Error:", error);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+
+
+
 module.exports = {
   createHabit,
   getUserHabits,
   updateHabit,
-  markHabitComplete
+  markHabitComplete,
+  deleteHabit
 };

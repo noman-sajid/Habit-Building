@@ -2,7 +2,8 @@ const express = require('express');
 const { createHabit,
         getUserHabits,
         updateHabit,
-        markHabitComplete
+        markHabitComplete,
+        deleteHabit
       } = require('../controllers/habitController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -20,6 +21,9 @@ router.put("/:id", protect, updateHabit);
 
 // PATCH /api/habits/:id/complete - Mark a habit as complete
 router.patch("/:id/complete", protect, markHabitComplete);
+
+// DELETE /api/habits/:id - Delete a habit
+router.delete("/:id", protect, deleteHabit);
 
 
 module.exports = router;
