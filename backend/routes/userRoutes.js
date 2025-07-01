@@ -2,12 +2,13 @@ const express = require('express');
 const { registerUser,
      loginUser,
      logout,
-      getProfile,
-      forgotPassword,
-      resetPassword
- } = require('../controllers/userController');
- const upload = require('../middleware/multer');
- const { protect } = require('../middleware/authMiddleware');
+     getProfile,
+     forgotPassword,
+     resetPassword,
+     updateProfile
+} = require('../controllers/userController');
+const upload = require('../middleware/multer');
+const { protect } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -24,5 +25,8 @@ router.route('/profile').get(protect, getProfile);
 router.post('/forgot-password', forgotPassword);
 
 router.put('/reset/:token', resetPassword);
+
+// PATCH /api/users/update-profile
+router.patch('/update-profile', protect, upload.single('avatar'), updateProfile);
 
 module.exports = router;

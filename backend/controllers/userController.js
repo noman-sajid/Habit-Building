@@ -110,6 +110,58 @@ const user = await User.findById(req.user._id).populate('habits');
   });
 };
 
+
+// PATCH /api/users/update-profile
+const updateProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const { name } = req.body;
+
+    // Handle avatar change
+    if (req.file) {
+      // Delete previous avatar from Cloudinary
+      if (user.avatar && user.avatar.public_id) {
+        await cloudinary.uploader.destroy(user.avatar.public_id);
+      }
+
+      // Upload new avatar
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'avatars',
+        width: 150,
+        crop: 'scale'
+      });
+
+      user.avatar = {
+        public_id: result.public_id,
+        url: result.secure_url
+      };
+    }
+
+    if (name) user.name = name;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar
+      }
+    });
+  } catch (error) {
+    console.error("Update Profile Error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 // Reset Password
 
 const forgotPassword = async (req, res, next) => {
@@ -213,6 +265,8 @@ const resetPassword = async (req, res, next) => {
     logout,
      getProfile,
      forgotPassword,
-     resetPassword
+     resetPassword,
+     updateProfile,
+
   };
 
