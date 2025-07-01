@@ -9,57 +9,6 @@ const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
 
 // POST /api/users/register
-// const registerUser = async (req, res) => {
-
-//    const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-//     folder: "avatars",
-//     width: 150,
-//     crop: "scale",
-//   });
-
-//   const { name, email, password } = req.body;
-
-//   try {
-//     // Check if user exists
-//     const existingUser = await User.findOne({ email });
-//     if (existingUser) {
-//       return res.status(400).json({ message: 'User already exists' });
-//     }
-
-//     // Hash password
-//     const salt = await bcrypt.genSalt(10);
-//     const hashedPassword = await bcrypt.hash(password, salt);
-
-//     // Create user
-//      const user = await User.create({
-//     name,
-//     email,
-//     password: hashedPassword,
-//     avatar: {
-//       public_id: myCloud.public_id,
-//       url: myCloud.secure_url,
-//     },
-//   });
-
-
-//     // Create token
-//     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-//       expiresIn: '7d'
-//     });
-
-//     // Respond with user data (excluding password)
-//     res.status(201).json({
-//       _id: user._id,
-//       name: user.name,
-//       email: user.email,
-//       token
-//     });
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ message: 'Server error during registration' });
-//   }
-// };
-
 const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
@@ -201,62 +150,6 @@ const forgotPassword = async (req, res, next) => {
 
 
 // PUT /api/users/reset/:token
-// const resetPassword = async (req, res, next) => {
-//   // Hash the token to compare with DB
-//   const resetPasswordToken = crypto
-//     .createHash('sha256')
-//     .update(req.params.token)
-//     .digest('hex');
-
-//   const user = await User.findOne({
-//     resetPasswordToken,
-//     resetPasswordExpire: { $gt: Date.now() },
-//   });
-
-//   if (!user) {
-//     return res.status(400).json({ message: 'Invalid or expired reset token' });
-//   }
-
-//   const { password, confirmPassword } = req.body;
-
-//   if (!password || !confirmPassword) {
-//     return res.status(400).json({ message: 'Please provide both fields' });
-//   }
-
-//   if (password !== confirmPassword) {
-//     return res.status(400).json({ message: 'Passwords do not match' });
-//   }
-
-//   // Hash and save new password
-//   const salt = await bcrypt.genSalt(10);
-//   user.password = await bcrypt.hash(password, salt);
-
-//   // Clear reset fields
-//   user.resetPasswordToken = undefined;
-//   user.resetPasswordExpire = undefined;
-
-//   await user.save();
-
-//   // Optionally log user in after reset
-//   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-//     expiresIn: '7d',
-//   });
-
-//  res.status(200).cookie('token', token, {
-//   httpOnly: true,
-//   secure: process.env.NODE_ENV === 'production',
-//   sameSite: 'strict',
-//   maxAge: 7 * 24 * 60 * 60 * 1000,
-// }).json({
-//   success: true,
-//   message: 'Password reset successful',
-//   token,
-//   // For testing only — remove before deployment
-//   plainPassword: password
-// });
-
-// };
-
 const resetPassword = async (req, res, next) => {
   // Hash the token to compare with DB
   const resetPasswordToken = crypto
@@ -310,6 +203,7 @@ const resetPassword = async (req, res, next) => {
     plainPassword: password
   });
 };
+
 
 
 
