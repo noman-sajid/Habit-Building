@@ -257,64 +257,108 @@ const resetPassword = async (req, res, next) => {
 };
 
 // PATCH /api/users/update-password
-const updatePassword = async (req, res) => {
+// const updatePassword = async (req, res) => {
+//   const user = await User.findById(req.user._id).select("+password");
+
+//   const { oldPassword, newPassword, confirmPassword } = req.body;
+
+//   if (!oldPassword || !newPassword || !confirmPassword) {
+//     return res.status(400).json({ message: 'All fields are required' });
+//   }
+
+//   const isPasswordMatched = await user.comparePassword(oldPassword);
+
+//   if (!isPasswordMatched) {
+//     return res.status(400).json({ message: 'Old password is incorrect' });
+//   }
+
+//   if (newPassword !== confirmPassword) {
+//     return res.status(400).json({ message: 'Passwords do not match' });
+//   }
+
+//   // Hashing is handled by the userSchema pre-save hook
+//   user.password = newPassword;
+//   await user.save();
+
+//   // 🔔 Send notification email
+//   try {
+//     const resetLink = `${req.protocol}://${req.get('host')}/api/users/forgot`; // Can be changed to a custom support page
+//     const message = `
+// Hi ${user.name},
+
+// Your password was recently changed for your account.
+
+// If **you made this change**, no further action is needed.
+
+// If **you did NOT make this change**, click the link below to reset your password immediately:
+// ${resetLink}
+
+// If you have any concerns, please contact support.
+
+// Best regards,  
+// ${process.env.FROM_NAME}
+//     `;
+
+//     await sendEmail({
+//       email: user.email,
+//       subject: "Security Alert: Password Changed",
+//       message
+//     });
+
+//   } catch (error) {
+//     console.warn("Password updated, but email notification failed:", error.message);
+//     // Not throwing error here since the main operation (password update) succeeded
+//   }
+
+//   res.status(200).json({
+//     success: true,
+//     message: 'Password updated successfully',
+//   });
+// };
+
+
+const updatePassword = async (req, res, next) => {
   const user = await User.findById(req.user._id).select("+password");
 
-  const { oldPassword, newPassword, confirmPassword } = req.body;
-
-  if (!oldPassword || !newPassword || !confirmPassword) {
-    return res.status(400).json({ message: 'All fields are required' });
-  }
-
-  const isPasswordMatched = await user.comparePassword(oldPassword);
-
+  const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
   if (!isPasswordMatched) {
-    return res.status(400).json({ message: 'Old password is incorrect' });
+    return res.status(400).json({ success: false, message: "Old password is incorrect" });
   }
 
-  if (newPassword !== confirmPassword) {
-    return res.status(400).json({ message: 'Passwords do not match' });
-  }
-
-  // Hashing is handled by the userSchema pre-save hook
-  user.password = newPassword;
+  user.password = req.body.newPassword;
   await user.save();
 
-  // 🔔 Send notification email
+  // Send security email after password change
+  const recoveryLink = `${req.protocol}://${req.get("host")}/recover-account?email=${user.email}`;
+  const message = `
+Your password was recently changed.
+
+If you made this change, no action is required.
+
+If you did NOT authorize this change, click the link below to recover your account:
+🔒 ${recoveryLink}
+
+Regards,
+The Habit App Team
+  `;
+
   try {
-    const resetLink = `${req.protocol}://${req.get('host')}/api/users/forgot`; // Can be changed to a custom support page
-    const message = `
-Hi ${user.name},
-
-Your password was recently changed for your account.
-
-If **you made this change**, no further action is needed.
-
-If **you did NOT make this change**, click the link below to reset your password immediately:
-${resetLink}
-
-If you have any concerns, please contact support.
-
-Best regards,  
-${process.env.FROM_NAME}
-    `;
-
     await sendEmail({
       email: user.email,
-      subject: "Security Alert: Password Changed",
-      message
+      subject: "Your Password Was Changed",
+      message,
     });
-
-  } catch (error) {
-    console.warn("Password updated, but email notification failed:", error.message);
-    // Not throwing error here since the main operation (password update) succeeded
+  } catch (err) {
+    console.error("Password change alert failed:", err.message);
+    // Still continue, as password update was successful
   }
 
   res.status(200).json({
     success: true,
-    message: 'Password updated successfully',
+    message: "Password updated successfully",
   });
 };
+
 
 
 
