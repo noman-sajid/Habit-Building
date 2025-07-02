@@ -256,6 +256,33 @@ const resetPassword = async (req, res, next) => {
   });
 };
 
+// PATCH /api/users/update-password
+const updatePassword = async (req, res) => {
+  const user = await User.findById(req.user._id).select("+password");
+
+  const { oldPassword, newPassword, confirmPassword } = req.body;
+
+  if (!oldPassword || !newPassword || !confirmPassword) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  const isMatch = await user.comparePassword(oldPassword);
+  if (!isMatch) {
+    return res.status(401).json({ message: "Old password is incorrect" });
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.status(400).json({ message: "New passwords do not match" });
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Password updated successfully"
+  });
+};
 
 
 
@@ -267,6 +294,6 @@ const resetPassword = async (req, res, next) => {
      forgotPassword,
      resetPassword,
      updateProfile,
-
+    updatePassword,
   };
 

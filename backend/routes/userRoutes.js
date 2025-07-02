@@ -5,7 +5,8 @@ const { registerUser,
      getProfile,
      forgotPassword,
      resetPassword,
-     updateProfile
+     updateProfile,
+     updatePassword,
 } = require('../controllers/userController');
 const upload = require('../middleware/multer');
 const { protect } = require('../middleware/authMiddleware');
@@ -28,5 +29,10 @@ router.put('/reset/:token', resetPassword);
 
 // PATCH /api/users/update-profile
 router.patch('/update-profile', protect, upload.single('avatar'), updateProfile);
+
+// PATCH /api/users/update-password
+router.patch('/update-password', protect, updatePassword);
+
+
 
 module.exports = router;
