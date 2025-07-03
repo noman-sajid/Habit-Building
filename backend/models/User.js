@@ -18,6 +18,7 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true
     },
+    
     password: {
       type: String,
       required: [true, 'Password is required'],
@@ -40,6 +41,7 @@ const userSchema = new mongoose.Schema(
       }
     ]
   },
+  
   { timestamps: true }
 );
 
@@ -68,6 +70,10 @@ userSchema.methods.comparePassword = async function (password) {
 userSchema.add({
   resetPasswordToken: String,
   resetPasswordExpire: Date,
+
+   emailChangeToken: String,
+  emailChangeExpire: Date,
+  pendingEmail: String,
 });
 
 userSchema.methods.getResetPasswordToken = function () {
