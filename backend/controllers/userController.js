@@ -360,52 +360,67 @@ The Habit App Team
 };
 
 
+
 const requestEmailChange = async (req, res) => {
   const { newEmail, currentPassword } = req.body;
 
-  // Basic input validation
+  
   if (!newEmail || !currentPassword) {
     return res.status(400).json({ message: 'New email and current password are required' });
   }
 
-  // Normalize email
   const normalizedNewEmail = newEmail.toLowerCase();
 
-  // Find user and explicitly select password
+  // Fetch user and include password
   const user = await User.findById(req.user._id).select('+password');
   if (!user) {
     return res.status(404).json({ message: 'User not found' });
   }
 
-  // Prevent using the same email
+  // Prevent updating to the same email
   if (normalizedNewEmail === user.email.toLowerCase()) {
     return res.status(400).json({ message: 'New email is same as current email' });
   }
 
-  // Check if the new email already exists in DB
+  //Check if email is already taken
   const existingUser = await User.findOne({ email: normalizedNewEmail });
   if (existingUser) {
     return res.status(400).json({ message: 'This email is already in use' });
   }
 
-  // Check password
+  // Confirm user's password
   const isMatch = await user.comparePassword(currentPassword);
   if (!isMatch) {
     return res.status(401).json({ message: 'Incorrect password' });
   }
 
-  // Generate token and expiry
+  // Generate token
   const rawToken = crypto.randomBytes(32).toString('hex');
   const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
 
   user.emailChangeToken = hashedToken;
-  user.emailChangeExpire = Date.now() + 20 * 60 * 1000; // 20 minutes
+  user.emailChangeExpire = Date.now() + 20 * 60 * 1000; // 20 mins
   user.pendingEmail = normalizedNewEmail;
 
   await user.save();
 
-  // Email to new address
-  const confirmMessage = `To confirm your new email address, send a PATCH request to the backend route:\n\n/api/users/confirm-email/${rawToken}\n\nThis link will expire in 20 minutes.`;
+  // Send email to new address
+  const confirmMessage = `
+Hi there,
+
+You requested to change your email address on the Habit App.
+
+To confirm this change, please send a PATCH request to the following backend route:
+
+📡 /api/users/confirm-email/${rawToken}
+
+This link will expire in 20 minutes.
+
+If you did NOT make this request, please ignore this email.
+
+Regards,  
+The Habit App Team
+`;
 
   await sendEmail({
     email: normalizedNewEmail,
@@ -413,8 +428,23 @@ const requestEmailChange = async (req, res) => {
     message: confirmMessage
   });
 
-  // Security alert to current email
-  const alertMessage = `A request was made to change your email to: ${normalizedNewEmail}.\n\nIf this was NOT you, reset your password immediately by visiting the forgot-password route.\n\nIf this was you, you can ignore this message.`;
+  // Send alert to current email
+  const alertMessage = `
+⚠️ Heads up!
+
+A request was made to change the email address on your Habit App account to:
+📧 ${normalizedNewEmail}
+
+If **you DID NOT** make this request, someone may be trying to take over your account.
+
+To secure your account, reset your password now:
+🔐 /api/users/forgot-password
+
+If you DID make this request, no further action is required.
+
+Stay safe,  
+The Habit App Team
+`;
 
   await sendEmail({
     email: user.email,
@@ -422,8 +452,11 @@ const requestEmailChange = async (req, res) => {
     message: alertMessage
   });
 
+  //Respond success
   res.status(200).json({ success: true, message: 'Confirmation email sent to new address' });
 };
+
+module.exports = requestEmailChange;
 
 
 
