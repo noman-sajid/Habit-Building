@@ -8,6 +8,7 @@ const { registerUser,
      updateProfile,
      updatePassword,
      requestEmailChange,
+     confirmEmailChange,
 } = require('../controllers/userController');
 const upload = require('../middleware/multer');
 const { protect } = require('../middleware/authMiddleware');
@@ -36,5 +37,9 @@ router.patch('/update-password', protect, updatePassword);
 
 // PATCH /api/users/request-email-change
 router.patch('/request-email-change', protect, requestEmailChange);
+
+// PATCH /api/users/confirm-email-change
+router.patch('/confirm-email/:token', confirmEmailChange);
+
 
 module.exports = router;
