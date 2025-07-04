@@ -406,10 +406,8 @@ const confirmEmailChange = async (req, res) => {
     return res.status(400).json({ message: 'Token is required' });
   }
 
-  // Hash the token
   const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
 
-  // Find the user by token and check expiry
   const user = await User.findOne({
     emailChangeToken: hashedToken,
     emailChangeExpire: { $gt: Date.now() },
@@ -423,20 +421,47 @@ const confirmEmailChange = async (req, res) => {
     return res.status(400).json({ message: 'No pending email change found' });
   }
 
-  // Update email
-  user.email = user.pendingEmail;
+  const oldEmail = user.email;
+  const newEmail = user.pendingEmail;
+
+  // Update the email
+  user.email = newEmail;
   user.pendingEmail = undefined;
   user.emailChangeToken = undefined;
   user.emailChangeExpire = undefined;
 
   await user.save();
 
+  // 📩 Send confirmation email to new address
+  const message = `
+🎉 Your email address has been successfully changed!
+
+🔐 New Email: ${newEmail}
+
+If you did NOT authorize this change, reset your password immediately by visiting the forgot-password route.
+
+Regards,  
+The Habit App Team
+  `;
+
+  try {
+    await sendEmail({
+      email: newEmail,
+      subject: 'Email Address Successfully Updated',
+      message,
+    });
+  } catch (err) {
+    console.error('Failed to send confirmation email:', err.message);
+    // Still proceed, as the change was successful
+  }
+
   res.status(200).json({
     success: true,
-    message: 'Email address successfully updated',
+    message: 'Email address successfully updated and confirmation sent',
     updatedEmail: user.email,
   });
 };
+
 
 
 
