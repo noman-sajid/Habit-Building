@@ -210,24 +210,78 @@ const resetPassword = catchAsyncErrors(async (req, res, next) => {
 });
 
 // PATCH /api/users/update-password
-const updatePassword = catchAsyncErrors(async (req, res, next) => {
-  const user = await User.findById(req.user._id).select("+password");
+// const updatePassword = catchAsyncErrors(async (req, res, next) => {
+//   const user = await User.findById(req.user._id).select("+password");
 
-  const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
+//   const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
+//   if (!isPasswordMatched) {
+//     return next(new ErrorHander("Old password is incorrect", 400));
+//   }
+
+//   user.password = req.body.newPassword;
+//   await user.save();
+
+//   // Send security email after password change
+//   const recoveryLink = `${req.protocol}://${req.get("host")}/recover-account?email=${user.email}`;
+//   const message = `\nYour password was recently changed.\n\nIf you made this change, no action is required.\n\nIf you did NOT authorize this change, click the link below to recover your account:\n🔒 ${recoveryLink}\n\nRegards,\nThe Habit App Team\n  `;
+
+//   try {
+//     await sendEmail({
+//       email: user.email,
+//       subject: "Your Password Was Changed",
+//       message,
+//     });
+//   } catch (err) {
+//     console.error("Password change alert failed:", err.message);
+//     // Still continue, as password update was successful
+//   }
+
+//   res.status(200).json({
+//     success: true,
+//     message: "Password updated successfully",
+//   });
+// });
+
+
+const updatePassword = catchAsyncErrors(async (req, res, next) => {
+  const { oldPassword, newPassword } = req.body;
+
+  if (!oldPassword || !newPassword) {
+    return next(new ErrorHander("Old and new password fields are required", 400));
+  }
+
+  const user = await User.findById(req.user._id).select("+password");
+  if (!user) {
+    return next(new ErrorHander("User not found", 404));
+  }
+
+  const isPasswordMatched = await user.comparePassword(oldPassword);
   if (!isPasswordMatched) {
     return next(new ErrorHander("Old password is incorrect", 400));
   }
 
-  user.password = req.body.newPassword;
+  user.password = newPassword;
   await user.save();
 
   // Send security email after password change
-  const recoveryLink = `${req.protocol}://${req.get("host")}/recover-account?email=${user.email}`;
-  const message = `\nYour password was recently changed.\n\nIf you made this change, no action is required.\n\nIf you did NOT authorize this change, click the link below to recover your account:\n🔒 ${recoveryLink}\n\nRegards,\nThe Habit App Team\n  `;
+  const normalizedEmail = user.email.toLowerCase();
+  const recoveryLink = `${req.protocol}://${req.get("host")}/recover-account?email=${encodeURIComponent(normalizedEmail)}`;
+
+  const message = `
+Your password was recently changed.
+
+If you made this change, no action is required.
+
+If you did NOT authorize this change, click the link below to recover your account:
+🔒 ${recoveryLink}
+
+Regards,
+The Habit App Team
+  `;
 
   try {
     await sendEmail({
-      email: user.email,
+      email: normalizedEmail,
       subject: "Your Password Was Changed",
       message,
     });
@@ -241,6 +295,7 @@ const updatePassword = catchAsyncErrors(async (req, res, next) => {
     message: "Password updated successfully",
   });
 });
+
 
 
 // PATCH /api/users/request-email-change
@@ -278,8 +333,8 @@ const requestEmailChange = catchAsyncErrors(async (req, res, next) => {
   }
 
   // Generate token
-  const rawToken = crypto.randomBytes(32).toString('hex');
-  const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');
+  const { rawToken, hashedToken } = User.generateHashedToken();
+
 
   user.emailChangeToken = hashedToken;
   user.emailChangeExpire = Date.now() + 20 * 60 * 1000; // 20 mins
