@@ -3,6 +3,11 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 
+const errorMiddleware = require("./middleware/error");
+
+
+
+
 
 require('dotenv').config();
 
@@ -29,7 +34,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/habits', habitRoutes);
 
 
-
+app.use(errorMiddleware);
 
 mongoose.connect(process.env.MONGO_URI, )
 .then(()=>{

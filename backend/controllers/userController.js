@@ -1,6 +1,4 @@
 const User = require('../models/User');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const ErrorHander = require("../utils/errorhander");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const sendToken = require("../utils/jwtToken");
@@ -9,55 +7,32 @@ const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
 
 // POST /api/users/register
-const registerUser = async (req, res) => {
+const registerUser = catchAsyncErrors(async (req, res, next) => {
   const { name, email, password } = req.body;
 
-  try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
-    }
-
-    const result = await cloudinary.uploader.upload(req.file.path, {
-      folder: 'avatars',
-      width: 150,
-      crop: 'scale'
-    });
-
- 
-
-
-    const user = await User.create({
-      name,
-      email,
-      password,
-      avatar: {
-        public_id: result.public_id,
-        url: result.secure_url
-      }
-    });
-
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: '7d'
-    });
-
-    res.status(201).cookie("token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    }).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      avatar: user.avatar,
-      token
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Server error during registration' });
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return next(new ErrorHander("User already exists", 400));
   }
-};
+
+  const result = await cloudinary.uploader.upload(req.file.path, {
+    folder: 'avatars',
+    width: 150,
+    crop: 'scale'
+  });
+
+  const user = await User.create({
+    name,
+    email,
+    password,
+    avatar: {
+      public_id: result.public_id,
+      url: result.secure_url
+    }
+  });
+
+  sendToken(user, 201, res);
+});
 
 
 //Post /api/users/login
@@ -88,7 +63,7 @@ const loginUser = catchAsyncErrors(async (req, res, next) => {
 //Logout
 const logout = catchAsyncErrors(async (req, res, next) => {
   res.cookie("token", null, {
-    expires: new Date(Date.now()),
+    expires: new Date(Date.now()), 
     httpOnly: true,
   });
 
@@ -100,76 +75,70 @@ const logout = catchAsyncErrors(async (req, res, next) => {
 
 
 // GET /api/users/profile
-const getProfile = async (req, res) => {
-const user = await User.findById(req.user._id).populate('habits');
-
+const getProfile = catchAsyncErrors(async (req, res, next) => {
+  const user = await User.findById(req.user._id).populate('habits');
 
   res.status(200).json({
     success: true,
     user,
   });
-};
+});
 
 
 // PATCH /api/users/update-profile
-const updateProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
+const updateProfile = catchAsyncErrors(async (req, res, next) => {
+  const user = await User.findById(req.user._id);
 
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-
-    const { name } = req.body;
-
-    // Handle avatar change
-    if (req.file) {
-      // Delete previous avatar from Cloudinary
-      if (user.avatar && user.avatar.public_id) {
-        await cloudinary.uploader.destroy(user.avatar.public_id);
-      }
-
-      // Upload new avatar
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'avatars',
-        width: 150,
-        crop: 'scale'
-      });
-
-      user.avatar = {
-        public_id: result.public_id,
-        url: result.secure_url
-      };
-    }
-
-    if (name) user.name = name;
-
-    await user.save();
-
-    res.status(200).json({
-      success: true,
-      message: "Profile updated successfully",
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        avatar: user.avatar
-      }
-    });
-  } catch (error) {
-    console.error("Update Profile Error:", error);
-    res.status(500).json({ success: false, message: "Server error" });
+  if (!user) {
+    return next(new ErrorHander("User not found", 404));
   }
-};
+
+  const { name } = req.body;
+
+  // Handle avatar change
+  if (req.file) {
+    // Delete previous avatar from Cloudinary
+    if (user.avatar && user.avatar.public_id) {
+      await cloudinary.uploader.destroy(user.avatar.public_id);
+    }
+
+    // Upload new avatar
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'avatars',
+      width: 150,
+      crop: 'scale'
+    });
+
+    user.avatar = {
+      public_id: result.public_id,
+      url: result.secure_url
+    };
+  }
+
+  if (name) user.name = name;
+
+  await user.save();
+
+  res.status(200).json({
+    success: true,
+    message: "Profile updated successfully",
+    user: {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      avatar: user.avatar
+    }
+  });
+});
 
 // Reset Password
 
-const forgotPassword = async (req, res, next) => {
+const forgotPassword = catchAsyncErrors(async (req, res, next) => {
   const { email } = req.body;
 
   const user = await User.findOne({ email });
   if (!user) {
-    return res.status(404).json({ message: 'User not found with this email' });
+    return next(new ErrorHander("User not found with this email", 404));
   }
 
   // Get reset token and save to DB
@@ -196,13 +165,13 @@ const forgotPassword = async (req, res, next) => {
     user.resetPasswordExpire = undefined;
     await user.save({ validateBeforeSave: false });
 
-    return res.status(500).json({ message: 'Email could not be sent' });
+    return next(new ErrorHander("Email could not be sent", 500));
   }
-};
+});
 
 
 // PUT /api/users/reset/:token
-const resetPassword = async (req, res, next) => {
+const resetPassword = catchAsyncErrors(async (req, res, next) => {
   // Hash the token to compare with DB
   const resetPasswordToken = crypto
     .createHash('sha256')
@@ -215,17 +184,17 @@ const resetPassword = async (req, res, next) => {
   });
 
   if (!user) {
-    return res.status(400).json({ message: 'Invalid or expired reset token' });
+    return next(new ErrorHander("Invalid or expired reset token", 400));
   }
 
   const { password, confirmPassword } = req.body;
 
   if (!password || !confirmPassword) {
-    return res.status(400).json({ message: 'Please provide both fields' });
+    return next(new ErrorHander("Please provide both fields", 400));
   }
 
   if (password !== confirmPassword) {
-    return res.status(400).json({ message: 'Passwords do not match' });
+    return next(new ErrorHander("Passwords do not match", 400));
   }
 
   // ✅ Just assign — Mongoose will hash it via pre-save middleware
@@ -237,32 +206,16 @@ const resetPassword = async (req, res, next) => {
 
   await user.save();
 
-  // Optionally log user in after reset
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-    expiresIn: '7d',
-  });
-
-  res.status(200).cookie('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-  }).json({
-    success: true,
-    message: 'Password reset successful',
-    token,
-    // 🚨 For testing only — remove this in production!
-    plainPassword: password
-  });
-};
+  sendToken(user, 200, res);
+});
 
 // PATCH /api/users/update-password
-const updatePassword = async (req, res, next) => {
+const updatePassword = catchAsyncErrors(async (req, res, next) => {
   const user = await User.findById(req.user._id).select("+password");
 
   const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
   if (!isPasswordMatched) {
-    return res.status(400).json({ success: false, message: "Old password is incorrect" });
+    return next(new ErrorHander("Old password is incorrect", 400));
   }
 
   user.password = req.body.newPassword;
@@ -270,17 +223,7 @@ const updatePassword = async (req, res, next) => {
 
   // Send security email after password change
   const recoveryLink = `${req.protocol}://${req.get("host")}/recover-account?email=${user.email}`;
-  const message = `
-Your password was recently changed.
-
-If you made this change, no action is required.
-
-If you did NOT authorize this change, click the link below to recover your account:
-🔒 ${recoveryLink}
-
-Regards,
-The Habit App Team
-  `;
+  const message = `\nYour password was recently changed.\n\nIf you made this change, no action is required.\n\nIf you did NOT authorize this change, click the link below to recover your account:\n🔒 ${recoveryLink}\n\nRegards,\nThe Habit App Team\n  `;
 
   try {
     await sendEmail({
@@ -297,16 +240,16 @@ The Habit App Team
     success: true,
     message: "Password updated successfully",
   });
-};
+});
 
 
 // PATCH /api/users/request-email-change
-const requestEmailChange = async (req, res) => {
+const requestEmailChange = catchAsyncErrors(async (req, res, next) => {
   const { newEmail, currentPassword } = req.body;
 
   
   if (!newEmail || !currentPassword) {
-    return res.status(400).json({ message: 'New email and current password are required' });
+    return next(new ErrorHander("New email and current password are required", 400));
   }
 
   const normalizedNewEmail = newEmail.toLowerCase();
@@ -314,24 +257,24 @@ const requestEmailChange = async (req, res) => {
   // Fetch user and include password
   const user = await User.findById(req.user._id).select('+password');
   if (!user) {
-    return res.status(404).json({ message: 'User not found' });
+    return next(new ErrorHander("User not found", 404));
   }
 
   // Prevent updating to the same email
   if (normalizedNewEmail === user.email.toLowerCase()) {
-    return res.status(400).json({ message: 'New email is same as current email' });
+    return next(new ErrorHander("New email is same as current email", 400));
   }
 
   //Check if email is already taken
   const existingUser = await User.findOne({ email: normalizedNewEmail });
   if (existingUser) {
-    return res.status(400).json({ message: 'This email is already in use' });
+    return next(new ErrorHander("This email is already in use", 400));
   }
 
   // Confirm user's password
   const isMatch = await user.comparePassword(currentPassword);
   if (!isMatch) {
-    return res.status(401).json({ message: 'Incorrect password' });
+    return next(new ErrorHander("Incorrect password", 401));
   }
 
   // Generate token
@@ -345,22 +288,7 @@ const requestEmailChange = async (req, res) => {
   await user.save();
 
   // Send email to new address
-  const confirmMessage = `
-Hi there,
-
-You requested to change your email address on the Habit App.
-
-To confirm this change, please send a PATCH request to the following backend route:
-
-📡 /api/users/confirm-email/${rawToken}
-
-This link will expire in 20 minutes.
-
-If you did NOT make this request, please ignore this email.
-
-Regards,  
-The Habit App Team
-`;
+  const confirmMessage = `\nHi there,\n\nYou requested to change your email address on the Habit App.\n\nTo confirm this change, please send a PATCH request to the following backend route:\n\n📡 /api/users/confirm-email/${rawToken}\n\nThis link will expire in 20 minutes.\n\nIf you did NOT make this request, please ignore this email.\n\nRegards,  \nThe Habit App Team\n`;
 
   await sendEmail({
     email: normalizedNewEmail,
@@ -369,22 +297,7 @@ The Habit App Team
   });
 
   // Send alert to current email
-  const alertMessage = `
-⚠️ Heads up!
-
-A request was made to change the email address on your Habit App account to:
-📧 ${normalizedNewEmail}
-
-If **you DID NOT** make this request, someone may be trying to take over your account.
-
-To secure your account, reset your password now:
-🔐 /api/users/forgot-password
-
-If you DID make this request, no further action is required.
-
-Stay safe,  
-The Habit App Team
-`;
+  const alertMessage = `\n⚠️ Heads up!\n\nA request was made to change the email address on your Habit App account to:\n📧 ${normalizedNewEmail}\n\nIf **you DID NOT** make this request, someone may be trying to take over your account.\n\nTo secure your account, reset your password now:\n🔐 /api/users/forgot-password\n\nIf you DID make this request, no further action is required.\n\nStay safe,  \nThe Habit App Team\n`;
 
   await sendEmail({
     email: user.email,
@@ -394,16 +307,16 @@ The Habit App Team
 
   //Respond success
   res.status(200).json({ success: true, message: 'Confirmation email sent to new address' });
-};
+});
 
 
 
 // PATCH /api/users/confirm-email/:token
-const confirmEmailChange = async (req, res) => {
+const confirmEmailChange = catchAsyncErrors(async (req, res, next) => {
   const { token } = req.params;
 
   if (!token) {
-    return res.status(400).json({ message: 'Token is required' });
+    return next(new ErrorHander("Token is required", 400));
   }
 
   const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
@@ -414,11 +327,11 @@ const confirmEmailChange = async (req, res) => {
   });
 
   if (!user) {
-    return res.status(400).json({ message: 'Invalid or expired token' });
+    return next(new ErrorHander("Invalid or expired token", 400));
   }
 
   if (!user.pendingEmail) {
-    return res.status(400).json({ message: 'No pending email change found' });
+    return next(new ErrorHander("No pending email change found", 400));
   }
 
   const oldEmail = user.email;
@@ -433,16 +346,7 @@ const confirmEmailChange = async (req, res) => {
   await user.save();
 
   // 📩 Send confirmation email to new address
-  const message = `
-🎉 Your email address has been successfully changed!
-
-🔐 New Email: ${newEmail}
-
-If you did NOT authorize this change, reset your password immediately by visiting the forgot-password route.
-
-Regards,  
-The Habit App Team
-  `;
+  const message = `\n🎉 Your email address has been successfully changed!\n\n🔐 New Email: ${newEmail}\n\nIf you did NOT authorize this change, reset your password immediately by visiting the forgot-password route.\n\nRegards,  \nThe Habit App Team\n  `;
 
   try {
     await sendEmail({
@@ -460,22 +364,17 @@ The Habit App Team
     message: 'Email address successfully updated and confirmation sent',
     updatedEmail: user.email,
   });
-};
+});
 
-
-
-
-
-  module.exports = {
+module.exports = {
     registerUser,
     loginUser,
     logout,
-     getProfile,
-     forgotPassword,
-     resetPassword,
-     updateProfile,
+    getProfile,
+    forgotPassword,
+    resetPassword,
+    updateProfile,
     updatePassword,
     requestEmailChange,
     confirmEmailChange,
-  };
-
+};
