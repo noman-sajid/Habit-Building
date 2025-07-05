@@ -23,40 +23,44 @@ The backend is a Node.js application built with the Express framework. It handle
 
 ```
 backend/
-├── app.js                # Main application file
+├── app.js                # Main application file. Initializes the Express app, connects to the database, and sets up middleware and routes.
 ├── config/               # Configuration files
-│   └── cloudinary.js     # Cloudinary configuration
-├── controllers/          # Request handlers
-│   ├── habitController.js # Habit-related logic
-│   └── userController.js  # User-related logic
-├── middleware/           # Express middleware
-│   ├── authMiddleware.js # Authentication middleware
-│   ├── catchAsyncErrors.js # Error handling middleware
-│   └── multer.js         # File upload middleware
-├── models/               # Mongoose models
-│   ├── Habit.js          # Habit schema
-│   └── User.js           # User schema
-├── routes/               # API routes
-│   ├── habitRoutes.js    # Habit-related routes
-│   └── userRoutes.js     # User-related routes
-└── utils/                # Utility functions
-    ├── errorhander.js    # Error handling utility
-    ├── jwtToken.js       # JWT utility
-    └── sendEmail.js      # Email utility
+│   └── cloudinary.js     # Configures Cloudinary for image uploads.
+├── controllers/          # Request handlers that contain the business logic.
+│   ├── habitController.js # Handles all CRUD operations for habits.
+│   └── userController.js  # Manages user registration, login, profile updates, and password management.
+├── middleware/           # Custom middleware for Express.
+│   ├── authMiddleware.js # Protects routes by verifying JWT tokens.
+│   ├── catchAsyncErrors.js # Wraps async functions to catch and forward errors.
+│   ├── error.js          # Global error handler for Express.
+│   └── multer.js         # Handles multipart/form-data for file uploads.
+├── models/               # Mongoose schemas and models.
+│   ├── Habit.js          # Defines the schema for habits.
+│   └── User.js           # Defines the schema for users, including password hashing.
+├── routes/               # Defines the API routes.
+│   ├── habitRoutes.js    # Routes for all habit-related endpoints.
+│   └── userRoutes.js     # Routes for all user-related endpoints.
+└── utils/                # Utility functions used across the application.
+    ├── errorhander.js    # Custom error handler class.
+    ├── jwtToken.js       # Utility for creating and sending JWT tokens.
+    └── sendEmail.js      # Utility for sending emails (e.g., for password reset).
 ```
 
 ### API Endpoints
 
 #### User Routes (`/api/users`)
 
-- `POST /register`: Register a new user.
-- `POST /login`: Log in a user.
-- `GET /logout`: Log out a user.
-- `GET /profile`: Get the user's profile.
-- `POST /forgot-password`: Send a password reset email.
-- `PUT /reset/:token`: Reset the user's password.
-- `PATCH /update-profile`: Update the user's profile.
-- `PATCH /update-password`: Update the user's password.
+- `POST /register`: Register a new user. Controller: `registerUser`.
+- `POST /login`: Log in a user. Controller: `loginUser`.
+- `GET /logout`: Log out a user. Controller: `logout`.
+- `GET /profile`: Get the user's profile. Controller: `getProfile`.
+- `POST /forgot-password`: Send a password reset email. Controller: `forgotPassword`.
+- `PUT /reset/:token`: Reset the user's password. Controller: `resetPassword`.
+- `PATCH /update-profile`: Update the user's profile. Controller: `updateProfile`.
+- `PATCH /update-password`: Update the user's password. Controller: `updatePassword`.
+- `PATCH /request-email-change`: Request an email change. Controller: `requestEmailChange`.
+- `PATCH /confirm-email/:token`: Confirm an email change. Controller: `confirmEmailChange`.
+
 
 #### Habit Routes (`/api/habits`)
 
