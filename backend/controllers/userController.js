@@ -35,6 +35,8 @@ const registerUser = catchAsyncErrors(async (req, res, next) => {
 });
 
 
+
+
 //Post /api/users/login
 const loginUser = catchAsyncErrors(async (req, res, next) => {
   const { email, password } = req.body;
