@@ -29,6 +29,20 @@ module.exports = {
           950: "#0c0a09", // Extra dark
         }
       },
+        keyframes: {
+      'zoom-fade-in': {
+        '0%': { opacity: '0', transform: 'scale(0.95)' },
+        '100%': { opacity: '1', transform: 'scale(1)' },
+      },
+      'zoom-fade-out': {
+        '0%': { opacity: '1', transform: 'scale(1)' },
+        '100%': { opacity: '0', transform: 'scale(0.9)' },
+      },
+    },
+    animation: {
+      'zoom-fade-in': 'zoom-fade-in 0.3s ease-out',
+      'zoom-fade-out': 'zoom-fade-out 0.4s ease-in forwards',
+    },
     },
   },
   plugins: [],

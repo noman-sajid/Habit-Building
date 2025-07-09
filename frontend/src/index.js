@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ThemeProvider } from './context/ThemeContext';
+import { AlertProvider } from './context/AlertContext'; 
 
 // 🌓 Apply saved theme before React renders
 const storedTheme = localStorage.getItem('theme');
@@ -13,7 +14,6 @@ if (storedTheme === 'dark') {
 } else if (storedTheme === 'light') {
   document.documentElement.classList.remove('dark');
 } else {
-  // Optional: default to system preference if no theme saved
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   if (prefersDark) {
     document.documentElement.classList.add('dark');
@@ -27,9 +27,11 @@ if (storedTheme === 'dark') {
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
+    <AlertProvider>        
+      <ThemeProvider>      
+        <App />
+      </ThemeProvider>
+    </AlertProvider>
   </React.StrictMode>
 );
 
