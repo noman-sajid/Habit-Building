@@ -8,6 +8,10 @@ module.exports = {
         inter: ['Inter', 'sans-serif'],
         poppins: ['Poppins', 'sans-serif'],
       },
+       boxShadow: {
+        light: '0 4px 6px rgba(0, 0, 0, 0.1)',     // default light shadow
+        dark: '0 4px 6px rgba(255, 255, 255, 0.05)', // subtle light-ish shadow for dark bg
+      },
       colors: {
         primary: "#f59e0b",   // Amber-500
         secondary: "#eab308", // Amber-400 or slightly deeper
