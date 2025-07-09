@@ -70,85 +70,94 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="w-full max-w-md bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md"
-        encType="multipart/form-data"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800 dark:text-white">
-          Register
-        </h2>
+   <div className="min-h-screen flex items-center justify-center bg-stone-100 dark:bg-stone-900 px-4">
+  <form
+    onSubmit={handleSubmit}
+    className="w-full max-w-md bg-white dark:bg-stone-800 p-8 rounded-2xl shadow-md"
+    encType="multipart/form-data"
+  >
+    <h2 className="text-2xl font-bold mb-6 text-center text-stone-900 dark:text-stone-100">
+      Register
+    </h2>
 
-        {errors.backend && (
-          <p className="text-red-500 text-sm text-center mb-4">
-            {errors.backend}
-          </p>
-        )}
+    {errors.backend && (
+      <p className="text-red-600 dark:text-red-400 text-sm text-center mb-4">
+        {errors.backend}
+      </p>
+    )}
 
-        <TextInput
-          label="Name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Enter your name"
-          error={errors.name}
-          required
+    <TextInput
+      label="Name"
+      name="name"
+      value={formData.name}
+      onChange={handleChange}
+      placeholder="Enter your name"
+      error={errors.name}
+      required
+    />
+
+    <TextInput
+      label="Email"
+      name="email"
+      type="email"
+      value={formData.email}
+      onChange={handleChange}
+      placeholder="you@example.com"
+      error={errors.email}
+      required
+    />
+
+    <TextInput
+      label="Password"
+      name="password"
+      type="password"
+      value={formData.password}
+      onChange={handleChange}
+      placeholder="Enter a strong password"
+      error={errors.password}
+      required
+    />
+
+    {/* Avatar Upload */}
+    <div className="mb-4">
+      <label className="block text-sm font-medium mb-1 text-stone-700 dark:text-stone-200">
+        Avatar
+      </label>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleAvatarChange}
+        className="block w-full text-sm text-stone-700 dark:text-stone-200 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-amber-100 file:text-amber-800 hover:file:bg-amber-200"
+      />
+      {errors.avatar && (
+        <p className="text-red-600 dark:text-red-400 text-sm mt-1">
+          {errors.avatar}
+        </p>
+      )}
+      {avatarPreview && (
+        <img
+          src={avatarPreview}
+          alt="Avatar Preview"
+          className="mt-3 h-20 w-20 rounded-full object-cover"
         />
-
-        <TextInput
-          label="Email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          placeholder="you@example.com"
-          error={errors.email}
-          required
-        />
-
-        <TextInput
-          label="Password"
-          name="password"
-          type="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Enter a strong password"
-          error={errors.password}
-          required
-        />
-
-        {/* Avatar Upload */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-            Avatar
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleAvatarChange}
-            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
-          />
-          {errors.avatar && (
-            <p className="text-red-500 text-sm mt-1">{errors.avatar}</p>
-          )}
-          {avatarPreview && (
-            <img
-              src={avatarPreview}
-              alt="Avatar Preview"
-              className="mt-3 h-20 w-20 rounded-full object-cover"
-            />
-          )}
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold py-2 px-4 rounded-lg mt-4"
-        >
-          Register
-        </button>
-      </form>
+      )}
     </div>
+
+    <button
+      type="submit"
+      className="w-full bg-amber-450 hover:bg-amber-550 text-stone-900 font-semibold py-2 px-4 rounded-lg mt-4 transition-colors duration-200"
+    >
+      Register
+    </button>
+  </form>
+</div>
+
+
+
+
+
+
+
   );
 };
 
