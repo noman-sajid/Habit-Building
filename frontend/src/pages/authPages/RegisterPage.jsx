@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import TextInput from '../../components/UI/TextInput';
+import TextInput from '../../components/form/TextInput';
 import { registerUser } from '../../actions/authActions';
 
 
