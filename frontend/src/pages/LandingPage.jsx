@@ -10,7 +10,9 @@ import FileUpload from '../components/form/FileUpload';
 import Select from '../components/form/Select';
 import Checkbox from '../components/form/Checkbox';
 import Modal from '../components/feedback/Modal';
-
+import Tabs from '../components/layout/tabs/tabs';
+import VerticalTabs from '../components/layout/tabs/VerticalTabs';
+import ToggleGroup from '../components/layout/tabs/ToggleGroup';
 
 
 const LandingPage = () => {
@@ -22,7 +24,13 @@ const LandingPage = () => {
   const [habitImage, setHabitImage] = useState(null);
   const [habitFrequency, setHabitFrequency] = useState('');
   const [reminder, setReminder] = useState(false);
- 
+ const [selectedTab, setSelectedTab] = useState('Overview');
+ const [selectedVerticalTab, setSelectedVerticalTab] = useState('Overview');
+ const [selectedToggle, setSelectedToggle] = useState('Weekly');
+
+
+
+
   const [isModalOpen, setIsModalOpen] = useState(false);
 
 const handleConfirm = () => {
@@ -163,6 +171,78 @@ const handleCancel = () => {
   onCancel={handleCancel}
 />
 
+{/* ───────── Tabs Demo Section ───────── */}
+<div className="w-full max-w-md space-y-8 mt-8">
+
+  {/* Horizontal Tabs */}
+  <div className="bg-white dark:bg-stone-800 rounded-lg shadow p-4">
+    <h2 className="text-lg font-semibold mb-4 text-stone-800 dark:text-stone-200">Horizontal Tabs</h2>
+ <Tabs
+  tabs={[
+    {
+      label: 'Overview',
+      content: (
+        <div> {/* JSX is now supported */}
+          <h3>Welcome back!</h3>
+          <p>You have 4 habits in progress.</p>
+        </div>
+      ),
+    },
+    {
+      label: 'Progress',
+      content: (
+        <ul>
+          <li>✅ Woke up early</li>
+          <li>✅ 10 pushups</li>
+          <li>❌ Missed journaling</li>
+        </ul>
+      ),
+    },
+    {
+      label: 'Settings',
+      content: (
+        <ToggleGroup
+          options={['Daily', 'Weekly', 'Monthly']}
+          selected="Weekly"
+          onChange={(val) => console.log('Settings changed:', val)}
+        />
+      ),
+    },
+  ]}
+  selected="Overview"
+  onTabChange={(label) => console.log('Switched tab:', label)}
+/>
+
+
+  </div>
+
+  {/* Vertical Tabs */}
+  <div className="bg-white dark:bg-stone-800 rounded-lg shadow p-4">
+    <h2 className="text-lg font-semibold mb-4 text-stone-800 dark:text-stone-200">Vertical Tabs</h2>
+    <VerticalTabs
+  tabs={[
+    { label: 'Overview', content: 'Overview in vertical tab.' },
+    { label: 'Logs', content: 'Check your habit logs.' },
+    { label: 'Config', content: 'Configure vertical settings here.' },
+  ]}
+  selected={selectedVerticalTab}
+  onTabChange={(label) => setSelectedVerticalTab(label)}
+/>
+
+  </div>
+
+  {/* Toggle Group */}
+  <div className="bg-white dark:bg-stone-800 rounded-lg shadow p-4">
+    <h2 className="text-lg font-semibold mb-4 text-stone-800 dark:text-stone-200">Toggle Group</h2>
+    <ToggleGroup
+  options={['Daily', 'Weekly', 'Monthly']}
+  selected={selectedToggle}
+  onChange={(val) => setSelectedToggle(val)}
+/>
+
+  </div>
+
+</div>
 
 
       <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 space-y-3 w-full max-w-sm px-4">
