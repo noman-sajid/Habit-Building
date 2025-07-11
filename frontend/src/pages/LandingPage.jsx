@@ -9,6 +9,8 @@ import TextArea from '../components/form/TextArea';
 import FileUpload from '../components/form/FileUpload';
 import Select from '../components/form/Select';
 import Checkbox from '../components/form/Checkbox';
+import Modal from '../components/feedback/Modal';
+
 
 
 const LandingPage = () => {
@@ -20,6 +22,19 @@ const LandingPage = () => {
   const [habitImage, setHabitImage] = useState(null);
   const [habitFrequency, setHabitFrequency] = useState('');
   const [reminder, setReminder] = useState(false);
+ 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+const handleConfirm = () => {
+  console.log('User confirmed!');
+  setIsModalOpen(false);
+};
+
+const handleCancel = () => {
+  console.log('User cancelled!');
+  setIsModalOpen(false);
+};
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -130,6 +145,25 @@ const LandingPage = () => {
           </div>
         </form>
       </div>
+
+      <Button
+  onClick={() => setIsModalOpen(true)}
+  variant="secondary"
+  size="sm"
+  className="mt-2"
+>
+  Open Modal
+</Button>
+
+<Modal
+  isOpen={isModalOpen}
+  title="Confirm Habit Creation"
+  showActions
+  onConfirm={handleConfirm}
+  onCancel={handleCancel}
+/>
+
+
 
       <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 space-y-3 w-full max-w-sm px-4">
         {/* Alert container for global alerts */}
