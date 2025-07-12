@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 const Tabs = ({ tabs, selected, onTabChange }) => {
-  const [activeTab, setActiveTab] = useState(selected || tabs[0].label);
+  const activeTab = selected || tabs[0].label;
 
   const handleTabClick = (label) => {
-    setActiveTab(label);
     onTabChange?.(label);
   };
 

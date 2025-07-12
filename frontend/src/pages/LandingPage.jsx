@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
+
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
 import ProfileAvatar from '../components/common/ProfileAvatar';
@@ -15,6 +17,7 @@ import VerticalTabs from '../components/layout/tabs/VerticalTabs';
 import ToggleGroup from '../components/layout/tabs/ToggleGroup';
 
 
+
 const LandingPage = () => {
   const navigate = useNavigate();
   const { showAlert } = useAlert();
@@ -24,9 +27,10 @@ const LandingPage = () => {
   const [habitImage, setHabitImage] = useState(null);
   const [habitFrequency, setHabitFrequency] = useState('');
   const [reminder, setReminder] = useState(false);
- const [selectedTab, setSelectedTab] = useState('Overview');
- const [selectedVerticalTab, setSelectedVerticalTab] = useState('Overview');
- const [selectedToggle, setSelectedToggle] = useState('Weekly');
+const [searchParams, setSearchParams] = useSearchParams();
+const selectedTab = searchParams.get('tab') || 'Overview';
+const selectedVerticalTab = searchParams.get('tabVertical') || 'Overview';
+const toggleSelection = searchParams.get('toggle') || 'Daily';
 
 
 
@@ -41,6 +45,29 @@ const handleConfirm = () => {
 const handleCancel = () => {
   console.log('User cancelled!');
   setIsModalOpen(false);
+};
+
+const handleTabChange = (label) => {
+  setSearchParams((prev) => {
+    const updated = new URLSearchParams(prev);
+    updated.set('tab', label);
+    return updated;
+  });
+};
+const handleToggleChange = (value) => {
+  setSearchParams((prev) => {
+    const updated = new URLSearchParams(prev);
+    updated.set('toggle', value);
+    return updated;
+  });
+};
+
+const handleVerticalTabChange = (label) => {
+  setSearchParams((prev) => {
+    const updated = new URLSearchParams(prev);
+    updated.set('tabVertical', label);
+    return updated;
+  });
 };
 
 
@@ -177,13 +204,13 @@ const handleCancel = () => {
   {/* Horizontal Tabs */}
   <div className="bg-white dark:bg-stone-800 rounded-lg shadow p-4">
     <h2 className="text-lg font-semibold mb-4 text-stone-800 dark:text-stone-200">Horizontal Tabs</h2>
- <Tabs
+<Tabs
   tabs={[
     {
       label: 'Overview',
       content: (
-        <div> {/* JSX is now supported */}
-          <h3>Welcome back!</h3>
+        <div>
+          <h3 className="text-lg font-semibold">Welcome back!</h3>
           <p>You have 4 habits in progress.</p>
         </div>
       ),
@@ -191,7 +218,7 @@ const handleCancel = () => {
     {
       label: 'Progress',
       content: (
-        <ul>
+        <ul className="list-disc list-inside">
           <li>✅ Woke up early</li>
           <li>✅ 10 pushups</li>
           <li>❌ Missed journaling</li>
@@ -209,9 +236,10 @@ const handleCancel = () => {
       ),
     },
   ]}
-  selected="Overview"
-  onTabChange={(label) => console.log('Switched tab:', label)}
+  selected={selectedTab}
+  onTabChange={handleTabChange}
 />
+
 
 
   </div>
@@ -219,28 +247,68 @@ const handleCancel = () => {
   {/* Vertical Tabs */}
   <div className="bg-white dark:bg-stone-800 rounded-lg shadow p-4">
     <h2 className="text-lg font-semibold mb-4 text-stone-800 dark:text-stone-200">Vertical Tabs</h2>
-    <VerticalTabs
+<VerticalTabs
   tabs={[
-    { label: 'Overview', content: 'Overview in vertical tab.' },
-    { label: 'Logs', content: 'Check your habit logs.' },
-    { label: 'Config', content: 'Configure vertical settings here.' },
+    {
+      label: 'Overview',
+      content: (
+        <div>
+          <h4 className="text-lg font-semibold mb-2">Vertical Overview</h4>
+          <p>This section shows a vertical layout overview.</p>
+        </div>
+      ),
+    },
+    {
+      label: 'Logs',
+      content: (
+        <ul className="list-disc list-inside space-y-1">
+          <li>📅 July 10 — Completed meditation</li>
+          <li>📅 July 11 — Skipped water goal</li>
+        </ul>
+      ),
+    },
+    {
+      label: 'Config',
+      content: (
+        <div className="space-y-2">
+          <p>Configure your habits here:</p>
+          <ToggleGroup
+            options={['Daily', 'Weekly', 'Monthly']}
+            selected="Daily"
+            onChange={(val) => console.log('Config updated:', val)}
+          />
+        </div>
+      ),
+    },
   ]}
   selected={selectedVerticalTab}
-  onTabChange={(label) => setSelectedVerticalTab(label)}
+  onTabChange={handleVerticalTabChange}
 />
+
+
 
   </div>
 
   {/* Toggle Group */}
-  <div className="bg-white dark:bg-stone-800 rounded-lg shadow p-4">
-    <h2 className="text-lg font-semibold mb-4 text-stone-800 dark:text-stone-200">Toggle Group</h2>
-    <ToggleGroup
-  options={['Daily', 'Weekly', 'Monthly']}
-  selected={selectedToggle}
-  onChange={(val) => setSelectedToggle(val)}
-/>
+<div className="bg-white dark:bg-stone-800 rounded-lg shadow p-4">
+  <h2 className="text-lg font-semibold mb-4 text-stone-800 dark:text-stone-200">Toggle Group</h2>
 
-  </div>
+  <ToggleGroup
+    options={[
+      { label: 'Daily', value: 'Daily' },
+      { label: 'Weekly', value: 'Weekly' },
+      { label: 'Monthly', value: 'Monthly' },
+    ]}
+    selected={toggleSelection}
+    onChange={handleToggleChange}
+  />
+
+  <p className="mt-4 text-sm text-stone-700 dark:text-stone-300">
+    Currently selected: <strong>{toggleSelection}</strong>
+  </p>
+</div>
+
+
 
 </div>
 
