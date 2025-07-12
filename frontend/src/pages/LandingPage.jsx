@@ -15,6 +15,7 @@ import Modal from '../components/feedback/Modal';
 import Tabs from '../components/layout/tabs/tabs';
 import VerticalTabs from '../components/layout/tabs/VerticalTabs';
 import ToggleGroup from '../components/layout/tabs/ToggleGroup';
+import Tooltip from '../components/common/Tooltip';
 
 
 
@@ -121,7 +122,10 @@ const handleVerticalTabChange = (label) => {
           <p className="text-lg font-inter text-stone-900 dark:text-stone-100">
             Your habit journey begins here.
           </p>
-
+         <Tooltip
+            text="Click to register and start your journey!"
+            position="bottom"
+          >
           <Button
             onClick={handleRegister}
             variant="primary"
@@ -130,6 +134,7 @@ const handleVerticalTabChange = (label) => {
           >
             Get Started
           </Button>
+          </Tooltip>
         </Card>
 
         <form
