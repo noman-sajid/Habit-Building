@@ -31,6 +31,9 @@ const Button = React.memo(({
       "bg-transparent border border-stone-400 text-stone-700 hover:bg-stone-100 dark:text-stone-100 dark:border-stone-500 dark:hover:bg-stone-600",
     danger:
       "bg-red-500 hover:bg-red-600 text-white",
+    stoned:
+      "bg-stone-900 text-amber-500 hover:bg-amber-300 dark:text-stone-800 dark:hover:text-amber-500 dark:bg-white dark:hover:bg-stone-900",
+       
     ghost:
       "bg-transparent text-stone-700 dark:text-stone-200 hover:bg-stone-200/50 dark:hover:bg-stone-700",
   };

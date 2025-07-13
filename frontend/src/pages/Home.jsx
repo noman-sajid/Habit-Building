@@ -227,6 +227,27 @@ const Home = () => {
   </div>
 </section>
 
+{/*CTA section */}
+<section className="relative bg-primary dark:bg-accent text-white dark:text-stone-900 py-20 px-4 -mx-6 sm:-mx-8 lg:-mx-16">
+  <div className="max-w-3xl mx-auto px-4 sm:px-8 text-center">
+    <h2 className="text-4xl md:text-5xl font-bold font-poppins mb-4">
+      Ready to start your habit journey?
+    </h2>
+    <p className="text-lg md:text-xl font-inter mb-8">
+      Join Habitium today and start building consistent habits — your future self will thank you.
+    </p>
+    <Button
+      variant="stoned"
+      size="lg"
+      className="text-lg font-semibold bg-white text-primary hover:bg-gray-100 dark:bg-white dark:text-accent"
+      onClick={() => window.location.href = '/register'}
+    >
+      Join Habitium
+    </Button>
+  </div>
+</section>
+
+
 
         </main>
     );
