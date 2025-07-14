@@ -12,6 +12,7 @@ const { registerUser,
 } = require('../controllers/userController');
 const upload = require('../middleware/multer');
 const { protect } = require('../middleware/authMiddleware');
+const isAuthenticated = require('../middleware/isAuthenticated');
 
 const router = express.Router();
 
@@ -40,6 +41,14 @@ router.patch('/request-email-change', protect, requestEmailChange);
 
 // PATCH /api/users/confirm-email-change
 router.patch('/confirm-email/:token', confirmEmailChange);
+
+router.get('/auth/check', isAuthenticated, (req, res) => {
+  if (req.user) {
+    return res.status(200).json({ authenticated: true });
+  } else {
+    return res.status(200).json({ authenticated: false });
+  }
+});
 
 
 module.exports = router;

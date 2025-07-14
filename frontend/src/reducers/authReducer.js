@@ -67,11 +67,21 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.initialized = true;
       })
-      .addCase(load.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-        state.initialized = true;
-      });
+   .addCase(load.rejected, (state, action) => {
+  state.loading = false;
+
+  if (action.error.message === 'NotLoggedIn') {
+    state.user = null;
+    state.isAuthenticated = false;
+    state.error = null; // Prevents UI alerts
+  } else {
+    state.error = action.error.message;
+  }
+
+  state.initialized = true;
+});
+
+
   },
 });
 

@@ -5,25 +5,43 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import LandingPage from './pages/LandingPage';
 import RegisterPage from './pages/authPages/RegisterPage';
-import Navbar from './components/layout/Navbar'; 
-import Footer from './components/layout/Footer'; 
+import LoginPage from './pages/authPages/LoginPage';
+import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './routes/ProtectedRoute';
+import Loader from './components/common/Loader';
+import api from './services/axiosInstance'; // Assuming you have an api.js file for API calls
 
 function App() {
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.auth);
+  const { initialized } = useSelector((state) => state.auth);
 
-  useEffect(() => {
-    console.log('[App] Dispatching loadUser()');
-    dispatch(load());
-  }, [dispatch]);
+useEffect(() => {
+  const checkAuthThenLoad = async () => {
+    try {
+      const res = await api.get('/users/auth/check');
+      if (res?.data?.authenticated) {
+        dispatch(load());
+      } else {
+       dispatch(load.rejected({ message: 'Not authenticated' }));
+      }
+    } catch (err) {
+      console.error('[App] Silent auth check failed:', err?.response?.status, err?.message);
+      dispatch({ type: 'auth/load/rejected', error: { message: 'Auth check failed' } });
+    }
+  };
 
-  if (loading) {
+  checkAuthThenLoad();
+}, [dispatch]);
+
+
+  if (!initialized) {
     return (
       <div className="min-h-screen flex items-center justify-center text-xl font-semibold text-stone-800 dark:text-stone-100">
-        Loading app...
+     
+    <Loader/>
       </div>
     );
   }
@@ -35,14 +53,15 @@ function App() {
         <Routes>
           <Route path="/test-landing" element={<LandingPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<Home />} />
-          <Route 
-            path="/dashboard" 
+          <Route
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <DashboardPage />
               </ProtectedRoute>
-            } 
+            }
           />
         </Routes>
         <Footer />

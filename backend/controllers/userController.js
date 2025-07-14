@@ -77,15 +77,36 @@ const logout = catchAsyncErrors(async (req, res, next) => {
 
 
 // GET /api/users/profile
+// const getProfile = catchAsyncErrors(async (req, res, next) => {
+//    console.log('[getProfile] Authenticated user ID:', req.user._id);
+//   const user = await User.findById(req.user._id).populate('habits');
+//     console.log('[getProfile] Returning user:', user?.email || 'Not found');
+//   res.status(200).json({
+//     success: true,
+//     user,
+//   });
+// });
+
+
+
+
+// GET /api/users/profile
+// controllers/userController.js
+
 const getProfile = catchAsyncErrors(async (req, res, next) => {
-   console.log('[getProfile] Authenticated user ID:', req.user._id);
+  // If req.user doesn't exist (unauthenticated), return null without error
+  if (!req.user) {
+    return res.status(200).json({ user: null });
+  }
+
   const user = await User.findById(req.user._id).populate('habits');
-    console.log('[getProfile] Returning user:', user?.email || 'Not found');
+
   res.status(200).json({
-    success: true,
     user,
   });
 });
+
+
 
 
 // PATCH /api/users/update-profile
@@ -423,6 +444,9 @@ const confirmEmailChange = catchAsyncErrors(async (req, res, next) => {
     updatedEmail: user.email,
   });
 });
+
+
+
 
 module.exports = {
     registerUser,
