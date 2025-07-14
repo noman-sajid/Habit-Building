@@ -5,6 +5,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ThemeProvider } from './context/ThemeContext';
 import { AlertProvider } from './context/AlertContext'; 
+import { Provider } from 'react-redux'; // ← Import Redux Provider
+import store from './store'; // ← Your configured Redux store
 
 // 🌓 Apply saved theme before React renders
 const storedTheme = localStorage.getItem('theme');
@@ -25,13 +27,16 @@ if (storedTheme === 'dark') {
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
-    <AlertProvider>        
-      <ThemeProvider>      
-        <App />
-      </ThemeProvider>
-    </AlertProvider>
+    <Provider store={store}> {/* ✅ Wrap in Redux Provider */}
+      <AlertProvider>
+        <ThemeProvider>
+          <App />
+        </ThemeProvider>
+      </AlertProvider>
+    </Provider>
   </React.StrictMode>
 );
 

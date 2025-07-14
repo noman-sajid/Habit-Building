@@ -18,6 +18,8 @@ export const loginUser = async ({ email, password }) => {
 
 // Load profile (to restore session)
 export const loadUser = async () => {
-  const response = await api.get('/profile');
+   console.log('[loadUser] Sending GET request to /profile...');
+  const response = await api.get('/users/profile');
+    console.log('[loadUser] Response:', response.data);
   return response.data.user;
 };

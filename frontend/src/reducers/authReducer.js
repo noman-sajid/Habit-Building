@@ -11,6 +11,7 @@ const initialState = {
   loading: false,
   isAuthenticated: false,
   error: null,
+  initialized: false, // 🔁 new flag
 };
 
 const authSlice = createSlice({
@@ -23,6 +24,7 @@ const authSlice = createSlice({
     logoutSuccess: (state) => {
       state.user = null;
       state.isAuthenticated = false;
+      state.initialized = true; // ensure state is fully reset
     },
   },
   extraReducers: (builder) => {
@@ -34,10 +36,12 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
+        state.initialized = true;
       })
       .addCase(register.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+        state.initialized = true;
       })
       .addCase(login.pending, (state) => {
         state.loading = true;
@@ -46,22 +50,27 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
+        state.initialized = true;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+        state.initialized = true;
       })
       .addCase(load.pending, (state) => {
         state.loading = true;
       })
       .addCase(load.fulfilled, (state, action) => {
+        console.log('[authReducer] load.fulfilled - setting user:', action.payload);
         state.loading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
+        state.initialized = true;
       })
       .addCase(load.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+        state.initialized = true;
       });
   },
 });
