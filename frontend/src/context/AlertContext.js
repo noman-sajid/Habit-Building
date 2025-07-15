@@ -8,16 +8,22 @@ export const useAlert = () => useContext(AlertContext);
 export const AlertProvider = ({ children }) => {
   const [alerts, setAlerts] = useState([]);
 
-  const showAlert = useCallback((alert) => {
-    const id = Date.now();
-    setAlerts((prev) => [...prev, { id, ...alert }]);
+ const showAlert = useCallback((message, type = 'info', duration = 5000) => {
+  if (!message) return;
 
-    const timeout = setTimeout(() => {
-      setAlerts((prev) => prev.filter((a) => a.id !== id));
-    }, alert.duration || 5000);
+  const id = Date.now();
+  setAlerts((prev) => [
+    ...prev,
+    { id, message, type, duration },
+  ]);
 
-    return () => clearTimeout(timeout);
-  }, []);
+  const timeout = setTimeout(() => {
+    setAlerts((prev) => prev.filter((a) => a.id !== id));
+  }, duration);
+
+  return () => clearTimeout(timeout);
+}, []);
+
 
   const removeAlert = (id) => {
     setAlerts((prev) => prev.filter((a) => a.id !== id));

@@ -37,11 +37,13 @@ export const loadUser = async () => {
 
 // Forgot Password
 export const forgotPassword = async (email) => {
-  const response = await api.post('/users/password/forgot', { email });
-  return response.data;
+  const response = await api.post('/users/forgot-password', { email });
+
+  // ✅ Wrap in object if needed
+  return { message: response.data.message || response.data };
 };
 
-// Reset Password
+
 export const resetPassword = async (token, passwords) => {
   const response = await api.put(`/users/password/reset/${token}`, passwords);
   return response.data;

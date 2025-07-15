@@ -12,7 +12,8 @@ import Home from './pages/Home';
 import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './routes/ProtectedRoute';
 import Loader from './components/common/Loader';
-import api from './services/axiosInstance'; // Assuming you have an api.js file for API calls
+import api from './services/axiosInstance'; 
+import ForgotPasswordPage from './pages/authPages/ForgotPasswordPage';
 
 function App() {
   const dispatch = useDispatch();
@@ -55,6 +56,7 @@ useEffect(() => {
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<Home />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route
             path="/dashboard"
             element={

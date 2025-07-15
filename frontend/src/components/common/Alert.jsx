@@ -102,7 +102,7 @@ const Alert = ({
 
 Alert.propTypes = {
   type: PropTypes.oneOf(['info', 'success', 'warning', 'error']),
-  message: PropTypes.string.isRequired,
+  message: PropTypes.string,
   className: PropTypes.string,
   onClose: PropTypes.func,
   duration: PropTypes.number,
