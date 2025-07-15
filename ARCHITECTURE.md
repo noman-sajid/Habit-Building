@@ -60,7 +60,7 @@ backend/
 - `PATCH /update-password`: Update the user's password. Controller: `updatePassword`.
 - `PATCH /request-email-change`: Request an email change. Controller: `requestEmailChange`.
 - `PATCH /confirm-email/:token`: Confirm an email change. Controller: `confirmEmailChange`.
-
+- `GET /auth/check`: Checks if the user is authenticated.
 
 #### Habit Routes (`/api/habits`)
 
@@ -73,15 +73,14 @@ backend/
 
 ## Frontend
 
-The frontend currently consists of a single test file. It is expected to be a single-page application (SPA) that interacts with the backend API.
+The frontend is a single-page application (SPA) built with React. It interacts with the backend API to provide a user interface for habit tracking.
 
 ### Tech Stack
 
-- To be determined.
+- **React:** A JavaScript library for building user interfaces.
+- **React Router:** For declarative routing in a React application.
+- **Redux:** For predictable state management.
+- **Axios:** A promise-based HTTP client for making API requests.
+- **Tailwind CSS:** A utility-first CSS framework for rapid UI development.
 
-### Project Structure
-
-```
-frontend/
-└── first.txt # Placeholder file
-```
+A more detailed breakdown of the frontend architecture can be found in `frontend/ARCHITECTURE.md`.

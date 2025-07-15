@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Button from '../components/common/Button';
 import { logoutSuccess } from '../reducers/authReducer';
+import { forgotPassword } from '../actions/authActions';
 import api from '../services/axiosInstance'; // Assuming you have an api.js file for API calls
 
 const DashboardPage = () => {
@@ -21,13 +22,24 @@ const DashboardPage = () => {
     }
   };
 
+  const handleResetPassword = () => {
+    if (user && user.email) {
+      dispatch(forgotPassword(user.email));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-stone-100 dark:bg-stone-900 p-8 text-stone-900 dark:text-white">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Welcome to your Dashboard</h1>
-        <Button variant="stoned" onClick={handleLogout}>
-          Logout
-        </Button>
+        <div className="flex space-x-2">
+          <Button variant="stoned" onClick={handleResetPassword}>
+            Reset Password
+          </Button>
+          <Button variant="stoned" onClick={handleLogout}>
+            Logout
+          </Button>
+        </div>
       </div>
 
       {user ? (
