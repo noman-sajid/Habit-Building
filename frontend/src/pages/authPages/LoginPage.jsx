@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import TextInput from '../../components/form/TextInput';
 import Button from '../../components/common/Button';
 import Loader from '../../components/common/Loader';
+import { Link } from 'react-router-dom';
+
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -36,19 +38,23 @@ const LoginPage = () => {
     }
 
     try {
-      const result = await dispatch(login(formData)).unwrap();
-      navigate('/dashboard');
+     await dispatch(login(formData)).unwrap();
+navigate('/dashboard');
     } catch (err) {
-      const message = err?.response?.data?.message || 'Login failed';
-      const lower = message.toLowerCase();
-      const fieldErrors = {};
+  const message = err?.response?.data?.message || 'Login failed';
+  const lower = message.toLowerCase(); // Declare first
 
-      if (lower.includes('email')) fieldErrors.email = 'Incorrect email';
-      else if (lower.includes('password')) fieldErrors.password = 'Incorrect password';
-      else fieldErrors.password = 'Login failed'; // fallback if message is vague
+  const fieldErrors = {};
+  if (lower.includes('email')) {
+    fieldErrors.email = 'Incorrect email';
+  } else if (lower.includes('password')) {
+    fieldErrors.password = 'Incorrect password';
+  } else {
+    fieldErrors.password = 'Incorrect credentials, try again';
+  }
 
-      setErrors(fieldErrors);
-    }
+  setErrors(fieldErrors);
+}
   };
 
   return (
@@ -65,6 +71,7 @@ const LoginPage = () => {
           label="Email"
           name="email"
           type="email"
+          autoComplete="email" 
           value={formData.email}
           onChange={handleChange}
           placeholder="you@example.com"
@@ -92,6 +99,16 @@ const LoginPage = () => {
         >
           {loading ? <Loader size="sm" /> : 'Log In'}
         </Button>
+        <p className="mt-4 text-center text-sm text-stone-700 dark:text-stone-300">
+  Don&apos;t have an account?{' '}
+  <Link
+    to="/register"
+    className="text-amber-600 dark:text-amber-400 hover:underline font-medium"
+  >
+    Register
+  </Link>
+</p>
+
       </form>
     </div>
   );

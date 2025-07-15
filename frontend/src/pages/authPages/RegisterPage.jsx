@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { register } from '../../reducers/authReducer';
 import TextInput from '../../components/form/TextInput';
 import FileUpload from '../../components/form/FileUpload';
@@ -9,7 +10,7 @@ import { useNavigate } from 'react-router-dom';
 const RegisterPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, error } = useSelector((state) => state.auth);
+  const { loading} = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -56,13 +57,33 @@ const RegisterPage = () => {
     data.append('password', formData.password);
     data.append('avatar', avatar);
 
-    try {
-      const res = await dispatch(register(data)).unwrap();
-      console.log('✅ Registered:', res);
-      navigate('/dashboard'); // adjust route if needed
-    } catch (err) {
-      console.error('❌ Registration error:', err);
-    }
+ try {
+  const res = await dispatch(register(data)).unwrap();
+  console.log('✅ Registered:', res);
+  navigate('/dashboard');
+} catch (err) {
+  const message = err?.response?.data?.message || 'Registration failed';
+  const lower = message.toLowerCase();
+  const fieldErrors = {};
+
+  if (lower.includes('user already exists') || lower.includes('email')) {
+    fieldErrors.email = 'Email already exists';
+  } else if (lower.includes('password')) {
+    fieldErrors.password = 'Password is invalid';
+  } else if (lower.includes('name')) {
+    fieldErrors.name = 'Name is invalid';
+  } else if (lower.includes('avatar')) {
+    fieldErrors.avatar = 'Please select a valid avatar';
+  } else {
+    // Show under avatar field by default if it's a mystery error
+    fieldErrors.avatar = 'Registration failed. Please try again.';
+  }
+
+  setLocalErrors(fieldErrors);
+}
+
+
+
   };
 
   return (
@@ -76,12 +97,7 @@ const RegisterPage = () => {
           Join Habitium
         </h2>
 
-        {/* Backend error */}
-        {error && (
-          <p className="text-red-600 dark:text-red-400 text-sm text-center mb-4">
-            {error}
-          </p>
-        )}
+       
 
         <TextInput
           label="Name"
@@ -122,15 +138,29 @@ const RegisterPage = () => {
           preview={avatarPreview}
         />
 
+
+
         <Button
-          type="submit"
-          variant="primary"
-          size="lg"
-          className="mt-4 w-full"
-          disabled={loading}
-        >
-          {loading ? 'Registering...' : 'Register'}
-        </Button>
+  type="submit"
+  variant="primary"
+  size="lg"
+  className="mt-4 w-full"
+  disabled={loading}
+>
+  {loading ? 'Registering...' : 'Register'}
+</Button>
+
+<p className="mt-4 text-center text-sm text-stone-700 dark:text-stone-300">
+  Already have an account?{' '}
+ <Link
+  to="/login"
+  className="text-amber-600 dark:text-amber-400 hover:underline font-medium"
+>
+  Log in
+</Link>
+
+</p>
+
       </form>
     </div>
   );
