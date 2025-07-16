@@ -16,6 +16,7 @@ import api from './services/axiosInstance';
 import ForgotPasswordPage from './pages/authPages/ForgotPasswordPage';
 import PasswordResetSent from './pages/authPages/PasswordResetSent';
 import ResetPasswordPage from './pages/authPages/ResetPasswordPage';
+import CreateHabitForm from './components/habits/CreateHabitForm';
 
 function App() {
   const dispatch = useDispatch();
@@ -69,6 +70,14 @@ useEffect(() => {
             element={
               <ProtectedRoute>
                 <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
+           <Route
+            path="/create-habit"
+            element={
+              <ProtectedRoute>
+               <CreateHabitForm/>
               </ProtectedRoute>
             }
           />
