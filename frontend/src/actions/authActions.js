@@ -38,14 +38,18 @@ export const loadUser = async () => {
 // Forgot Password
 export const forgotPassword = async (email) => {
   const response = await api.post('/users/forgot-password', { email });
-
-  // ✅ Wrap in object if needed
   return { message: response.data.message || response.data };
 };
 
 
-export const resetPassword = async (token, passwords) => {
-  const response = await api.put(`/users/password/reset/${token}`, passwords);
-  return response.data;
+export const resetPassword = async ({ token, passwords }) => {
+  try {
+    const response = await api.put(`/users/reset/${token}`, passwords);
+    return response.data;
+  } catch (error) {
+    const message = error.response?.data?.message || 'Reset failed';
+    console.error('[resetPassword ACTION] Error:', message);
+    throw new Error(message); // ensures reducer gets action.error.message
+  }
 };
 

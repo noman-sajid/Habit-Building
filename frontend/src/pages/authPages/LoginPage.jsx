@@ -79,26 +79,36 @@ navigate('/dashboard');
           required
         />
 
-        <TextInput
-          label="Password"
-          name="password"
-          type="password"
-          value={formData.password}
-          onChange={handleChange}
-          placeholder="Enter your password"
-          error={errors.password}
-          required
-        />
+       <TextInput
+  label="Password"
+  name="password"
+  type="password"
+  value={formData.password}
+  onChange={handleChange}
+  placeholder="Enter your password"
+  error={errors.password}
+  required
+/>
 
-        <Button
-          type="submit"
-          variant="primary"
-          fullWidth
-          disabled={loading}
-          className="mt-4"
-        >
-          {loading ? <Loader size="sm" /> : 'Log In'}
-        </Button>
+<div className="flex justify-end text-sm mt-1">
+  <Link
+    to="/forgot-password"
+    className="text-amber-600 dark:text-amber-400 hover:underline font-medium"
+  >
+    Forgot Password?
+  </Link>
+</div>
+
+<Button
+  type="submit"
+  variant="primary"
+  fullWidth
+  disabled={loading}
+  className="mt-4"
+>
+  {loading ? <Loader size="sm" /> : 'Log In'}
+</Button>
+
         <p className="mt-4 text-center text-sm text-stone-700 dark:text-stone-300">
   Don&apos;t have an account?{' '}
   <Link

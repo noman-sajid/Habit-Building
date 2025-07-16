@@ -14,6 +14,8 @@ import ProtectedRoute from './routes/ProtectedRoute';
 import Loader from './components/common/Loader';
 import api from './services/axiosInstance'; 
 import ForgotPasswordPage from './pages/authPages/ForgotPasswordPage';
+import PasswordResetSent from './pages/authPages/PasswordResetSent';
+import ResetPasswordPage from './pages/authPages/ResetPasswordPage';
 
 function App() {
   const dispatch = useDispatch();
@@ -57,6 +59,11 @@ useEffect(() => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<Home />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/password-reset-sent" element={<PasswordResetSent />} />
+         <Route path="/reset/:token" element={<ResetPasswordPage />} />
+
+          
+          {/* Protected Routes */}
           <Route
             path="/dashboard"
             element={

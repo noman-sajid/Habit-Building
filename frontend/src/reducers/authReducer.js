@@ -11,7 +11,18 @@ import {
 export const login = createAsyncThunk('auth/login', loginUser);
 export const register = createAsyncThunk('auth/register', registerUser);
 export const load = createAsyncThunk('auth/loadUser', loadUser);
-export const forgot = createAsyncThunk('auth/forgotPassword', forgotPassword);
+export const forgot = createAsyncThunk(
+  'auth/forgotPassword',
+  async (email, thunkAPI) => {
+    try {
+      return await forgotPassword(email);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(
+        error.response?.data?.message || error.message || 'Something went wrong'
+      );
+    }
+  }
+);
 export const reset = createAsyncThunk('auth/resetPassword', resetPassword);
 
 // Initial State
@@ -116,14 +127,17 @@ const authSlice = createSlice({
         state.error = null;
         state.message = null;
       })
-      .addCase(reset.fulfilled, (state, action) => {
-        state.loading = false;
-        state.message = action.payload.message;
-      })
-      .addCase(reset.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      });
+     .addCase(reset.fulfilled, (state, action) => {
+  console.log('[REDUCER] Password reset success:', action.payload);
+  state.loading = false;
+  state.message = action.payload.message;
+})
+.addCase(reset.rejected, (state, action) => {
+  console.error('[REDUCER] Password reset failed:', action.error.message);
+  state.loading = false;
+  state.error = action.error.message;
+})
+
   },
 });
 

@@ -4,10 +4,14 @@ import { forgot } from '../../reducers/authReducer';
 import TextInput from '../../components/form/TextInput';
 import Button from '../../components/common/Button';
 import { useAlert } from '../../context/AlertContext';
+import Loader from '../../components/common/Loader';
+import { useNavigate } from 'react-router-dom';
+
 
 const ForgotPasswordPage = () => {
   const dispatch = useDispatch();
   const { showAlert } = useAlert();
+  const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -17,21 +21,25 @@ const handleSubmit = async (e) => {
   setLoading(true);
 
   try {
-   const action = await dispatch(forgot(email));
-if (forgot.fulfilled.match(action)) {
-  const message = action.payload?.message || 'Password reset email sent.';
-  showAlert(message, 'success');
-} else {
-  throw new Error(action.payload || 'Unexpected error occurred.');
-}
-  } catch (error) {
-    const fallback = error.message || 'Failed to send password reset email.';
-    console.error('[ForgotPasswordPage] Error message:', fallback);
-    showAlert(fallback, 'error');
+    const action = await dispatch(forgot(email));
+    console.log('[ForgotPasswordPage] Dispatch result:', action);
+
+    if (forgot.fulfilled.match(action)) {
+      const message = action.payload?.message || 'Password reset email sent.';
+      showAlert(message, 'success');
+       navigate('/password-reset-sent');
+    } else {
+      const errorMsg = action.payload || 'Unexpected error occurred.';
+      showAlert(errorMsg, 'error');
+    }
+  } catch (err) {
+    console.error('[ForgotPasswordPage] Catch error:', err);
+    showAlert(err.message || 'Something went wrong.', 'error');
   } finally {
-    setLoading(false);
+    setLoading(false); // ✅ Always re-enable the button
   }
 };
+
 
 
 
@@ -55,9 +63,10 @@ if (forgot.fulfilled.match(action)) {
             required
             placeholder="your@email.com"
           />
-          <Button type="submit" disabled={loading} className="w-full">
-            {loading ? 'Sending...' : 'Send Reset Link'}
-          </Button>
+         <Button type="submit" disabled={loading} className="w-full">
+  {loading ? <Loader className="mx-auto w-5 h-5" /> : 'Send Reset Link'}
+</Button>
+
         </form>
       </div>
     </div>

@@ -161,14 +161,14 @@ const forgotPassword = catchAsyncErrors(async (req, res, next) => {
 
   const user = await User.findOne({ email });
   if (!user) {
-    return next(new ErrorHander("User not found with this email", 404));
+    return next(new ErrorHander("Incorrect Email!", 404));
   }
 
   // Get reset token and save to DB
   const resetToken = user.getResetPasswordToken();
   await user.save({ validateBeforeSave: false });
 
-  const resetUrl = `${req.protocol}://${req.get('host')}/api/users/reset/${resetToken}`;
+const resetUrl = `${process.env.FRONTEND_URL}/reset/${resetToken}`;
   const message = `You requested a password reset.\n\nClick to reset: ${resetUrl}\n\nIf you didn't request it, ignore this email.`;
 
   try {
@@ -194,12 +194,53 @@ const forgotPassword = catchAsyncErrors(async (req, res, next) => {
 
 
 // PUT /api/users/reset/:token
+// const resetPassword = catchAsyncErrors(async (req, res, next) => {
+//   // Hash the token to compare with DB
+//   const resetPasswordToken = crypto
+//     .createHash('sha256')
+//     .update(req.params.token)
+//     .digest('hex');
+
+//   const user = await User.findOne({
+//     resetPasswordToken,
+//     resetPasswordExpire: { $gt: Date.now() },
+//   });
+
+//   if (!user) {
+//     return next(new ErrorHander("Invalid or expired reset token", 400));
+//   }
+
+//   const { password, confirmPassword } = req.body;
+
+//   if (!password || !confirmPassword) {
+//     return next(new ErrorHander("Please provide both fields", 400));
+//   }
+
+//   if (password !== confirmPassword) {
+//     return next(new ErrorHander("Passwords do not match", 400));
+//   }
+
+//   // ✅ Just assign — Mongoose will hash it via pre-save middleware
+//   user.password = password;
+
+//   // Clear reset fields
+//   user.resetPasswordToken = undefined;
+//   user.resetPasswordExpire = undefined;
+
+//   await user.save();
+
+//   sendToken(user, 200, res);
+// });
+
 const resetPassword = catchAsyncErrors(async (req, res, next) => {
-  // Hash the token to compare with DB
+  console.log('[BACKEND] Raw token from params:', req.params.token);
+
   const resetPasswordToken = crypto
     .createHash('sha256')
     .update(req.params.token)
     .digest('hex');
+
+  console.log('[BACKEND] Hashed token for DB lookup:', resetPasswordToken);
 
   const user = await User.findOne({
     resetPasswordToken,
@@ -207,10 +248,12 @@ const resetPassword = catchAsyncErrors(async (req, res, next) => {
   });
 
   if (!user) {
+    console.warn('[BACKEND] No matching user for token or token expired');
     return next(new ErrorHander("Invalid or expired reset token", 400));
   }
 
   const { password, confirmPassword } = req.body;
+  console.log('[BACKEND] Passwords received:', { password, confirmPassword });
 
   if (!password || !confirmPassword) {
     return next(new ErrorHander("Please provide both fields", 400));
@@ -220,17 +263,17 @@ const resetPassword = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHander("Passwords do not match", 400));
   }
 
-  // ✅ Just assign — Mongoose will hash it via pre-save middleware
   user.password = password;
-
-  // Clear reset fields
   user.resetPasswordToken = undefined;
   user.resetPasswordExpire = undefined;
 
   await user.save();
 
+  console.log('[BACKEND] Password reset successful. Sending token...');
   sendToken(user, 200, res);
 });
+
+
 
 // PATCH /api/users/update-password
 // const updatePassword = catchAsyncErrors(async (req, res, next) => {
