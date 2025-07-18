@@ -3,26 +3,23 @@ const User = require('../models/User');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const ErrorHandler = require('../utils/errorhander');
 
+
 // Create a new habit
 const createHabit = catchAsyncErrors(async (req, res, next) => {
-  const { title, description, frequency } = req.body;
+  const { title, description, frequency, emoji } = req.body;
 
-  // Step 1: Create the habit with user ID
+  // Step 1: Create the habit with user ID and optional emoji
   const habit = await Habit.create({
     user: req.user._id,
     title,
     description,
-    frequency
+    frequency,
+    emoji, // include emoji if provided
   });
-
-  // Step 2: Push the habit ID to user's habits array
-  const user = await User.findById(req.user._id);
-  user.habits.push(habit._id);
-  await user.save();
 
   res.status(201).json({
     success: true,
-    habit
+    data: habit,
   });
 });
 

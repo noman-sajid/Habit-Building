@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useRef, useEffect } from 'react';
 import StepTitle from './steps/StepTitle';
 import StepDescription from './steps/StepDescription';
@@ -13,7 +10,7 @@ import { useAlert } from '../../context/AlertContext';
 import Loader from '../common/Loader';
 import { AnimatePresence, motion } from 'framer-motion';
 
-// Custom hook for dynamic height using ResizeObserver
+// Custom hook to handle dynamic height
 function useResizeHeight(ref) {
   const [height, setHeight] = useState('auto');
 
@@ -35,14 +32,16 @@ function useResizeHeight(ref) {
 const CreateHabitForm = () => {
   const [step, setStep] = useState(1);
   const [direction, setDirection] = useState(0);
+
   const [formData, setFormData] = useState({
     title: '',
+    emoji: '',
     description: '',
     frequency: 'daily',
     customDays: [],
   });
-  const [errors, setErrors] = useState({});
 
+  const [errors, setErrors] = useState({});
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { showAlert } = useAlert();
@@ -68,7 +67,7 @@ const CreateHabitForm = () => {
 
   const handleSubmit = async () => {
     try {
-      const res = await dispatch(addHabit(formData)).unwrap();
+      await dispatch(addHabit(formData)).unwrap();
       showAlert('Habit created successfully!', 'success');
       navigate('/dashboard');
     } catch (error) {
@@ -102,6 +101,8 @@ const CreateHabitForm = () => {
             value={formData.title}
             onChange={(val) => handleChange('title', val)}
             error={errors.title}
+            emoji={formData.emoji}
+            setEmoji={(emoji) => handleChange('emoji', emoji)}
           />
         );
       case 2:
@@ -110,6 +111,7 @@ const CreateHabitForm = () => {
             value={formData.description}
             onChange={(val) => handleChange('description', val)}
             error={errors.description}
+            title={formData.title}
           />
         );
       case 3:
@@ -150,9 +152,7 @@ const CreateHabitForm = () => {
           {['Title', 'Motivation', 'Frequency', 'Review'].map((label, index) => (
             <span
               key={label}
-              className={`transition-colors ${
-                step === index + 1 ? 'text-stone-900 dark:text-white' : ''
-              }`}
+              className={`transition-colors ${step === index + 1 ? 'text-stone-900 dark:text-white' : ''}`}
             >
               {label}
             </span>
@@ -166,7 +166,7 @@ const CreateHabitForm = () => {
         </div>
       </div>
 
-      {/* Step Content with Dynamic Height */}
+      {/* Step Content */}
       <div
         className="relative transition-all duration-300 ease-in-out overflow-hidden"
         style={{ height }}

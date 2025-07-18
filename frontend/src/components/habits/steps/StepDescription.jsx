@@ -1,65 +1,42 @@
-// import React from 'react';
-// import TextInput from '../../form/TextInput';
-
-// const descriptionSuggestions = [
-//   'I will do this every single day!',
-//   'Small steps lead to big change.',
-//   'Stay consistent and trust the process.',
-//   'I’m doing this to improve my life.',
-//   'Discipline over motivation.',
-// ];
-
-// const StepDescription = ({ value = '', onChange, error }) => {
-//   return (
-//     <div>
-//       <h2 className="text-xl font-semibold text-stone-800 dark:text-white mb-4">
-//         Add a motivational sentence (optional)
-//       </h2>
-
-//       <div className="flex flex-wrap gap-2 mb-4">
-//         {descriptionSuggestions.map((sentence) => (
-//           <button
-//             key={sentence}
-//             type="button"
-//             onClick={() => onChange(sentence)}
-//             className={`px-4 py-2 rounded-full border text-sm ${
-//               value === sentence
-//                 ? 'bg-amber-500 text-white border-amber-500'
-//                 : 'bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-100 border-stone-300 dark:border-stone-600 hover:border-amber-400'
-//             }`}
-//           >
-//             {sentence}
-//           </button>
-//         ))}
-//       </div>
-
-//       <TextInput
-//         label="Custom Description"
-//         name="description"
-//         placeholder="Why are you doing this?"
-//         value={value}
-//         onChange={(e) => onChange(e.target.value)}
-//         error={error}
-//       />
-//     </div>
-//   );
-// };
-
-// export default StepDescription;
-
-
-
-
-
-
-
-
-
-
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import TextInput from '../../form/TextInput';
 
-const descriptionSuggestions = [
+// Map keywords to tailored suggestions
+const habitSuggestionMap = {
+  water: [
+    'I will drink a glass of water after waking up.',
+    'I’ll sip water every hour while working.',
+    'I will drink 8 glasses of water daily.',
+  ],
+  meditate: [
+    'I will meditate for 5 minutes after waking up.',
+    'I’ll meditate every night before sleeping.',
+    'I will take deep breaths during stressful moments.',
+  ],
+  walk: [
+    'After lunch, I’ll go for a short walk.',
+    'I’ll walk 5,000 steps before dinner.',
+    'I will walk around the block every evening.',
+  ],
+  read: [
+    'I will read 10 pages every night before bed.',
+    'I’ll read after finishing lunch.',
+    'I will read in the morning before starting work.',
+  ],
+  gratitude: [
+    'I’ll write one gratitude point after brushing teeth.',
+    'I will reflect on 3 good things every night.',
+    'I will journal something I’m grateful for after breakfast.',
+  ],
+  stretch: [
+    'I will stretch for 2 minutes after a long sitting session.',
+    'I’ll do morning stretches after brushing teeth.',
+    'I will stretch before going to bed.',
+  ],
+};
+
+// Fallback suggestions
+const defaultSuggestions = [
   'I will meditate for 5 minutes after waking up.',
   'After lunch, I’ll go for a short walk.',
   'I will read 10 pages every night before bed.',
@@ -67,8 +44,17 @@ const descriptionSuggestions = [
   'I will stretch for 2 minutes after a long sitting session.',
 ];
 
-const StepDescription = ({ value = '', onChange, error }) => {
+const StepDescription = ({ value = '', onChange, error, title = '' }) => {
   const [template, setTemplate] = useState({ action: '', trigger: '', location: '' });
+
+  // Filter relevant suggestions based on title
+  const filteredSuggestions = useMemo(() => {
+    const titleLower = title.toLowerCase();
+    const foundKey = Object.keys(habitSuggestionMap).find((key) =>
+      titleLower.includes(key)
+    );
+    return foundKey ? habitSuggestionMap[foundKey] : defaultSuggestions;
+  }, [title]);
 
   // Create a helper to auto-generate the sentence from the structured fields
   const handleTemplateChange = (field, val) => {
@@ -88,7 +74,7 @@ const StepDescription = ({ value = '', onChange, error }) => {
 
       {/* Suggestions */}
       <div className="flex flex-wrap gap-2 mb-4">
-        {descriptionSuggestions.map((sentence) => (
+        {filteredSuggestions.map((sentence) => (
           <button
             key={sentence}
             type="button"

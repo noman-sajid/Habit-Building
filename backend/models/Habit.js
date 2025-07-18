@@ -30,11 +30,16 @@ const habitSchema = new mongoose.Schema({
     default: 0,
   },
   maxStreak: {
-  type: Number,
-  default: 0,
-},
+    type: Number,
+    default: 0,
+  },
   lastCompleted: {
     type: Date,
+  },
+  emoji: {
+    type: String,
+    trim: true,
+    default: '🌱', // Optional default emoji
   },
 }, { timestamps: true });
 
