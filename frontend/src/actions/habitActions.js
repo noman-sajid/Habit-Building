@@ -2,7 +2,7 @@ import api from '../services/axiosInstance';
 
 // Create a new habit
 export const createHabit = async (habitData) => {
-  const response = await api.post('/api/habits', habitData, {
+  const response = await api.post('/habits', habitData, {
     headers: { 'Content-Type': 'application/json' },
   });
   return response.data;
