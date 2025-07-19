@@ -15,6 +15,11 @@ const habitSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  duration: {
+    type: Number, // Duration in minutes
+    min: [1, 'Duration must be at least 1 minute'],
+    default: null,
+  },
   frequency: {
     type: String,
     enum: ['daily', 'weekly', 'custom'],

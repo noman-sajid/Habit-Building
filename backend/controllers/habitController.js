@@ -6,15 +6,16 @@ const ErrorHandler = require('../utils/errorhander');
 
 // Create a new habit
 const createHabit = catchAsyncErrors(async (req, res, next) => {
-  const { title, description, frequency, emoji } = req.body;
+  const { title, description, frequency, emoji, duration } = req.body;
 
-  // Step 1: Create the habit with user ID and optional emoji
+  // Step 1: Create the habit with user ID and optional fields
   const habit = await Habit.create({
     user: req.user._id,
     title,
     description,
     frequency,
     emoji, // include emoji if provided
+    duration, // include duration if provided
   });
 
   res.status(201).json({
@@ -36,7 +37,7 @@ const getUserHabits = catchAsyncErrors(async (req, res, next) => {
 // PUT /api/habits/:id
 const updateHabit = catchAsyncErrors(async (req, res, next) => {
   const habitId = req.params.id;
-  const { title, description, frequency } = req.body;
+  const { title, description, frequency, duration } = req.body;
 
   let habit = await Habit.findOne({ _id: habitId, user: req.user._id });
 
@@ -48,6 +49,7 @@ const updateHabit = catchAsyncErrors(async (req, res, next) => {
   if (title) habit.title = title;
   if (description) habit.description = description;
   if (frequency) habit.frequency = frequency;
+  if (duration) habit.duration = duration;
 
   await habit.save();
 

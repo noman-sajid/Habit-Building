@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '../../common/Button';
 
 const StepReview = ({ formData, onBack, onSubmit, loading }) => {
-  const { title, emoji, description, frequency, customDays } = formData;
+  const { title, emoji, description, frequency, customDays, duration } = formData;
 
   return (
     <div>
@@ -32,6 +32,15 @@ const StepReview = ({ formData, onBack, onSubmit, loading }) => {
             {frequency === 'custom' ? customDays.join(', ') : frequency}
           </p>
         </div>
+
+        {duration && (
+          <div>
+            <p className="text-sm text-stone-500 dark:text-stone-400">Duration</p>
+            <p className="text-lg text-stone-800 dark:text-stone-100">
+              {duration} minutes per session
+            </p>
+          </div>
+        )}
       </div>
 
       <div className="mt-8 flex justify-between">

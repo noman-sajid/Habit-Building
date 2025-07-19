@@ -4,7 +4,15 @@ import TextInput from '../../form/TextInput';
 const frequencyOptions = ['daily', 'weekly', 'custom'];
 const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-const StepFrequency = ({ value = '', onChange, error, customDays = [], onCustomDaysChange }) => {
+const StepFrequency = ({
+  value = '',
+  onChange,
+  error,
+  customDays = [],
+  onCustomDaysChange,
+  duration,
+  onDurationChange,
+}) => {
   const currentValue = typeof value === 'string' ? value.toLowerCase() : '';
 
   // Toggle day selection
@@ -15,8 +23,6 @@ const StepFrequency = ({ value = '', onChange, error, customDays = [], onCustomD
       onCustomDaysChange([...customDays, day]);
     }
   };
-
-  const errorMessage = typeof error === 'string' ? error : error?.message || '';
 
   return (
     <div>
@@ -68,15 +74,18 @@ const StepFrequency = ({ value = '', onChange, error, customDays = [], onCustomD
         </div>
       )}
 
-      {/* Optional TextInput (can be removed or hidden now if not needed) */}
-      <TextInput
-        label="Custom Frequency Text (optional)"
-        name="frequency"
-        placeholder="e.g. every Monday and Thursday"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        error={errorMessage}
-      />
+      {/* Duration Input */}
+      <div className="mt-4">
+        <TextInput
+          label="How many minutes per session? (Optional)"
+          name="duration"
+          type="number"
+          placeholder="e.g., 15"
+          value={duration || ''}
+          onChange={(e) => onDurationChange(e.target.value ? parseInt(e.target.value, 10) : null)}
+          error={error?.duration}
+        />
+      </div>
     </div>
   );
 };

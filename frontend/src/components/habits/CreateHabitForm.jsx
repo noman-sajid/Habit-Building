@@ -39,6 +39,7 @@ const CreateHabitForm = () => {
     description: '',
     frequency: 'daily',
     customDays: [],
+    duration: null, // in minutes
   });
 
   const [errors, setErrors] = useState({});
@@ -87,6 +88,8 @@ const CreateHabitForm = () => {
       if (!formData.frequency) newErrors.frequency = 'Please select frequency.';
       if (formData.frequency === 'custom' && formData.customDays.length === 0)
         newErrors.customDays = 'Select at least one day.';
+      if (formData.duration !== null && formData.duration <= 0)
+        newErrors.duration = 'Duration must be a positive number.';
     }
 
     setErrors(newErrors);
@@ -126,6 +129,8 @@ const CreateHabitForm = () => {
             error={errors}
             customDays={formData.customDays}
             onCustomDaysChange={(days) => handleChange('customDays', days)}
+            duration={formData.duration}
+            onDurationChange={(duration) => handleChange('duration', duration)}
           />
         );
       case 4:
