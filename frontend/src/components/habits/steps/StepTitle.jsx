@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import TextInput from '../../form/TextInput';
-import EmojiPicker from 'emoji-picker-react'; // ✅ Correct import
+import EmojiSelector from './EmojiSelector';
+import Button from '../../common/Button';
 
 const habitSuggestions = [
   { title: 'Drink Water', emoji: '💧' },
@@ -13,43 +14,122 @@ const habitSuggestions = [
 ];
 
 const emojiKeywordMap = {
-  water: '💧',
-  read: '📖',
-  book: '📚',
-  exercise: '🏋️',
-  meditate: '🧘',
-  write: '✍️',
-  journal: '📓',
-  sugar: '🍬',
-  gratitude: '🙏',
-};
+    run: ['🏃', '👟'],
+    workout: ['🏋️', '💪'],
+    gym: ['🏋️', '🏃‍♂️'],
+    water: ['💧', '🚰'],
+    read: ['📖', '📚'],
+    book: ['📘', '📖'],
+    meditate: ['🧘', '🕯️'],
+    sleep: ['🛌', '🌙'],
+    wake: ['☀️', '⏰'],
+    code: ['💻', '👨‍💻'],
+    write: ['📝', '✍️'],
+    journal: ['📔', '🗒️'],
+    prayer: ['🙏', '🕌'],
+    food: ['🍎', '🥦'],
+    clean: ['🧹', '🧼'],
+    walk: ['🚶', '🌳'],
+    music: ['🎵', '🎶', '🎸', '🎹', '🎤'],
+    learn: ['🎓', '💡', '🧠'],
+    study: ['📚', '✍️', '🏫'],
+    draw: ['���', '✏️', '🖼️'],
+    paint: ['🎨', '🖌️', '🖼️'],
+    family: ['👨‍👩‍👧‍👦', '❤️', '🏡'],
+    friends: ['🧑‍🤝‍🧑', '🎉', '😊'],
+    love: ['❤️', '🥰', '😍'],
+    health: ['❤️‍🩹', '🩺', '🏥'],
+    finance: ['💰', '💵', '📈'],
+    budget: ['🧾', '📉', '🏦'],
+    invest: ['📈', '💹', '🤑'],
+    cook: ['🍳', '👨‍🍳', '🍽️'],
+    bake: ['🍰', '🍪', '🧁'],
+    garden: ['🌱', '🌻', '🌳'],
+    pet: ['🐶', '🐱', '🐾'],
+    dog: ['🐶', '🐕', '🦴'],
+    cat: ['🐱', '🐈', '🐾'],
+    fish: ['🐠', '🐡', '🎣'],
+    bird: ['🐦', '🦜', '🦢'],
+    reptile: ['🐍', '🦎', '🐢'],
+    amphibian: ['🐸', '🦎', '🐍'],
+    'no sugar': ['🚫', '🍬', '🍭'],
+    'no junk': ['🚫', '🍔', '🍟'],
+    'no alcohol': ['🚫', '🍺', '🍷'],
+    'no smoking': ['🚫', '🚬', '🚭'],
+    'no vaping': ['🚫', '💨', '🚭'],
+    'no caffeine': ['🚫', '☕', '🍵'],
+    'no social media': ['🚫', '📱', '💻'],
+    'no tv': ['🚫', '📺', '💻'],
+    'no games': ['🚫', '🎮', '💻'],
+    'no gambling': ['🚫', '🎰', '🎲'],
+    'no porn': ['🚫', '🔞', '💻'],
+    'no procrastination': ['🚫', '⏰', '🏃'],
+    'no complaining': ['🚫', '🗣️', '😊'],
+    'no gossip': ['🚫', '🗣️', '😊'],
+    'no lying': ['🚫', '🗣️', '😊'],
+    'no swearing': ['🚫', '🗣️', '😊'],
+    'no biting nails': ['🚫', '💅', '😊'],
+    'no picking skin': ['🚫', '🩹', '😊'],
+    'no slouching': ['🚫', '🧍', '😊'],
+    'no cracking knuckles': ['🚫', '👊', '😊'],
+    'no touching face': ['🚫', '🤦', '😊'],
+    'no skipping meals': ['🚫', '🍽️', '😊'],
+    'no eating late': ['🚫', '🍽️', '😊'],
+    'no eating fast': ['🚫', '🍽️', '😊'],
+    'no eating junk': ['🚫', '🍽️', '😊'],
+    'no eating sugar': ['🚫', '🍽️', '😊'],
+    'no drinking soda': ['🚫', '🥤', '😊'],
+    'no drinking juice': ['🚫', '🥤', '😊'],
+    'no drinking alcohol': ['🚫', '🍺', '😊'],
+    'no drinking coffee': ['🚫', '☕', '😊'],
+    'no drinking tea': ['🚫', '🍵', '😊'],
+    'no smoking cigarettes': ['🚫', '🚬', '😊'],
+    'no smoking weed': ['🚫', '🌿', '😊'],
+    'no vaping nicotine': ['🚫', '💨', '😊'],
+    'no vaping thc': ['🚫', '💨', '😊'],
+  };
+  
+  function getSuggestedEmojis(title) {
+    const lowerTitle = title.toLowerCase();
+    const matchedEmojis = new Set();
+  
+    Object.entries(emojiKeywordMap).forEach(([keyword, emojis]) => {
+      if (lowerTitle.includes(keyword)) {
+        emojis.forEach((emoji) => matchedEmojis.add(emoji));
+      }
+    });
+  
+    return Array.from(matchedEmojis).slice(0, 5); // Limit to 5 suggestions
+  }
 
 const StepTitle = ({ value = '', onChange, error, emoji, setEmoji }) => {
-  const [showPicker, setShowPicker] = useState(false);
-  const isEmojiManuallySet = useRef(false); // tracks if user manually picked emoji
+  const isEmojiManuallySet = useRef(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const suggestedEmojis = getSuggestedEmojis(value);
 
-  // Auto-suggest emoji based on title — only if not manually set
   useEffect(() => {
     if (!isEmojiManuallySet.current) {
-      const keyword = value.toLowerCase();
-      const match = Object.keys(emojiKeywordMap).find((key) =>
-        keyword.includes(key)
-      );
-      if (match) setEmoji(emojiKeywordMap[match]);
+      if (value.trim() === '') {
+        setEmoji('');
+      }
     }
   }, [value, setEmoji]);
 
   const handleSuggestionClick = (title, emoji) => {
     onChange(title);
     setEmoji(emoji);
-    isEmojiManuallySet.current = false; // reset manual flag on suggestion click
+    isEmojiManuallySet.current = false;
   };
 
-  const handleEmojiPick = (emojiData) => {
-    setEmoji(emojiData.emoji);
-    isEmojiManuallySet.current = true; // mark that user manually picked
-    setShowPicker(false);
-  };
+ const handleEmojiPick = (selectedEmojiObj) => {
+  setEmoji(selectedEmojiObj.emoji);
+  isEmojiManuallySet.current = true;
+};
+
+const handleRecommendedEmojiClick = (selectedEmoji) => {
+    setEmoji(selectedEmoji);
+    isEmojiManuallySet.current = true;
+}
 
   return (
     <div>
@@ -87,7 +167,6 @@ const StepTitle = ({ value = '', onChange, error, emoji, setEmoji }) => {
           value={value}
           onChange={(e) => {
             onChange(e.target.value);
-            // Reset manual emoji flag if cleared title
             if (e.target.value.trim() === '') {
               isEmojiManuallySet.current = false;
             }
@@ -96,32 +175,42 @@ const StepTitle = ({ value = '', onChange, error, emoji, setEmoji }) => {
         />
       </div>
 
-      {/* Emoji Picker Field */}
-      <div className="mb-2">
-        <label className="text-sm font-medium text-stone-700 dark:text-stone-200 mb-1 block">
-          Emoji
-        </label>
-        <div className="flex items-center gap-2">
-          <button
+      {/* Emoji Selector + Suggestions */}
+      <div className="mb-4">
+        <div className="flex items-center gap-4">
+            <button
             type="button"
-            onClick={() => setShowPicker(!showPicker)}
-            className="text-2xl border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-700 px-3 py-1 rounded hover:border-amber-400"
-            title="Pick an emoji"
-          >
-            {emoji || '🌱'}
-          </button>
-          <span className="text-sm text-stone-500 dark:text-stone-400">
-            Tap to change emoji
-          </span>
+            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            className="text-3xl p-2 rounded hover:bg-stone-100 dark:hover:bg-stone-700"
+            title="Choose an emoji"
+            >
+            {emoji || '😀'}
+            </button>
+
+            {suggestedEmojis.length > 0 && (
+                <div className="flex flex-wrap gap-2 items-center">
+                <span className="text-sm font-medium text-stone-600 dark:text-stone-300">
+                    Recommended:
+                </span>
+                {suggestedEmojis.map((emoji, index) => (
+                    <Button
+                        key={index}
+                        onClick={() => handleRecommendedEmojiClick(emoji)}
+                        variant="ghost"
+                        className="text-2xl"
+                    >
+                    {emoji}
+                    </Button>
+                ))}
+                </div>
+            )}
         </div>
 
-        {showPicker && (
-          <div className="absolute z-50 mt-2 shadow-lg">
-            <EmojiPicker
+        {showEmojiPicker && (
+          <div className="mt-2 border border-stone-300 dark:border-stone-600 rounded shadow-lg bg-white dark:bg-stone-800 z-50">
+            <EmojiSelector
               onEmojiClick={handleEmojiPick}
-              theme="light"
-              height={350}
-              width={300}
+              onClose={() => setShowEmojiPicker(false)}
             />
           </div>
         )}

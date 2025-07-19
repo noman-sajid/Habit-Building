@@ -1,85 +1,57 @@
-import React, { useState, useMemo } from 'react';
-import TextInput from '../../form/TextInput';
+import React, { useState, useEffect, useMemo } from 'react';
+import TextArea from '../../form/TextArea';
+import { getSuggestions } from './descriptionSuggestions';
+import { FiRefreshCw } from 'react-icons/fi';
 
-// Map keywords to tailored suggestions
-const habitSuggestionMap = {
-  water: [
-    'I will drink a glass of water after waking up.',
-    'I’ll sip water every hour while working.',
-    'I will drink 8 glasses of water daily.',
-  ],
-  meditate: [
-    'I will meditate for 5 minutes after waking up.',
-    'I’ll meditate every night before sleeping.',
-    'I will take deep breaths during stressful moments.',
-  ],
-  walk: [
-    'After lunch, I’ll go for a short walk.',
-    'I’ll walk 5,000 steps before dinner.',
-    'I will walk around the block every evening.',
-  ],
-  read: [
-    'I will read 10 pages every night before bed.',
-    'I’ll read after finishing lunch.',
-    'I will read in the morning before starting work.',
-  ],
-  gratitude: [
-    'I’ll write one gratitude point after brushing teeth.',
-    'I will reflect on 3 good things every night.',
-    'I will journal something I’m grateful for after breakfast.',
-  ],
-  stretch: [
-    'I will stretch for 2 minutes after a long sitting session.',
-    'I’ll do morning stretches after brushing teeth.',
-    'I will stretch before going to bed.',
-  ],
-};
-
-// Fallback suggestions
-const defaultSuggestions = [
-  'I will meditate for 5 minutes after waking up.',
-  'After lunch, I’ll go for a short walk.',
-  'I will read 10 pages every night before bed.',
-  'I’ll write one gratitude point after brushing teeth.',
-  'I will stretch for 2 minutes after a long sitting session.',
-];
+const SUGGESTIONS_TO_SHOW = 4;
 
 const StepDescription = ({ value = '', onChange, error, title = '' }) => {
-  const [template, setTemplate] = useState({ action: '', trigger: '', location: '' });
+  const [allSuggestions, setAllSuggestions] = useState([]);
+  const [visibleSuggestions, setVisibleSuggestions] = useState([]);
+  const [page, setPage] = useState(0);
 
-  // Filter relevant suggestions based on title
-  const filteredSuggestions = useMemo(() => {
-    const titleLower = title.toLowerCase();
-    const foundKey = Object.keys(habitSuggestionMap).find((key) =>
-      titleLower.includes(key)
-    );
-    return foundKey ? habitSuggestionMap[foundKey] : defaultSuggestions;
+  // Get and shuffle suggestions when the title changes
+  useEffect(() => {
+    const suggestions = getSuggestions(title);
+    setAllSuggestions(suggestions);
+    setPage(0); // Reset page index
   }, [title]);
 
-  // Create a helper to auto-generate the sentence from the structured fields
-  const handleTemplateChange = (field, val) => {
-    const newTemplate = { ...template, [field]: val };
-    setTemplate(newTemplate);
+  // Update visible suggestions when the list or page changes
+  useEffect(() => {
+    const start = page * SUGGESTIONS_TO_SHOW;
+    const end = start + SUGGESTIONS_TO_SHOW;
+    setVisibleSuggestions(allSuggestions.slice(start, end));
+  }, [allSuggestions, page]);
 
-    const { action, trigger, location } = newTemplate;
-    const sentence = `I will ${action}${trigger ? ` after ${trigger}` : ''}${location ? ` in ${location}` : ''}.`;
-    onChange(sentence.trim());
+  const handleMoreSuggestions = () => {
+    const nextPage = page + 1;
+    const start = nextPage * SUGGESTIONS_TO_SHOW;
+    // If the next page is out of bounds, loop back to the start
+    if (start >= allSuggestions.length) {
+      setPage(0);
+    } else {
+      setPage(nextPage);
+    }
   };
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-stone-800 dark:text-white mb-4">
-        Commit to your habit with a motivational sentence
+      <h2 className="text-xl font-semibold text-stone-800 dark:text-white mb-2">
+        What is your motivation for this habit?
       </h2>
+      <p className="text-sm text-stone-500 dark:text-stone-400 mb-4">
+        A strong reason will keep you going. Choose a suggestion or write your own.
+      </p>
 
       {/* Suggestions */}
       <div className="flex flex-wrap gap-2 mb-4">
-        {filteredSuggestions.map((sentence) => (
+        {visibleSuggestions.map((sentence) => (
           <button
             key={sentence}
             type="button"
             onClick={() => onChange(sentence)}
-            className={`px-4 py-2 rounded-full border text-sm transition ${
+            className={`px-3 py-1.5 rounded-full border text-sm text-left transition ${
               value === sentence
                 ? 'bg-amber-500 text-white border-amber-500'
                 : 'bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-100 border-stone-300 dark:border-stone-600 hover:border-amber-400'
@@ -88,41 +60,27 @@ const StepDescription = ({ value = '', onChange, error, title = '' }) => {
             {sentence}
           </button>
         ))}
-      </div>
-
-      {/* Custom Builder */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
-        <TextInput
-          name="action"
-          label="I will..."
-          placeholder="e.g. read 10 pages"
-          value={template.action}
-          onChange={(e) => handleTemplateChange('action', e.target.value)}
-        />
-        <TextInput
-          name="trigger"
-          label="After..."
-          placeholder="e.g. dinner"
-          value={template.trigger}
-          onChange={(e) => handleTemplateChange('trigger', e.target.value)}
-        />
-        <TextInput
-          name="location"
-          label="In..."
-          placeholder="e.g. my bedroom"
-          value={template.location}
-          onChange={(e) => handleTemplateChange('location', e.target.value)}
-        />
+        {allSuggestions.length > SUGGESTIONS_TO_SHOW && (
+          <button
+            type="button"
+            onClick={handleMoreSuggestions}
+            className="p-2 rounded-full border bg-white dark:bg-stone-700 text-stone-600 dark:text-stone-300 border-stone-300 dark:border-stone-600 hover:border-amber-400 hover:text-amber-500 transition"
+            aria-label="Show more suggestions"
+          >
+            <FiRefreshCw />
+          </button>
+        )}
       </div>
 
       {/* Manual Input */}
-      <TextInput
-        label="Or write your own"
+      <TextArea
+        label="My Motivation"
         name="description"
-        placeholder="e.g. I will journal at 8PM after dinner in my room."
+        placeholder="e.g., To become a better version of myself."
         value={value}
         onChange={(e) => onChange(e.target.value)}
         error={error}
+        rows="3"
       />
     </div>
   );

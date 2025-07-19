@@ -61,6 +61,10 @@ const CreateHabitForm = () => {
   };
 
   const handleChange = (field, value) => {
+    // Capitalize the first letter of the title
+    if (field === 'title' && typeof value === 'string' && value.length > 0) {
+      value = value.charAt(0).toUpperCase() + value.slice(1);
+    }
     setFormData((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: '' }));
   };
