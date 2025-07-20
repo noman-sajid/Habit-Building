@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import TextInput from '../../form/TextInput';
 import EmojiSelector from './EmojiSelector';
 import Button from '../../common/Button';
+import AssistBlock from '../../common/AssistBlock';
 
 const habitSuggestions = [
   { title: 'Drink Water', emoji: '💧' },
@@ -33,7 +34,7 @@ const emojiKeywordMap = {
     music: ['🎵', '🎶', '🎸', '🎹', '🎤'],
     learn: ['🎓', '💡', '🧠'],
     study: ['📚', '✍️', '🏫'],
-    draw: ['���', '✏️', '🖼️'],
+    draw: ['🎨', '✏️', '🖼️'],
     paint: ['🎨', '🖌️', '🖼️'],
     family: ['👨‍👩‍👧‍👦', '❤️', '🏡'],
     friends: ['🧑‍🤝‍🧑', '🎉', '😊'],
@@ -107,13 +108,17 @@ const StepTitle = ({ value = '', onChange, error, emoji, setEmoji }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const suggestedEmojis = getSuggestedEmojis(value);
 
-  useEffect(() => {
-    if (!isEmojiManuallySet.current) {
-      if (value.trim() === '') {
-        setEmoji('');
-      }
+useEffect(() => {
+  if (!isEmojiManuallySet.current) {
+    const lowerTitle = value.toLowerCase();
+    const matchedEmojis = getSuggestedEmojis(lowerTitle);
+    if (matchedEmojis.length > 0 && emoji !== matchedEmojis[0]) {
+      setEmoji(matchedEmojis[0]);
+    } else if (matchedEmojis.length === 0 && emoji !== '') {
+      setEmoji('');
     }
-  }, [value, setEmoji]);
+  }
+}, [value, emoji, setEmoji]);
 
   const handleSuggestionClick = (title, emoji) => {
     onChange(title);
@@ -131,92 +136,101 @@ const handleRecommendedEmojiClick = (selectedEmoji) => {
     isEmojiManuallySet.current = true;
 }
 
-  return (
-    <div>
-      <h2 className="text-xl font-semibold text-stone-800 dark:text-white mb-2">
+ return (
+  <div>
+    {/* Title & Assist */}
+    <div className="mb-4">
+      <h2 className="text-xl font-semibold text-stone-800 dark:text-white mb-1">
         What habit do you want to build?
       </h2>
-      <p className="text-sm text-stone-500 dark:text-stone-400 mb-4">
-        Pick from common habits or write your own. You can also choose an emoji to represent it.
-      </p>
+   <AssistBlock
+  text="Name your habit clearly for daily motivation."
+  expandedText="Choose names like 'Read 10 pages' or 'Daily walk'. Short, clear titles help with consistency and make your goal memorable."
+/>
 
-      {/* Habit Suggestions */}
-      <div className="flex flex-wrap gap-2 mb-4">
-        {habitSuggestions.map(({ title, emoji }) => (
-          <button
-            key={title}
-            type="button"
-            onClick={() => handleSuggestionClick(title, emoji)}
-            className={`px-4 py-2 rounded-full border text-sm ${
-              value === title
-                ? 'bg-amber-500 text-white border-amber-500'
-                : 'bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-100 border-stone-300 dark:border-stone-600 hover:border-amber-400'
-            }`}
-          >
-            {emoji} {title}
-          </button>
-        ))}
-      </div>
 
-      {/* Habit Title Input */}
-      <div className="mb-4">
-        <TextInput
-          label="Habit Title"
-          name="title"
-          placeholder="e.g. Practice gratitude"
-          value={value}
-          onChange={(e) => {
-            onChange(e.target.value);
-            if (e.target.value.trim() === '') {
-              isEmojiManuallySet.current = false;
-            }
-          }}
-          error={error}
-        />
-      </div>
+    </div>
 
-      {/* Emoji Selector + Suggestions */}
-      <div className="mb-4">
-        <div className="flex items-center gap-4">
-            <button
-            type="button"
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-            className="text-3xl p-2 rounded hover:bg-stone-100 dark:hover:bg-stone-700"
-            title="Choose an emoji"
-            >
-            {emoji || '😀'}
-            </button>
 
-            {suggestedEmojis.length > 0 && (
-                <div className="flex flex-wrap gap-2 items-center">
-                <span className="text-sm font-medium text-stone-600 dark:text-stone-300">
-                    Recommended:
-                </span>
-                {suggestedEmojis.map((emoji, index) => (
-                    <Button
-                        key={index}
-                        onClick={() => handleRecommendedEmojiClick(emoji)}
-                        variant="ghost"
-                        className="text-2xl"
-                    >
-                    {emoji}
-                    </Button>
-                ))}
-                </div>
-            )}
-        </div>
 
-        {showEmojiPicker && (
-          <div className="mt-2 border border-stone-300 dark:border-stone-600 rounded shadow-lg bg-white dark:bg-stone-800 z-50">
-            <EmojiSelector
-              onEmojiClick={handleEmojiPick}
-              onClose={() => setShowEmojiPicker(false)}
-            />
+    {/* Habit Suggestions */}
+    <div className="flex flex-wrap gap-2 mb-6">
+      {habitSuggestions.map(({ title, emoji }) => (
+        <button
+          key={title}
+          type="button"
+          onClick={() => handleSuggestionClick(title, emoji)}
+          className={`px-4 py-2 rounded-full border text-sm transition ${
+            value === title
+              ? 'bg-amber-500 text-white border-amber-500'
+              : 'bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-100 border-stone-300 dark:border-stone-600 hover:border-amber-400'
+          }`}
+        >
+          {emoji} {title}
+        </button>
+      ))}
+    </div>
+
+    {/* Habit Title Input */}
+    <div className="mb-6">
+      <TextInput
+        label="Habit Title"
+        name="title"
+        placeholder="e.g. Practice gratitude"
+        value={value}
+        onChange={(e) => {
+          onChange(e.target.value);
+          if (e.target.value.trim() === '') {
+            isEmojiManuallySet.current = false;
+          }
+        }}
+        error={error}
+      />
+    </div>
+
+    {/* Emoji Selector + Suggestions */}
+    <div className="mb-4">
+      <div className="flex items-center gap-4">
+        <button
+          type="button"
+          onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+          className="text-3xl p-2 rounded hover:bg-stone-100 dark:hover:bg-stone-700"
+          title="Choose an emoji"
+        >
+          {emoji || '😀'}
+        </button>
+
+        {suggestedEmojis.length > 0 && (
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-sm font-medium text-stone-600 dark:text-stone-300">
+              Recommended:
+            </span>
+            {suggestedEmojis.map((emoji, index) => (
+              <Button
+                key={index}
+                onClick={() => handleRecommendedEmojiClick(emoji)}
+                variant="ghost"
+                className="text-2xl"
+              >
+                {emoji}
+              </Button>
+            ))}
           </div>
         )}
       </div>
+
+      {showEmojiPicker && (
+        <div className="mt-2 border border-stone-300 dark:border-stone-600 rounded shadow-lg bg-white dark:bg-stone-800 z-50">
+          <EmojiSelector
+            onEmojiClick={handleEmojiPick}
+            onClose={() => setShowEmojiPicker(false)}
+          />
+        </div>
+      )}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default StepTitle;

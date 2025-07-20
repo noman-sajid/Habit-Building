@@ -1,14 +1,18 @@
 import React from 'react';
 import Button from '../../common/Button';
+import InfoTooltip from '../../common/InfoTooltip';
 
 const StepReview = ({ formData, onBack, onSubmit, loading }) => {
   const { title, emoji, description, frequency, customDays, duration } = formData;
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-stone-800 dark:text-white mb-6">
-        Review Your Habit
-      </h2>
+      <div className="flex items-center gap-2 mb-6">
+        <h2 className="text-2xl font-bold text-stone-800 dark:text-white">
+          Review Your Habit
+        </h2>
+        <InfoTooltip text="This is a summary of the habit you are about to create." />
+      </div>
 
       <div className="space-y-4">
         <div>

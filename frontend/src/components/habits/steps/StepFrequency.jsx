@@ -1,5 +1,7 @@
 import React from 'react';
 import TextInput from '../../form/TextInput';
+import AssistBlock from '../../common/AssistBlock';
+
 
 const frequencyOptions = ['daily', 'weekly', 'custom'];
 const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
@@ -26,9 +28,19 @@ const StepFrequency = ({
 
   return (
     <div>
-      <h2 className="text-xl font-semibold text-stone-800 dark:text-white mb-4">
-        How often do you want to do this habit?
-      </h2>
+  
+        <div>
+        <h2 className="text-xl font-semibold text-stone-800 dark:text-white mb-2">
+           How often do you want to do this habit?
+        </h2>
+      
+        <AssistBlock
+          text="Choose how frequently you’ll do this habit."
+          expandedText="Setting a schedule helps you stay consistent. Daily works well for building strong routines. Weekly is great for bigger tasks. Or customize it by picking specific days that suit your lifestyle."
+        />
+      
+      
+            </div>
 
       {/* Frequency options */}
       <div className="flex flex-wrap gap-2 mb-4">
@@ -81,7 +93,7 @@ const StepFrequency = ({
           name="duration"
           type="number"
           placeholder="e.g., 15"
-          value={duration || ''}
+          value={duration?.toString() || ''}
           onChange={(e) => onDurationChange(e.target.value ? parseInt(e.target.value, 10) : null)}
           error={error?.duration}
         />
