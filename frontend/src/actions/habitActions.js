@@ -10,7 +10,7 @@ export const createHabit = async (habitData) => {
 
 // Get all habits for the logged-in user
 export const getHabits = async () => {
-  const response = await api.get('/api/habits');
+  const response = await api.get('/habits');
   return response.data.habits;
 };
 

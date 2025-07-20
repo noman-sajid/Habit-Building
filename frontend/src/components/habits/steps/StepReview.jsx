@@ -1,18 +1,24 @@
 import React from 'react';
 import Button from '../../common/Button';
-import InfoTooltip from '../../common/InfoTooltip';
+import AssistBlock from '../../common/AssistBlock';
+
 
 const StepReview = ({ formData, onBack, onSubmit, loading }) => {
   const { title, emoji, description, frequency, customDays, duration } = formData;
 
   return (
     <div>
-      <div className="flex items-center gap-2 mb-6">
-        <h2 className="text-2xl font-bold text-stone-800 dark:text-white">
-          Review Your Habit
-        </h2>
-        <InfoTooltip text="This is a summary of the habit you are about to create." />
-      </div>
+     <div className="mb-4">
+  <h2 className="text-xl font-semibold text-stone-800 dark:text-white mb-2">
+    How often do you want to do this habit?
+  </h2>
+
+  <AssistBlock
+    text="Choose how frequently you’ll do this habit."
+    expandedText="Setting a schedule helps you stay consistent. Daily works well for building strong routines. Weekly is great for bigger tasks. Or customize it by picking specific days that suit your lifestyle."
+  />
+</div>
+
 
       <div className="space-y-4">
         <div>
