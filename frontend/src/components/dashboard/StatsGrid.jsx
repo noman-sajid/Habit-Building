@@ -1,9 +1,24 @@
-// /components/dashboard/StatsGrid.jsx
+import React from "react";
+import { useSelector } from "react-redux";
+
 const StatsGrid = () => {
+  const { summary, loading } = useSelector((state) => state.habits);
+
+  if (loading) {
+    return <p className="text-stone-500">Loading stats...</p>;
+  }
+
+  if (!summary || !summary.summary) {
+    return <p className="text-stone-500">No summary data available.</p>;
+  }
+
+  // ✅ Corrected destructuring from nested object
+  const { totalHabits, completedToday, maxStreaks } = summary.summary;
+
   const stats = [
-    { label: "Total Habits", value: 12 },
-    { label: "Completed Today", value: 4 },
-    { label: "Best Streak", value: 21 },
+    { label: "Total Habits", value: totalHabits || 0 },
+    { label: "Completed Today", value: completedToday || 0 },
+    { label: "Best Streak", value: maxStreaks || 0 },
   ];
 
   return (
