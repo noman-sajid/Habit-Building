@@ -16,13 +16,13 @@ export const getHabits = async () => {
 
 // Get a single habit's details
 export const getHabitDetails = async (id) => {
-  const response = await api.get(`/api/habits/${id}`);
+  const response = await api.get(`/habits/${id}`);
   return response.data.habit;
 };
 
 // Update a habit
 export const updateHabit = async ({ id, habitData }) => {
-  const response = await api.put(`/api/habits/${id}`, habitData, {
+  const response = await api.put(`/habits/${id}`, habitData, {
     headers: { 'Content-Type': 'application/json' },
   });
   return response.data;
@@ -30,13 +30,13 @@ export const updateHabit = async ({ id, habitData }) => {
 
 // Mark a habit as complete
 export const markHabitComplete = async (id) => {
-  const response = await api.patch(`/api/habits/${id}/complete`);
+  const response = await api.patch(`/habits/${id}/complete`);
   return response.data;
 };
 
 // Get summary of habits
 export const getHabitSummary = async () => {
-  const response = await api.get('/api/habits/summary');
+  const response = await api.get('/habits/summary');
   return response.data;
 };
 
@@ -44,6 +44,6 @@ export const getHabitSummary = async () => {
 
 // Delete a habit
 export const deleteHabit = async (id) => {
-  const response = await api.delete(`/api/habits/${id}`);
+  const response = await api.delete(`/habits/${id}`);
   return response.data;
 };

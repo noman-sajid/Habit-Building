@@ -1,64 +1,36 @@
-// src/pages/dashboard/DashboardPage.jsx
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import Button from '../components/common/Button';
-import { logoutSuccess } from '../reducers/authReducer';
-import { forgotPassword } from '../actions/authActions';
-import api from '../services/axiosInstance'; // Assuming you have an api.js file for API calls
+import React from "react";
+import WelcomeBanner from "../components/dashboard/WelcomeBanner";
+import StatsGrid from "../components/dashboard/StatsGrid";
+import SummaryChart from "../components/dashboard/SummaryChart";
+import ProgressRing from "../components/dashboard/ProgressRing";
+import HabitList from "../components/dashboard/HabitList";
+import QuickActionButton from "../components/dashboard/QuickActionButton";
 
-const DashboardPage = () => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
-
-  const handleLogout = async () => {
-    try {
-      await api.get('/users/logout');
-      dispatch(logoutSuccess());
-      navigate('/');
-    } catch (error) {
-      console.error('[Logout Error]', error);
-    }
-  };
-
-  const handleResetPassword = () => {
-    if (user && user.email) {
-      dispatch(forgotPassword(user.email));
-    }
-  };
-
+const Dashboard = () => {
   return (
-    <div className="min-h-screen bg-stone-100 dark:bg-stone-900 p-8 text-stone-900 dark:text-white">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Welcome to your Dashboard</h1>
-        <div className="flex space-x-2">
-          <Button variant="stoned" onClick={handleResetPassword}>
-            Reset Password
-          </Button>
-          <Button variant="stoned" onClick={handleLogout}>
-            Logout
-          </Button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-stone-50 dark:bg-stone-900 text-stone-800 dark:text-stone-200">
 
-      {user ? (
-        <div className="space-y-2">
-          <p><strong>Name:</strong> {user.name}</p>
-          <p><strong>Email:</strong> {user.email}</p>
-          {user.avatar && (
-            <img
-              src={user.avatar.url || user.avatar}
-              alt={user.name}
-              className="h-24 w-24 rounded-full object-cover mt-4"
-            />
-          )}
+
+      {/* Main Grid */}
+      <main className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6 py-6">
+        {/* Left Column */}
+        <div className="lg:col-span-2 space-y-6">
+          <WelcomeBanner />
+          <HabitList />
         </div>
-      ) : (
-        <p>Loading user info...</p>
-      )}
+
+        {/* Right Column */}
+        <div className="space-y-6">
+          <ProgressRing />
+          <SummaryChart />
+          <StatsGrid />
+        </div>
+      </main>
+
+      {/* Floating Action Button */}
+      <QuickActionButton />
     </div>
   );
 };
 
-export default DashboardPage;
+export default Dashboard;
