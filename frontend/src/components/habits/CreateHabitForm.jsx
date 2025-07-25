@@ -4,7 +4,7 @@ import StepDescription from './steps/StepDescription';
 import StepFrequency from './steps/StepFrequency';
 import StepReview from './steps/StepReview';
 import { useDispatch, useSelector } from 'react-redux';
-import { addHabit } from '../../reducers/habitReducer';
+import { addHabit, fetchHabits } from '../../reducers/habitReducer';
 import { useNavigate } from 'react-router-dom';
 import { useAlert } from '../../context/AlertContext';
 import Loader from '../common/Loader';
@@ -72,9 +72,10 @@ const CreateHabitForm = () => {
 
   const handleSubmit = async () => {
     try {
-      await dispatch(addHabit(formData)).unwrap();
+      await dispatch(addHabit(formData)).unwrap(); // ✅ Add habit
+      await dispatch(fetchHabits()).unwrap();      // ✅ Refresh Redux state
       showAlert('Habit created successfully!', 'success');
-      navigate('/dashboard');
+      navigate('/dashboard');                      // ✅ Safe navigation
     } catch (error) {
       showAlert(error || 'Failed to create habit', 'error');
     }

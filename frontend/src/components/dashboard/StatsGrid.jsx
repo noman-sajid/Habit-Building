@@ -2,23 +2,29 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 const StatsGrid = () => {
-  const { summary, loading } = useSelector((state) => state.habits);
+  const { habits } = useSelector((state) => state.habits);
 
-  if (loading) {
-    return <p className="text-stone-500">Loading stats...</p>;
-  }
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
-  if (!summary || !summary.summary) {
-    return <p className="text-stone-500">No summary data available.</p>;
-  }
+  const totalHabits = habits?.length || 0;
+  const completedToday = habits?.filter((habit) =>
+    habit.completedDates?.some((date) => {
+      const d = new Date(date);
+      d.setHours(0, 0, 0, 0);
+      return d.getTime() === today.getTime();
+    })
+  ).length;
 
-  // ✅ Corrected destructuring from nested object
-  const { totalHabits, completedToday, maxStreaks } = summary.summary;
+  const bestStreak = habits?.reduce(
+    (max, habit) => (habit.maxStreak > max ? habit.maxStreak : max),
+    0
+  );
 
   const stats = [
-    { label: "Total Habits", value: totalHabits || 0 },
-    { label: "Completed Today", value: completedToday || 0 },
-    { label: "Best Streak", value: maxStreaks || 0 },
+    { label: "Total Habits", value: totalHabits },
+    { label: "Completed Today", value: completedToday },
+    { label: "Best Streak", value: bestStreak },
   ];
 
   return (
@@ -29,9 +35,7 @@ const StatsGrid = () => {
           className="bg-white dark:bg-stone-800 rounded-xl shadow p-4 text-center"
         >
           <div className="text-2xl font-bold text-amber-500">{stat.value}</div>
-          <div className="text-sm text-stone-500 dark:text-stone-400">
-            {stat.label}
-          </div>
+          <div className="text-sm text-stone-500 dark:text-stone-400">{stat.label}</div>
         </div>
       ))}
     </div>

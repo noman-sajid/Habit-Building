@@ -1,4 +1,3 @@
-// /components/dashboard/HabitList.jsx
 import React from "react";
 import { useSelector } from "react-redux";
 import HabitCard from "./HabitCard";
@@ -11,15 +10,18 @@ const HabitList = () => {
   }
 
   if (!habits || habits.length === 0) {
-    return <p className="text-stone-500">No habits yet. Create one!</p>;
+    return (
+      <p className="text-stone-500 dark:text-stone-400 text-center">
+        No habits yet. Create one to get started!
+      </p>
+    );
   }
 
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-semibold mb-2">Your Habits</h3>
-      {habits.map((habit) => (
-        <HabitCard key={habit._id} habit={habit} />
-      ))}
+      {habits.map((habit) =>
+        habit?._id ? <HabitCard key={habit._id} habit={habit} /> : null
+      )}
     </div>
   );
 };
