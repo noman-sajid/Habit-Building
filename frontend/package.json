@@ -5,6 +5,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.8.2",
     "axios": "^1.10.0",
+    "canvas-confetti": "^1.9.3",
     "clsx": "^2.1.1",
     "cra-template-pwa": "2.0.0",
     "emoji-picker-react": "^4.13.2",
