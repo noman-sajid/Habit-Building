@@ -18,12 +18,16 @@ import PasswordResetSent from './pages/authPages/PasswordResetSent';
 import ResetPasswordPage from './pages/authPages/ResetPasswordPage';
 import CreateHabitForm from './components/habits/CreateHabitForm';
 import AllHabits from './components/habits/AllHabits';
+import OfflineBanner from './components/layout/OfflineBanner';
+import { listenNetworkStatus } from './utils/networkStatus';
+
 
 function App() {
   const dispatch = useDispatch();
   const { initialized } = useSelector((state) => state.auth);
 
   useEffect(() => {
+    listenNetworkStatus(dispatch);
     const checkAuthThenLoad = async () => {
       try {
         const res = await api.get('/users/auth/check');
@@ -54,6 +58,7 @@ function App() {
   return (
     <Router>
       <div className="relative min-h-screen transition-colors duration-300">
+           <OfflineBanner />
         <Navbar />
         <Routes>
           <Route path="/test-landing" element={<LandingPage />} />

@@ -16,19 +16,67 @@ This document provides a detailed overview of the frontend architecture for the 
 ```
 frontend/
 ├── public/               # Static assets and the main HTML file.
-│   └── index.html        # The entry point for the React application.
+│   ├── favicon.ico       # Favicon for the application.
+│   ├── index.html        # The entry point for the React application.
+│   ├── logo192.png       # Logo for the application (192x192).
+│   ├── logo512.png       # Logo for the application (512x512).
+│   ├── manifest.json     # Web app manifest for PWA features.
+│   ├── robots.txt        # Instructions for web crawlers.
+│   └── images/           # Publicly accessible images.
 ├── src/
 │   ├── actions/          # Redux action creators (Thunks).
-│   │   └── authActions.js  # Async actions related to user authentication.
-│   ├── assets/           # Images, icons, and other static assets.
+│   │   ├── authActions.js  # Async actions related to user authentication.
+│   │   └── habitActions.js # Async actions related to habit management.
+│   ├── assets/           # Images, icons, and other static assets used within components.
 │   ├── components/       # Reusable UI components.
-│   │   ├── common/         # Generic, reusable components (e.g., Button, Card, Loader).
-│   │   ├── feedback/       # Components for user feedback (e.g., Modal, Alert).
-│   │   ├── form/           # Form-related components (e.g., TextInput, Checkbox).
-│   │   ├── layout/         # Components that define the page structure (e.g., Navbar, Footer).
+│   │   ├── common/         # Generic, reusable components.
+│   │   │   ├── Alert.jsx
+│   │   │   ├── AssistBlock.jsx
+│   │   │   ├── Button.jsx
+│   │   │   ├── Card.jsx
+│   │   │   ├── InfoTooltip.jsx
+│   │   │   ├── Loader.jsx
+│   │   │   ├── ProfileAvatar.jsx
+│   │   │   └── Tooltip.jsx
+│   │   ├── dashboard/      # Components for the user dashboard.
+│   │   │   ├── HabitCard.jsx
+│   │   │   ├── HabitList.jsx
+│   │   │   ├── ProgressRing.jsx
+│   │   │   ├── QuickActionButton.jsx
+│   │   │   ├── StatsGrid.jsx
+│   │   │   ├── SummaryChart.jsx
+│   │   │   └── WelcomeBanner.jsx
+│   │   ├── feedback/       # Components for user feedback.
+│   │   │   └── Modal.jsx
+│   │   ├── form/           # Form-related components.
+│   │   │   ├── Checkbox.jsx
+│   │   │   ├── FileUpload.jsx
+│   │   │   ├── Select.jsx
+│   │   │   ├── TextArea.jsx
+│   │   │   └── TextInput.jsx
+│   │   ├── habits/         # Components related to habit management.
+│   │   │   ├── AllHabits.jsx
+│   │   │   ├── CreateHabitForm.jsx
+│   │   │   └── steps/      # Components for the multi-step habit creation form.
+│   │   │       ├── descriptionSuggestions.js
+│   │   │       ��── EmojiSelector.jsx
+│   │   │       ├── StepDescription.jsx
+│   │   │       ├── StepFrequency.jsx
+│   │   │       ├── StepReview.jsx
+│   │   │       └── StepTitle.jsx
+│   │   ├── layout/         # Components that define the page structure.
+│   │   │   ├── Footer.jsx
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── PageLayout.jsx
+│   │   │   └── tabs/       # Tab components for navigation.
+│   │   │       ├── tabs.jsx
+│   │   │       ├── ToggleGroup.jsx
+│   │   │       └── VerticalTabs.jsx
 │   │   └── theme/          # Components related to theme switching.
+│   │       └── ThemeToggle.jsx
 │   ├── constants/        # Application-wide constants.
-│   │   └── authConstants.js # Constants related to authentication actions.
+│   │   ├── authConstants.js # Constants related to authentication actions.
+│   │   └── habitConstants.js# Constants related to habit actions.
 │   ├── context/          # React context providers.
 │   │   ├── AlertContext.js # Context for managing global alerts.
 │   │   └── ThemeContext.js # Context for managing the application's theme.
@@ -37,36 +85,62 @@ frontend/
 │   │   ├── Home.jsx        # The home page.
 │   │   ├── LandingPage.jsx # The landing page for new users.
 │   │   └── authPages/      # Pages related to user authentication.
+│   │       ├── ForgotPasswordPage.jsx
 │   │       ├── LoginPage.jsx
-│   │       └── RegisterPage.jsx
+│   │       ├── PasswordResetSent.jsx
+│   │       ├── RegisterPage.jsx
+│   │       └── ResetPasswordPage.jsx
 │   ├── reducers/         # Redux reducers.
-│   │   └── authReducer.js  # Reducer for managing authentication state.
+│   │   ├── authReducer.js  # Reducer for managing authentication state.
+│   │   └── habitReducer.js # Reducer for managing habit state.
 │   ├── routes/           # Routing-related components.
 │   │   └── ProtectedRoute.jsx # A component to protect routes that require authentication.
 │   ├── services/         # Services for interacting with external APIs.
 │   │   └── axiosInstance.js # A pre-configured Axios instance for making API requests.
 │   ├── store.js          # Redux store configuration.
+│   ├── App.css           # Main application styles.
 │   ├── App.js            # The main application component, containing the router setup.
+│   ├── index.css         # Global styles.
 │   ├── index.js          # The entry point of the React application.
-│   └── ...
+│   └── reportWebVitals.js# Performance measurement.
 └── ...
 ```
 
 ## State Management (Redux)
 
-The application uses Redux for state management.
+The application uses Redux Toolkit for efficient and predictable state management.
 
-- **Store:** The single source of truth for the application's state. Configured in `src/store.js`.
-- **Reducers:** Pure functions that specify how the application's state changes in response to actions. The `authReducer` in `src/reducers/authReducer.js` manages user authentication state, including loading and initialization status.
-- **Actions:** Payloads of information that send data from the application to the Redux store. Asynchronous actions, such as API calls, are handled using Thunks in `src/actions/`.
+- **Store:** The single source of truth for the application's state, configured in `src/store.js`. It combines multiple reducers into a single root reducer.
+- **Reducers:** Pure functions that specify how the application's state changes in response to actions.
+  - `authReducer`: Manages user authentication state, including loading and initialization status.
+  - `habitReducer`: Manages the state for habits, including creating, reading, updating, and deleting habits.
+- **Actions:** Asynchronous actions, such as API calls, are handled using Thunks defined in the `src/actions/` directory. These thunks dispatch actions to the reducers to update the state.
+
+## Habit Management
+
+Habit management is a core feature of the application and has its own set of components, actions, and reducer.
+
+- **Components:**
+  - `CreateHabitForm`: A multi-step form for creating new habits.
+  - `HabitList`: Displays a list of all the user's habits.
+  - `HabitCard`: A component that displays a single habit and allows the user to interact with it (e.g., mark as complete, view details).
+- **Actions:** The `habitActions.js` file contains thunks for all habit-related API calls, including:
+  - `createHabit`
+  - `getHabits`
+  - `getHabitDetails`
+  - `updateHabit`
+  - `deleteHabit`
+  - `markHabitComplete`
+  - `getHabitSummary`
+- **Reducer:** The `habitReducer.js` file manages the state for habits, including the list of habits, a single habit's details, and loading/error states.
 
 ## Routing
 
 Routing is managed by `react-router-dom`.
 
-- **`App.js`:** Defines the main routes for the application.
+- **`App.js`:** Defines the main routes for the application, including public routes and protected routes.
 - **`ProtectedRoute.jsx`:** A higher-order component that checks if a user is authenticated before allowing access to a route. If the user is not authenticated, they are redirected to the login page.
 
 ## API Communication
 
-All communication with the backend API is handled through a pre-configured Axios instance in `src/services/axiosInstance.js`. This allows for centralized handling of API requests, including setting base URLs and handling authentication tokens.
+All communication with the backend API is handled through a pre-configured Axios instance in `src/services/axiosInstance.js`. This allows for centralized handling of API requests, including setting base URLs and automatically including authentication tokens in the headers of requests.
