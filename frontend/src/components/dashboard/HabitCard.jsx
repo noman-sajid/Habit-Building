@@ -1,11 +1,13 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { completeHabit } from "../../reducers/habitReducer";
+import { completeHabit, setGoalCompletionHabit } from "../../reducers/habitReducer";
 import { motion } from "framer-motion";
-import { Flame } from "lucide-react"; // ✅ Icon import
+import { Flame } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const HabitCard = ({ habit }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -16,9 +18,21 @@ const HabitCard = ({ habit }) => {
     return d.getTime() === today.getTime();
   });
 
-  const handleComplete = () => {
+  const progressPercent = Math.min((habit.progress / habit.goal) * 100, 100);
+
+  const handleComplete = async () => {
     if (!isCompletedToday) {
-      dispatch(completeHabit(habit._id));
+      const resultAction = await dispatch(completeHabit(habit._id));
+
+      if (completeHabit.fulfilled.match(resultAction)) {
+        const updatedHabit = resultAction.payload.habit;
+
+        // ✅ Goal completion check
+        if (updatedHabit.goalAchieved) {
+          dispatch(setGoalCompletionHabit(updatedHabit));
+          navigate("/goal-complete");
+        }
+      }
     }
   };
 
@@ -30,28 +44,59 @@ const HabitCard = ({ habit }) => {
       animate={{ opacity: 1, y: 0 }}
       layout
     >
-      {/* Emoji (or icon for habit category in future) */}
+      {/* Emoji */}
       <span className="text-2xl">{habit.emoji || "🌱"}</span>
 
       {/* Title + Frequency */}
       <div className="flex-1 px-4">
         <strong
-          className={`block ${isCompletedToday ? "line-through text-stone-400 dark:text-stone-500" : ""}`}
+          className={`block ${
+            isCompletedToday ? "line-through text-stone-400 dark:text-stone-500" : ""
+          }`}
         >
           {habit.title}
         </strong>
-        <p className="text-sm text-stone-500 dark:text-stone-400">
-          {habit.frequency}
-        </p>
+        <p className="text-sm text-stone-500 dark:text-stone-400">{habit.frequency}</p>
       </div>
 
-      {/* Streak Badge with Icon */}
-      <div className="flex items-center gap-1 bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300 rounded-full px-2 py-1 font-medium text-xs">
-        <Flame size={14} className="text-amber-500" />
-        {habit.streak}
+      {/* Streak + Goal Progress */}
+      <div className="flex items-center gap-3">
+        {/* Streak Badge */}
+        <div className="flex items-center gap-1 bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300 rounded-full px-2 py-1 font-medium text-xs">
+          <Flame size={14} className="text-amber-500" />
+          {habit.streak}
+        </div>
+
+        {/* ✅ Circular Progress with Numbers */}
+        <div className="relative w-10 h-10">
+          <svg width="40" height="40" className="text-stone-300 dark:text-stone-600">
+            <circle
+              cx="20"
+              cy="20"
+              r="18"
+              stroke="currentColor"
+              strokeWidth="4"
+              fill="transparent"
+            />
+            <circle
+              cx="20"
+              cy="20"
+              r="18"
+              stroke="#f59e0b"
+              strokeWidth="4"
+              fill="transparent"
+              strokeDasharray={2 * Math.PI * 18}
+              strokeDashoffset={2 * Math.PI * 18 * (1 - progressPercent / 100)}
+              strokeLinecap="round"
+            />
+          </svg>
+          <span className="absolute inset-0 flex items-center justify-center text-xs font-semibold text-stone-700 dark:text-stone-200">
+            {habit.progress}/{habit.goal}
+          </span>
+        </div>
       </div>
 
-      {/* Custom Checkbox */}
+      {/* Checkbox */}
       <div className="ml-4">
         <input
           type="checkbox"

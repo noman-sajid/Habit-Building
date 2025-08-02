@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import StepTitle from './steps/StepTitle';
 import StepDescription from './steps/StepDescription';
 import StepFrequency from './steps/StepFrequency';
+import StepGoal from './steps/StepGoal'; // ✅ NEW IMPORT
 import StepReview from './steps/StepReview';
 import { useDispatch, useSelector } from 'react-redux';
 import { addHabit, fetchHabits } from '../../reducers/habitReducer';
@@ -10,19 +11,14 @@ import { useAlert } from '../../context/AlertContext';
 import Loader from '../common/Loader';
 import { AnimatePresence, motion } from 'framer-motion';
 
-// Custom hook to handle dynamic height
+// Custom hook for dynamic height
 function useResizeHeight(ref) {
   const [height, setHeight] = useState('auto');
 
   useEffect(() => {
     if (!ref.current) return;
-
-    const observer = new ResizeObserver(([entry]) => {
-      setHeight(entry.contentRect.height);
-    });
-
+    const observer = new ResizeObserver(([entry]) => setHeight(entry.contentRect.height));
     observer.observe(ref.current);
-
     return () => observer.disconnect();
   }, [ref]);
 
@@ -39,7 +35,8 @@ const CreateHabitForm = () => {
     description: '',
     frequency: 'daily',
     customDays: [],
-    duration: null, // in minutes
+    duration: null,
+    goal: { type: '', value: '' }, // ✅ NEW FIELD
   });
 
   const [errors, setErrors] = useState({});
@@ -62,20 +59,16 @@ const CreateHabitForm = () => {
   };
 
   const handleChange = (field, value) => {
-    // Capitalize the first letter of the title
-    if (field === 'title' && typeof value === 'string' && value.length > 0) {
-      value = value.charAt(0).toUpperCase() + value.slice(1);
-    }
     setFormData((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
   const handleSubmit = async () => {
     try {
-      await dispatch(addHabit(formData)).unwrap(); // ✅ Add habit
-      await dispatch(fetchHabits()).unwrap();      // ✅ Refresh Redux state
+      await dispatch(addHabit(formData)).unwrap();
+      await dispatch(fetchHabits()).unwrap();
       showAlert('Habit created successfully!', 'success');
-      navigate('/dashboard');                      // ✅ Safe navigation
+      navigate('/dashboard');
     } catch (error) {
       showAlert(error || 'Failed to create habit', 'error');
     }
@@ -92,7 +85,11 @@ const CreateHabitForm = () => {
       if (formData.duration !== null && formData.duration <= 0)
         newErrors.duration = 'Duration must be a positive number.';
     }
-
+    if (step === 4) {
+      if (formData.goal.value && !formData.goal.type) {
+        newErrors.goal = 'Select a goal type if setting a goal.';
+      }
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -136,6 +133,14 @@ const CreateHabitForm = () => {
         );
       case 4:
         return (
+          <StepGoal
+            goal={formData.goal}
+            onGoalChange={(goal) => handleChange('goal', goal)}
+            error={errors.goal}
+          />
+        );
+      case 5:
+        return (
           <StepReview
             formData={formData}
             onBack={prevStep}
@@ -155,11 +160,11 @@ const CreateHabitForm = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto px-6 py-8 bg-white dark:bg-stone-800 rounded-2xl shadow-xl transition-all duration-300">
+    <div className="max-w-lg mx-auto px-6 py-8 bg-white dark:bg-stone-800 rounded-2xl shadow-xl">
       {/* Progress Indicator */}
       <div className="mb-6">
         <div className="flex justify-between text-xs font-medium text-stone-400 dark:text-stone-500">
-          {['Title', 'Motivation', 'Frequency', 'Review'].map((label, index) => (
+          {['Title', 'Motivation', 'Frequency', 'Goal', 'Review'].map((label, index) => (
             <span
               key={label}
               className={`transition-colors ${step === index + 1 ? 'text-stone-900 dark:text-white' : ''}`}
@@ -171,16 +176,13 @@ const CreateHabitForm = () => {
         <div className="h-2 mt-2 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden">
           <div
             className="h-full bg-amber-500 transition-all duration-300 ease-out"
-            style={{ width: `${(step - 1) * 33.33}%` }}
+            style={{ width: `${(step - 1) * 25}%` }} // ✅ Adjust for 5 steps
           />
         </div>
       </div>
 
       {/* Step Content */}
-      <div
-        className="relative transition-all duration-300 ease-in-out overflow-hidden"
-        style={{ height }}
-      >
+      <div className="relative transition-all duration-300 ease-in-out overflow-hidden" style={{ height }}>
         <div ref={containerRef}>
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
@@ -189,7 +191,7 @@ const CreateHabitForm = () => {
               initial="initial"
               animate="animate"
               exit="exit"
-              transition={{ duration: 0.25, ease: 'easeOut' }}
+              transition={{ duration: 0.25 }}
             >
               {renderStep()}
             </motion.div>
@@ -198,7 +200,7 @@ const CreateHabitForm = () => {
       </div>
 
       {/* Navigation Buttons */}
-      {step < 4 && (
+      {step < 5 && (
         <div className="mt-6 flex justify-between items-center">
           <button
             type="button"
@@ -211,7 +213,7 @@ const CreateHabitForm = () => {
           <button
             type="button"
             onClick={handleNext}
-            className="bg-amber-600 hover:bg-amber-700 text-white text-sm px-5 py-2 rounded-lg shadow-sm transition-all duration-200"
+            className="bg-amber-600 hover:bg-amber-700 text-white text-sm px-5 py-2 rounded-lg shadow-sm"
           >
             Next
           </button>

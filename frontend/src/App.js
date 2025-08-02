@@ -20,6 +20,7 @@ import CreateHabitForm from './components/habits/CreateHabitForm';
 import AllHabits from './components/habits/AllHabits';
 import OfflineBanner from './components/layout/OfflineBanner';
 import { listenNetworkStatus } from './utils/networkStatus';
+import GoalCompletionPage from './components/dashboard/GoalCompletionPage';
 
 
 function App() {
@@ -68,6 +69,8 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/password-reset-sent" element={<PasswordResetSent />} />
           <Route path="/reset/:token" element={<ResetPasswordPage />} />
+          <Route path="/goal-complete" element={<GoalCompletionPage />} />
+
 
 
           {/* Protected Routes */}
@@ -87,6 +90,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          
           <Route
             path="/habits"
             element={

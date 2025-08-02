@@ -2,40 +2,42 @@ import React from 'react';
 import Button from '../../common/Button';
 import AssistBlock from '../../common/AssistBlock';
 
-
 const StepReview = ({ formData, onBack, onSubmit, loading }) => {
-  const { title, emoji, description, frequency, customDays, duration } = formData;
+  const { title, emoji, description, frequency, customDays, duration, goal } = formData;
 
   return (
     <div>
-     <div className="mb-4">
-  <h2 className="text-xl font-semibold text-stone-800 dark:text-white mb-2">
-    How often do you want to do this habit?
-  </h2>
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold text-stone-800 dark:text-white mb-2">
+          Review Your Habit
+        </h2>
 
-  <AssistBlock
-    text="Choose how frequently you’ll do this habit."
-    expandedText="Setting a schedule helps you stay consistent. Daily works well for building strong routines. Weekly is great for bigger tasks. Or customize it by picking specific days that suit your lifestyle."
-  />
-</div>
-
+        <AssistBlock
+          text="Double-check your details before creating your habit."
+          expandedText="You can always edit later, but having clear goals and details upfront makes your habit more effective."
+        />
+      </div>
 
       <div className="space-y-4">
+        {/* Emoji */}
         <div>
           <p className="text-sm text-stone-500 dark:text-stone-400">Emoji</p>
           <p className="text-2xl">{emoji || '🌱'}</p>
         </div>
 
+        {/* Habit Title */}
         <div>
           <p className="text-sm text-stone-500 dark:text-stone-400">Habit</p>
           <p className="text-lg text-stone-800 dark:text-stone-100">{title}</p>
         </div>
 
+        {/* Motivation */}
         <div>
           <p className="text-sm text-stone-500 dark:text-stone-400">Motivation</p>
           <p className="text-lg text-stone-800 dark:text-stone-100">{description}</p>
         </div>
 
+        {/* Frequency */}
         <div>
           <p className="text-sm text-stone-500 dark:text-stone-400">Frequency</p>
           <p className="text-lg text-stone-800 dark:text-stone-100 capitalize">
@@ -43,6 +45,7 @@ const StepReview = ({ formData, onBack, onSubmit, loading }) => {
           </p>
         </div>
 
+        {/* Duration */}
         {duration && (
           <div>
             <p className="text-sm text-stone-500 dark:text-stone-400">Duration</p>
@@ -51,8 +54,19 @@ const StepReview = ({ formData, onBack, onSubmit, loading }) => {
             </p>
           </div>
         )}
+
+        {/* ✅ Goal */}
+        {goal && (
+          <div>
+            <p className="text-sm text-stone-500 dark:text-stone-400">Goal</p>
+            <p className="text-lg text-stone-800 dark:text-stone-100">
+              {goal} completions
+            </p>
+          </div>
+        )}
       </div>
 
+      {/* Buttons */}
       <div className="mt-8 flex justify-between">
         <Button onClick={onBack} disabled={loading} variant="secondary">
           Back

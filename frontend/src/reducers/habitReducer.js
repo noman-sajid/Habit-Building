@@ -9,7 +9,7 @@ import {
   getHabitSummary,
 } from '../actions/habitActions';
 
-// Thunks
+// ✅ Thunks
 export const fetchHabits = createAsyncThunk('habits/fetchHabits', getHabits);
 export const addHabit = createAsyncThunk('habits/addHabit', createHabit);
 export const fetchHabitDetails = createAsyncThunk('habits/fetchHabitDetails', getHabitDetails);
@@ -17,7 +17,6 @@ export const editHabit = createAsyncThunk('habits/editHabit', updateHabit);
 export const removeHabit = createAsyncThunk('habits/removeHabit', deleteHabit);
 export const completeHabit = createAsyncThunk('habits/completeHabit', markHabitComplete);
 export const fetchHabitSummary = createAsyncThunk('habits/fetchHabitSummary', getHabitSummary);
-
 
 const initialState = {
   habits: [],
@@ -29,6 +28,12 @@ const initialState = {
   isUpdated: false,
   isDeleted: false,
   isCompleted: false,
+  successMessage: null,
+
+  // ✅ For full-page goal completion flow
+  goalCompletion: {
+    habit: null, // stores the habit that achieved the goal
+  },
 };
 
 const habitSlice = createSlice({
@@ -39,20 +44,25 @@ const habitSlice = createSlice({
       state.error = null;
     },
     createHabitReset: (state) => {
-        state.isCreated = false;
+      state.isCreated = false;
     },
     updateHabitReset: (state) => {
-        state.isUpdated = false;
+      state.isUpdated = false;
     },
     deleteHabitReset: (state) => {
-        state.isDeleted = false;
+      state.isDeleted = false;
     },
     markHabitCompleteReset: (state) => {
-        state.isCompleted = false;
-    },clearSuccessMessage: (state) => {
-  state.successMessage = null;
-}
-    
+      state.isCompleted = false;
+    },
+    clearSuccessMessage: (state) => {
+      state.successMessage = null;
+    },
+
+    // ✅ Manually set or reset goal completion habit
+    setGoalCompletionHabit: (state, action) => {
+      state.goalCompletion.habit = action.payload; // habit object or null
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -68,6 +78,7 @@ const habitSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
       // Fetch single habit details
       .addCase(fetchHabitDetails.pending, (state) => {
         state.loading = true;
@@ -80,6 +91,7 @@ const habitSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
       // Create a new habit
       .addCase(addHabit.pending, (state) => {
         state.loading = true;
@@ -93,6 +105,7 @@ const habitSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
       // Update a habit
       .addCase(editHabit.pending, (state) => {
         state.loading = true;
@@ -108,6 +121,7 @@ const habitSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
       // Delete a habit
       .addCase(removeHabit.pending, (state) => {
         state.loading = true;
@@ -123,16 +137,17 @@ const habitSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
       // Mark habit as complete
-     .addCase(completeHabit.pending, (state) => {
-  state.loading = true;
-  state.error = null;
-  state.isCompleted = false;
-})
+      .addCase(completeHabit.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.isCompleted = false;
+      })
       .addCase(completeHabit.fulfilled, (state, action) => {
         state.loading = false;
         state.isCompleted = true;
-        state.successMessage = "Habit marked complete!"
+        state.successMessage = 'Habit marked complete!';
         state.habits = state.habits.map((habit) =>
           habit._id === action.payload.habit._id ? action.payload.habit : habit
         );
@@ -141,6 +156,7 @@ const habitSlice = createSlice({
         state.loading = false;
         state.error = action.error.message;
       })
+
       // Get habit summary
       .addCase(fetchHabitSummary.pending, (state) => {
         state.loading = true;
@@ -156,5 +172,14 @@ const habitSlice = createSlice({
   },
 });
 
-export const { clearErrors, createHabitReset, updateHabitReset, deleteHabitReset, markHabitCompleteReset } = habitSlice.actions;
+export const {
+  clearErrors,
+  createHabitReset,
+  updateHabitReset,
+  deleteHabitReset,
+  markHabitCompleteReset,
+  clearSuccessMessage,
+  setGoalCompletionHabit,
+} = habitSlice.actions;
+
 export default habitSlice.reducer;
