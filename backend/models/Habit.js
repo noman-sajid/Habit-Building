@@ -16,15 +16,25 @@ const habitSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    duration: {
-      type: Number, // Duration in minutes
-      min: [1, 'Duration must be at least 1 minute'],
-      default: null,
+    // ✅ NEW: Time range for notifications/reminders
+    timeRange: {
+      start: {
+        type: String, // e.g., "07:00"
+        required: false,
+      },
+      end: {
+        type: String, // e.g., "08:00"
+        required: false,
+      },
     },
     frequency: {
       type: String,
       enum: ['daily', 'weekly', 'custom'],
       default: 'daily',
+    },
+    customDays: {
+      type: [String], // For custom frequency (Mon, Tue, etc.)
+      default: [],
     },
     completedDates: [
       {
@@ -45,17 +55,15 @@ const habitSchema = new mongoose.Schema(
     emoji: {
       type: String,
       trim: true,
-      default: '🌱', // Optional default emoji
+      default: '🌱',
     },
-
-    // ✅ NEW: Goal feature
     goal: {
-      type: Number, // Number of completions required
+      type: Number,
       min: [1, 'Goal must be at least 1'],
-      default: null, // Optional
+      default: null,
     },
     progress: {
-      type: Number, // How many times completed so far
+      type: Number,
       default: 0,
     },
     goalAchieved: {

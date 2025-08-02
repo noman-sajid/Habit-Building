@@ -3,10 +3,9 @@ const User = require('../models/User');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const ErrorHandler = require('../utils/errorhander');
 
-
-// Create a new habit
+// ✅ Create a new habit
 const createHabit = catchAsyncErrors(async (req, res, next) => {
-  const { title, description, frequency, emoji, duration, goal } = req.body;
+  const { title, description, frequency, emoji, timeRange, customDays, goal } = req.body;
 
   const habit = await Habit.create({
     user: req.user._id,
@@ -14,7 +13,8 @@ const createHabit = catchAsyncErrors(async (req, res, next) => {
     description,
     frequency,
     emoji,
-    duration,
+    timeRange: timeRange || { start: null, end: null }, // ✅ NEW
+    customDays: customDays || [], // ✅ NEW
     goal: goal || null,
     progress: 0,
     goalAchieved: false,
@@ -26,8 +26,7 @@ const createHabit = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-
-// Get all habits of the logged-in user
+// ✅ Get all habits of the logged-in user
 const getUserHabits = catchAsyncErrors(async (req, res, next) => {
   const habits = await Habit.find({ user: req.user._id }).sort({ createdAt: -1 });
 
@@ -37,10 +36,10 @@ const getUserHabits = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// PUT /api/habits/:id
+// ✅ Update habit details
 const updateHabit = catchAsyncErrors(async (req, res, next) => {
   const habitId = req.params.id;
-  const { title, description, frequency, duration, goal } = req.body;
+  const { title, description, frequency, timeRange, customDays, goal, emoji } = req.body;
 
   let habit = await Habit.findOne({ _id: habitId, user: req.user._id });
   if (!habit) {
@@ -51,20 +50,20 @@ const updateHabit = catchAsyncErrors(async (req, res, next) => {
   if (title) habit.title = title;
   if (description) habit.description = description;
   if (frequency) habit.frequency = frequency;
-  if (duration) habit.duration = duration;
+  if (customDays) habit.customDays = customDays;
+  if (timeRange && timeRange.start && timeRange.end) habit.timeRange = timeRange;
+  if (emoji) habit.emoji = emoji;
 
   // ✅ If goal is updated
   if (goal !== undefined) {
     habit.goal = goal;
 
-    // ✅ Do NOT reset progress to 0
-    // If progress > goal, cap it and mark goal as achieved
+    // Do NOT reset progress
     if (habit.progress >= goal) {
       habit.progress = goal;
-      habit.goalAchieved = true; // auto-mark achieved if already exceeded
+      habit.goalAchieved = true;
     } else {
-      habit.goalAchieved = false; // new goal, still not achieved
-      // Keep current progress (e.g., streak or previous completions)
+      habit.goalAchieved = false;
     }
   }
 
@@ -77,8 +76,7 @@ const updateHabit = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-
-// PATCH /api/habits/:id/complete
+// ✅ Mark habit as complete
 const markHabitComplete = catchAsyncErrors(async (req, res, next) => {
   const habitId = req.params.id;
   const today = new Date();
@@ -107,7 +105,7 @@ const markHabitComplete = catchAsyncErrors(async (req, res, next) => {
   yesterday.setDate(yesterday.getDate() - 1);
   const last = habit.lastCompleted ? new Date(habit.lastCompleted) : null;
 
-  // Update streak
+  // ✅ Update streak
   habit.streak = last && last.toDateString() === yesterday.toDateString() ? habit.streak + 1 : 1;
   habit.lastCompleted = today;
   if (habit.streak > habit.maxStreak) habit.maxStreak = habit.streak;
@@ -116,7 +114,7 @@ const markHabitComplete = catchAsyncErrors(async (req, res, next) => {
   if (habit.goal && !habit.goalAchieved) {
     habit.progress += 1;
     if (habit.progress >= habit.goal) {
-      habit.progress = habit.goal; // prevent overflow
+      habit.progress = habit.goal;
       habit.goalAchieved = true;
     }
   }
@@ -130,8 +128,7 @@ const markHabitComplete = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-
-// DELETE /api/habits/:id
+// ✅ Delete habit
 const deleteHabit = catchAsyncErrors(async (req, res, next) => {
   const habitId = req.params.id;
 
@@ -142,20 +139,17 @@ const deleteHabit = catchAsyncErrors(async (req, res, next) => {
   }
 
   // Remove habit from User model
-  await User.findByIdAndUpdate(req.user._id, {
-    $pull: { habits: habitId }
-  });
+  await User.findByIdAndUpdate(req.user._id, { $pull: { habits: habitId } });
 
-  // Delete the habit
   await Habit.findByIdAndDelete(habitId);
 
   res.status(200).json({
     success: true,
-    message: "Habit deleted successfully"
+    message: "Habit deleted successfully",
   });
 });
 
-// GET /api/habits/summary
+// ✅ Get summary
 const getHabitSummary = catchAsyncErrors(async (req, res, next) => {
   const habits = await Habit.find({ user: req.user._id });
 

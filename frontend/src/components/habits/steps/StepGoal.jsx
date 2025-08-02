@@ -1,6 +1,7 @@
 import React from "react";
-import TextInput from "../../form/TextInput";
 import AssistBlock from "../../common/AssistBlock";
+
+const goalOptions = [1, 3, 7, 14]; // ✅ Testing with 1-day goal included
 
 const StepGoal = ({ goal, onGoalChange, error }) => {
   return (
@@ -12,25 +13,36 @@ const StepGoal = ({ goal, onGoalChange, error }) => {
 
       {/* Explanation */}
       <AssistBlock
-        text="Define a clear goal to stay motivated."
-        expandedText="Your goal represents the total number of completions you aim for. For example, 'Complete this habit 30 times' to build consistency. You can change it later if needed."
+        text="Choose a small, realistic goal to start strong."
+        expandedText="Smaller goals help maintain motivation and prevent burnout. You can always increase your goal later when the habit feels natural."
       />
 
-      {/* Goal Input */}
+      {/* Goal Selection */}
       <div className="mt-4">
-        <TextInput
-          label="How many times do you want to complete this habit?"
-          name="goal"
-          type="number"
-          placeholder="e.g., 30"
-          value={goal?.toString() || ""}
-          onChange={(e) =>
-            onGoalChange(e.target.value ? parseInt(e.target.value, 10) : null)
-          }
-          error={error?.goal}
-        />
+        <p className="text-sm text-stone-700 dark:text-stone-300 mb-2">
+          Select your completion goal:
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {goalOptions.map((option) => (
+            <button
+              key={option}
+              type="button"
+              onClick={() => onGoalChange(option)}
+              className={`px-4 py-2 rounded-full border text-sm transition ${
+                goal === option
+                  ? "bg-amber-500 text-white border-amber-500"
+                  : "bg-white dark:bg-stone-700 text-stone-800 dark:text-stone-100 border-stone-300 dark:border-stone-600 hover:border-amber-400"
+              }`}
+            >
+              {option} {option === 1 ? "day" : "times"}
+            </button>
+          ))}
+        </div>
+        {error && (
+          <p className="text-sm text-red-500 mt-1">{error}</p>
+        )}
         <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
-          Tip: A realistic goal helps maintain momentum.
+          Start small! Most people begin with 3 or 7 completions.
         </p>
       </div>
     </div>

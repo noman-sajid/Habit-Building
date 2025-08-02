@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import StepTitle from './steps/StepTitle';
 import StepDescription from './steps/StepDescription';
 import StepFrequency from './steps/StepFrequency';
-import StepGoal from './steps/StepGoal'; // ✅ NEW IMPORT
+import StepGoal from './steps/StepGoal'; // ✅ NEW
 import StepReview from './steps/StepReview';
 import { useDispatch, useSelector } from 'react-redux';
 import { addHabit, fetchHabits } from '../../reducers/habitReducer';
@@ -11,7 +11,7 @@ import { useAlert } from '../../context/AlertContext';
 import Loader from '../common/Loader';
 import { AnimatePresence, motion } from 'framer-motion';
 
-// Custom hook for dynamic height
+// ✅ Custom hook for dynamic height
 function useResizeHeight(ref) {
   const [height, setHeight] = useState('auto');
 
@@ -36,7 +36,9 @@ const CreateHabitForm = () => {
     frequency: 'daily',
     customDays: [],
     duration: null,
-    goal: { type: '', value: '' }, // ✅ NEW FIELD
+    goal: { type: '', value: '' },
+    startTime: '', // ✅ NEW
+    endTime: ''    // ✅ NEW
   });
 
   const [errors, setErrors] = useState({});
@@ -84,6 +86,10 @@ const CreateHabitForm = () => {
         newErrors.customDays = 'Select at least one day.';
       if (formData.duration !== null && formData.duration <= 0)
         newErrors.duration = 'Duration must be a positive number.';
+      if (!formData.startTime) newErrors.startTime = 'Start time is required.';
+      if (!formData.endTime) newErrors.endTime = 'End time is required.';
+      if (formData.startTime && formData.endTime && formData.endTime <= formData.startTime)
+        newErrors.endTime = 'End time must be after start time.';
     }
     if (step === 4) {
       if (formData.goal.value && !formData.goal.type) {
@@ -129,6 +135,10 @@ const CreateHabitForm = () => {
             onCustomDaysChange={(days) => handleChange('customDays', days)}
             duration={formData.duration}
             onDurationChange={(duration) => handleChange('duration', duration)}
+            startTime={formData.startTime} // ✅ NEW
+            onStartTimeChange={(time) => handleChange('startTime', time)} // ✅ NEW
+            endTime={formData.endTime} // ✅ NEW
+            onEndTimeChange={(time) => handleChange('endTime', time)} // ✅ NEW
           />
         );
       case 4:
@@ -176,7 +186,7 @@ const CreateHabitForm = () => {
         <div className="h-2 mt-2 bg-stone-200 dark:bg-stone-700 rounded-full overflow-hidden">
           <div
             className="h-full bg-amber-500 transition-all duration-300 ease-out"
-            style={{ width: `${(step - 1) * 25}%` }} // ✅ Adjust for 5 steps
+            style={{ width: `${(step - 1) * 25}%` }}
           />
         </div>
       </div>
