@@ -5,8 +5,8 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ThemeProvider } from './context/ThemeContext';
 import { AlertProvider } from './context/AlertContext'; 
-import { Provider } from 'react-redux'; // ← Import Redux Provider
-import store from './store'; // ← Your configured Redux store
+import { Provider } from 'react-redux';
+import store from './store';
 
 // 🌓 Apply saved theme before React renders
 const storedTheme = localStorage.getItem('theme');
@@ -30,7 +30,7 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
   <React.StrictMode>
-    <Provider store={store}> {/* ✅ Wrap in Redux Provider */}
+    <Provider store={store}>
       <AlertProvider>
         <ThemeProvider>
           <App />
@@ -41,3 +41,15 @@ root.render(
 );
 
 reportWebVitals();
+console.log('NODE_ENV:', process.env.NODE_ENV);
+
+// ✅ Register custom service worker
+if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/custom-sw.js')
+      .then(() => console.log('✅ Custom Service Worker Registered'))
+      .catch((err) => console.error('❌ SW registration failed:', err));
+  });
+}
+
