@@ -33,6 +33,7 @@ backend/
 │   ├── authMiddleware.js # Protects routes by verifying JWT tokens.
 │   ├── catchAsyncErrors.js # Wraps async functions to catch and forward errors.
 │   ├── error.js          # Global error handler for Express.
+│   ├── isAuthenticated.js # Checks if a user is authenticated without protecting the route.
 │   └── multer.js         # Handles multipart/form-data for file uploads.
 ├── models/               # Mongoose schemas and models.
 │   ├── Habit.js          # Defines the schema for habits.
@@ -64,12 +65,12 @@ backend/
 
 #### Habit Routes (`/api/habits`)
 
-- `POST /`: Create a new habit.
-- `GET /`: Get all habits for the logged-in user.
-- `PUT /:id`: Update a habit.
-- `PATCH /:id/complete`: Mark a habit as complete.
-- `DELETE /:id`: Delete a habit.
-- `GET /summary`: Get a summary of the user's habits.
+- `POST /`: Create a new habit. Controller: `createHabit`.
+- `GET /`: Get all habits for the logged-in user. Controller: `getUserHabits`.
+- `PUT /:id`: Update a habit. Controller: `updateHabit`.
+- `PATCH /:id/complete`: Mark a habit as complete. Controller: `markHabitComplete`.
+- `DELETE /:id`: Delete a habit. Controller: `deleteHabit`.
+- `GET /summary`: Get a summary of the user's habits. Controller: `getHabitSummary`.
 
 ## Frontend
 
