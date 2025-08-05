@@ -1,91 +1,67 @@
-
-
 const express = require("express");
-const app = express();
-
 const cors = require("cors");
-const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const userRoutes = require("./routes/userRoutes");
 const habitRoutes = require("./routes/habitRoutes");
 
-
-const cloudinary = require("cloudinary");
-
-console.log("Starting server...");
+const app = express();
+console.log("Starting Habitium backend...");
 
 // Load environment variables
 if (process.env.NODE_ENV !== "production") {
-  console.log("Loading environment variables from config.env...");
-  dotenv.config({
-    path: "./config/config.env",
-  });
+dotenv.config();
+
 }
 
 // CORS Configuration
 const corsConfig = {
   origin: process.env.FRONTEND_URL,
   credentials: true,
-  method: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
 };
-
-console.log("Configuring CORS...");
-app.options("", cors(corsConfig));
 app.use(cors(corsConfig));
 
-// Middleware setup
-console.log("Setting up middlewares...");
-console.log("tehre is abeen an")
-
-app.get('/favicon.ico', (req, res) => res.status(204));
-
-
+// Middleware
 app.use(cookieParser());
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true }));
-app.use(bodyParser.urlencoded({ extended: true })); // Use true or false explicitly
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Favicon fix
+app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 // Test route
 app.get("/", (req, res) => {
-  console.log("Root endpoint accessed");
-  res.send("Hello World");
+  res.send("Habitium API is running...");
 });
 
 // Routes
-console.log("Registering routes...");
 app.use("/api/users", userRoutes);
 app.use("/api/habits", habitRoutes);
 
-// Database connection
-console.log("Connecting to the database...");
-console.log("Connecting to the database...");
-async function connectDB() {
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
+// Export app for Vercel
+module.exports = app;
+
+// ✅ Local server only
+if (process.env.VERCEL !== "1") {
+  mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+    .then(() => {
+      console.log("MongoDB connected");
+      const PORT = process.env.PORT || 5000;
+      app.listen(PORT, () => {
+        console.log(`Server running locally on port ${PORT}`);
+      });
+    })
+    .catch((error) => {
+      console.error("Database connection failed:", error);
+      process.exit(1);
     });
-    console.log("Database connected successfully");
-  } catch (error) {
-    console.error("Database connection failed:", error);
-    process.exit(1);
-  }
 }
-
-
-
-
-console.log("Cloudinary configuration completed.");
-
-// Start the server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  try {
-    console.log(`Server is running on port ${PORT}`);
-  } catch (error) {
-    console.error("Error starting the server:", error);
-  }
-});
