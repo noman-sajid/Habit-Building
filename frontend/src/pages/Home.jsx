@@ -1,7 +1,10 @@
 import React from 'react';
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
-import mascot from '../assets/HiboMascot-1.png';
+import mascot from '../assets/smiling_mascot.png';
+import thinking from '../assets/thinking_mascot.png';
+import chill1 from '../assets/chill_mascot1.png';
+import chill2 from '../assets/chill_mascot2.png';
 
 const features = [
     {
@@ -117,7 +120,7 @@ const Home = () => {
     {/* Left: Mascot Image */}
     <div className="flex justify-center md:justify-center">
       <img
-        src={mascot}
+        src={thinking}
         alt="Psychology Backed Mascot"
         className="max-w-x w-full drop-shadow-xl"
       />
@@ -180,7 +183,7 @@ const Home = () => {
     {/* Right: Mascot Image */}
     <div className="flex justify-center md:justify-center">
       <img
-        src={mascot}
+        src={chill1}
         alt="Mascot on the journey"
         className="max-w-x w-full drop-shadow-xl"
       />
@@ -195,7 +198,7 @@ const Home = () => {
     {/* Left: Mascot Image */}
     <div className="flex justify-center md:justify-center">
       <img
-        src={mascot}
+        src={chill2}
         alt="Hibo adjusting to ups and downs"
         className="max-w w-full drop-shadow-xl"
       />
