@@ -6,11 +6,13 @@ import {
   forgotPassword,
   resetPassword,
   loginWithGoogle,
+  logoutUser,
 } from '../actions/authActions';
 
 // Thunks
 export const login = createAsyncThunk('auth/login', loginUser);
 export const register = createAsyncThunk('auth/register', registerUser);
+export const logout = createAsyncThunk('auth/logout', logoutUser);
 export const loginGoogle = createAsyncThunk('auth/loginGoogle', loginWithGoogle);
 export const load = createAsyncThunk('auth/loadUser', loadUser);
 export const forgot = createAsyncThunk(
@@ -34,7 +36,7 @@ const initialState = {
   isAuthenticated: false,
   error: null,
   initialized: false,
-  message: null, 
+  message: null,
 };
 
 const authSlice = createSlice({
@@ -101,6 +103,26 @@ const authSlice = createSlice({
         state.error = action.error.message;
         state.initialized = true;
       })
+
+
+
+
+
+      .addCase(logout.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.loading = false;
+        state.user = null;
+        state.isAuthenticated = false;
+        state.initialized = true;
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+        state.initialized = true;
+      })
+
 
       // Load
       .addCase(load.pending, (state) => {

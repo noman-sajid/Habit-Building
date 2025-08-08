@@ -11,7 +11,7 @@ export const registerUser = async (userData) => {
 
 // login with Google
 export const loginWithGoogle = async (googleData) => {
-  const response = await api.post('/users/google', googleData); // no need for multipart
+  const response = await api.post('/users/google-login', googleData); // no need for multipart
   return response.data.user;
 };
 
@@ -23,9 +23,16 @@ export const loginUser = async ({ email, password }) => {
   return response.data.user;
 };
 
+
+//Logout
+export const logoutUser = async () => {
+  const response = await api.get('/users/logout');
+  return response.data;
+};
+
 // Load profile (to restore session)
 
-// authActions.js
+
 export const loadUser = async () => {
   try {
     console.log('[loadUser] Sending GET request to /profile...');
