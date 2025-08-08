@@ -9,6 +9,13 @@ export const registerUser = async (userData) => {
   return response.data.user;
 };
 
+// login with Google
+export const loginWithGoogle = async (googleData) => {
+  const response = await api.post('/users/google', googleData); // no need for multipart
+  return response.data.user;
+};
+
+
 
 // Login
 export const loginUser = async ({ email, password }) => {

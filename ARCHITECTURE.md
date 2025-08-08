@@ -23,7 +23,15 @@ The backend is a Node.js application built with the Express framework. It handle
 
 ```
 backend/
+├── .env                  # Environment variables
+├── .env.example          # Example environment variables
+├── .gitignore            # Git ignore file
 ├── app.js                # Main application file. Initializes the Express app, connects to the database, and sets up middleware and routes.
+
+├── package-lock.json     # Package lock file
+├── package.json          # Package file
+├── vercel.js             # Vercel configuration
+├── vercel.json           # Vercel configuration
 ├── config/               # Configuration files
 │   └── cloudinary.js     # Configures Cloudinary for image uploads.
 ├── controllers/          # Request handlers that contain the business logic.
@@ -44,7 +52,7 @@ backend/
 └── utils/                # Utility functions used across the application.
     ├── errorhander.js    # Custom error handler class.
     ├── jwtToken.js       # Utility for creating and sending JWT tokens.
-    └── sendEmail.js      # Utility for sending emails (e.g., for password reset).
+    ���── sendEmail.js      # Utility for sending emails (e.g., for password reset).
 ```
 
 ### API Endpoints

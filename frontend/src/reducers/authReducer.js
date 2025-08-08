@@ -5,11 +5,13 @@ import {
   loadUser,
   forgotPassword,
   resetPassword,
+  loginWithGoogle,
 } from '../actions/authActions';
 
 // Thunks
 export const login = createAsyncThunk('auth/login', loginUser);
 export const register = createAsyncThunk('auth/register', registerUser);
+export const loginGoogle = createAsyncThunk('auth/loginGoogle', loginWithGoogle);
 export const load = createAsyncThunk('auth/loadUser', loadUser);
 export const forgot = createAsyncThunk(
   'auth/forgotPassword',
@@ -63,6 +65,22 @@ const authSlice = createSlice({
         state.initialized = true;
       })
       .addCase(register.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+        state.initialized = true;
+      })
+
+      // Google Login
+      .addCase(loginGoogle.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(loginGoogle.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.isAuthenticated = true;
+        state.initialized = true;
+      })
+      .addCase(loginGoogle.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
         state.initialized = true;
@@ -127,17 +145,16 @@ const authSlice = createSlice({
         state.error = null;
         state.message = null;
       })
-     .addCase(reset.fulfilled, (state, action) => {
-  console.log('[REDUCER] Password reset success:', action.payload);
-  state.loading = false;
-  state.message = action.payload.message;
-})
-.addCase(reset.rejected, (state, action) => {
-  console.error('[REDUCER] Password reset failed:', action.error.message);
-  state.loading = false;
-  state.error = action.error.message;
-})
-
+      .addCase(reset.fulfilled, (state, action) => {
+        console.log('[REDUCER] Password reset success:', action.payload);
+        state.loading = false;
+        state.message = action.payload.message;
+      })
+      .addCase(reset.rejected, (state, action) => {
+        console.error('[REDUCER] Password reset failed:', action.error.message);
+        state.loading = false;
+        state.error = action.error.message;
+      });
   },
 });
 

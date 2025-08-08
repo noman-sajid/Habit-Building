@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { register } from '../../reducers/authReducer';
+import { Link, useNavigate } from 'react-router-dom';
+import { register, loginGoogle } from '../../reducers/authReducer';
 import TextInput from '../../components/form/TextInput';
 import FileUpload from '../../components/form/FileUpload';
 import Button from '../../components/common/Button';
-import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 
 const RegisterPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading} = useSelector((state) => state.auth);
+  const { loading } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -57,33 +57,43 @@ const RegisterPage = () => {
     data.append('password', formData.password);
     data.append('avatar', avatar);
 
- try {
-  const res = await dispatch(register(data)).unwrap();
-  console.log('✅ Registered:', res);
-  navigate('/dashboard');
-} catch (err) {
-  const message = err?.response?.data?.message || 'Registration failed';
-  const lower = message.toLowerCase();
-  const fieldErrors = {};
+    try {
+      const res = await dispatch(register(data)).unwrap();
+      console.log('✅ Registered:', res);
+      navigate('/dashboard');
+    } catch (err) {
+      const message = err?.response?.data?.message || 'Registration failed';
+      const lower = message.toLowerCase();
+      const fieldErrors = {};
 
-  if (lower.includes('user already exists') || lower.includes('email')) {
-    fieldErrors.email = 'Email already exists';
-  } else if (lower.includes('password')) {
-    fieldErrors.password = 'Password is invalid';
-  } else if (lower.includes('name')) {
-    fieldErrors.name = 'Name is invalid';
-  } else if (lower.includes('avatar')) {
-    fieldErrors.avatar = 'Please select a valid avatar';
-  } else {
-    // Show under avatar field by default if it's a mystery error
-    fieldErrors.avatar = 'Registration failed. Please try again.';
-  }
+      if (lower.includes('user already exists') || lower.includes('email')) {
+        fieldErrors.email = 'Email already exists';
+      } else if (lower.includes('password')) {
+        fieldErrors.password = 'Password is invalid';
+      } else if (lower.includes('name')) {
+        fieldErrors.name = 'Name is invalid';
+      } else if (lower.includes('avatar')) {
+        fieldErrors.avatar = 'Please select a valid avatar';
+      } else {
+        fieldErrors.avatar = 'Registration failed. Please try again.';
+      }
 
-  setLocalErrors(fieldErrors);
-}
+      setLocalErrors(fieldErrors);
+    }
+  };
 
+  const handleGoogleSuccess = async (response) => {
+    try {
+      const res = await dispatch(loginGoogle({ credential: response.credential })).unwrap();
+      console.log('✅ Google Login Success:', res);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('❌ Google login failed:', error);
+    }
+  };
 
-
+  const handleGoogleError = () => {
+    console.error('❌ Google login was not successful');
   };
 
   return (
@@ -96,8 +106,6 @@ const RegisterPage = () => {
         <h2 className="text-3xl font-bold font-poppins text-center mb-6 text-stone-900 dark:text-white">
           Join Habitium
         </h2>
-
-       
 
         <TextInput
           label="Name"
@@ -138,29 +146,31 @@ const RegisterPage = () => {
           preview={avatarPreview}
         />
 
-
-
         <Button
-  type="submit"
-  variant="primary"
-  size="lg"
-  className="mt-4 w-full"
-  disabled={loading}
->
-  {loading ? 'Registering...' : 'Register'}
-</Button>
+          type="submit"
+          variant="primary"
+          size="lg"
+          className="mt-4 w-full"
+          disabled={loading}
+        >
+          {loading ? 'Registering...' : 'Register'}
+        </Button>
 
-<p className="mt-4 text-center text-sm text-stone-700 dark:text-stone-300">
-  Already have an account?{' '}
- <Link
-  to="/login"
-  className="text-amber-600 dark:text-amber-400 hover:underline font-medium"
->
-  Log in
-</Link>
+        <div className="my-4 text-center text-stone-500 dark:text-stone-400">OR</div>
 
-</p>
+        <div className="flex justify-center mb-4">
+          <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleError} />
+        </div>
 
+        <p className="mt-4 text-center text-sm text-stone-700 dark:text-stone-300">
+          Already have an account?{' '}
+          <Link
+            to="/login"
+            className="text-amber-600 dark:text-amber-400 hover:underline font-medium"
+          >
+            Log in
+          </Link>
+        </p>
       </form>
     </div>
   );

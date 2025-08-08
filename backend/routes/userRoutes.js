@@ -9,6 +9,7 @@ const { registerUser,
      updatePassword,
      requestEmailChange,
      confirmEmailChange,
+     googleLogin,
 } = require('../controllers/userController');
 const upload = require('../middleware/multer');
 const { protect } = require('../middleware/authMiddleware');
@@ -18,6 +19,9 @@ const router = express.Router();
 
 // POST /api/users/register
 router.post('/register', upload.single('avatar'), registerUser);
+
+// Google Login
+router.post('/google-login', googleLogin);
 
 //Login
 router.post('/login', loginUser);

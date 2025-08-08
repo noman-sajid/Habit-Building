@@ -5,6 +5,9 @@ const sendToken = require("../utils/jwtToken");
 const cloudinary = require('../config/cloudinary');
 const sendEmail = require('../utils/sendEmail');
 const crypto = require('crypto');
+const { OAuth2Client } = require('google-auth-library');
+const jwt = require('jsonwebtoken');
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 // POST /api/users/register
 const registerUser = catchAsyncErrors(async (req, res, next) => {
@@ -34,6 +37,46 @@ const registerUser = catchAsyncErrors(async (req, res, next) => {
   sendToken(user, 201, res);
 });
 
+
+// Login with Google 
+const googleLogin = async (req, res) => {
+  const { credential } = req.body;
+
+  try {
+    // 1. Verify Google ID token
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    const payload = ticket.getPayload();
+    const { email, name, picture, sub: googleId } = payload;
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Google token did not return email.' });
+    }
+
+    // 2. Check if user already exists
+    let user = await User.findOne({ email });
+
+    // 3. If not, create user
+    if (!user) {
+      user = await User.create({
+        name,
+        email,
+        avatar: picture,
+        googleId,
+        password: jwt.sign({ email }, process.env.JWT_SECRET), // dummy password
+      });
+    }
+
+    // 4. Send token using consistent utility
+    sendToken(user, 200, res);
+  } catch (error) {
+    console.error('Google login error:', error);
+    res.status(401).json({ success: false, message: 'Google login failed' });
+  }
+};
 
 
 
@@ -501,4 +544,5 @@ module.exports = {
     updatePassword,
     requestEmailChange,
     confirmEmailChange,
+    googleLogin,
 };
