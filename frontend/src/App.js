@@ -47,11 +47,9 @@ function App() {
     checkAuthThenLoad();
   }, [dispatch]);
 
-
   if (!initialized) {
     return (
       <div className="min-h-screen flex items-center justify-center text-xl font-semibold text-stone-800 dark:text-stone-100">
-
         <Loader />
       </div>
     );
@@ -59,48 +57,50 @@ function App() {
 
   return (
     <Router>
-      <div className="relative min-h-screen transition-colors duration-300">
-           <OfflineBanner />
+      {/* ✅ Flex layout to push footer down */}
+      <div className="flex flex-col min-h-screen transition-colors duration-300">
+        <OfflineBanner />
         <Navbar />
-        <Routes>
-          <Route path="/test-landing" element={<LandingPage />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/" element={<Home />} />
-          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-          <Route path="/password-reset-sent" element={<PasswordResetSent />} />
-          <Route path="/reset/:token" element={<ResetPasswordPage />} />
-          <Route path="/goal-complete" element={<GoalCompletionPage />} />
 
+        {/* ✅ Main grows to push footer */}
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/test-landing" element={<LandingPage />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/password-reset-sent" element={<PasswordResetSent />} />
+            <Route path="/reset/:token" element={<ResetPasswordPage />} />
+            <Route path="/goal-complete" element={<GoalCompletionPage />} />
 
-
-          {/* Protected Routes */}
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/create-habit"
-            element={
-              <ProtectedRoute>
-                <CreateHabitForm />
-              </ProtectedRoute>
-            }
-          />
-          
-          <Route
-            path="/habits"
-            element={
-              <ProtectedRoute>
-                <AllHabits />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+            {/* Protected Routes */}
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/create-habit"
+              element={
+                <ProtectedRoute>
+                  <CreateHabitForm />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/habits"
+              element={
+                <ProtectedRoute>
+                  <AllHabits />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </main>
 
         <Footer />
       </div>
