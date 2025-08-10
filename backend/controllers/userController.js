@@ -9,13 +9,51 @@ const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// POST /api/users/register
+// // POST /api/users/register
+// const registerUser = catchAsyncErrors(async (req, res, next) => {
+//    console.log(req.body);
+//   const { name, email, password } = req.body;
+
+//   const existingUser = await User.findOne({ email });
+//   if (existingUser) {
+//     return next(new ErrorHander("User already exists", 400));
+//   }
+
+//   const result = await cloudinary.uploader.upload(req.file.path, {
+//     folder: 'avatars',
+//     width: 150,
+//     crop: 'scale'
+//   });
+
+//   const user = await User.create({
+//     name,
+//     email,
+//     password,
+//     avatar: {
+//       public_id: result.public_id,
+//       url: result.secure_url
+//     }
+//   });
+
+//   sendToken(user, 201, res);
+// });
+
+
+
 const registerUser = catchAsyncErrors(async (req, res, next) => {
+
+
   const { name, email, password } = req.body;
 
   const existingUser = await User.findOne({ email });
   if (existingUser) {
+    console.warn("⚠ User already exists:", email);
     return next(new ErrorHander("User already exists", 400));
+  }
+
+  if (!req.file) {
+    console.error("❌ No avatar file uploaded!");
+    return next(new ErrorHander("Avatar is required", 400));
   }
 
   const result = await cloudinary.uploader.upload(req.file.path, {
@@ -23,6 +61,8 @@ const registerUser = catchAsyncErrors(async (req, res, next) => {
     width: 150,
     crop: 'scale'
   });
+
+  console.log("✅ Cloudinary upload success:", result);
 
   const user = await User.create({
     name,
@@ -34,11 +74,12 @@ const registerUser = catchAsyncErrors(async (req, res, next) => {
     }
   });
 
+  
   sendToken(user, 201, res);
 });
 
 
-// Login with Google 
+// Login with Google
 const googleLogin = async (req, res) => {
   const { credential } = req.body;
 
@@ -53,7 +94,7 @@ const googleLogin = async (req, res) => {
     const { email, name, picture, sub: googleId } = payload;
 
     if (!email) {
-      return res.status(400).json({ success: false, message: 'Google token did not return email.' });
+      return res.status(400).json({ success: false, message: "Google token did not return email." });
     }
 
     // 2. Check if user already exists
@@ -61,23 +102,31 @@ const googleLogin = async (req, res) => {
 
     // 3. If not, create user
     if (!user) {
+      // Upload Google profile picture to Cloudinary
+      const uploadResult = await cloudinary.uploader.upload(picture, {
+        folder: "avatars",
+      });
+
       user = await User.create({
         name,
         email,
-        avatar: picture,
         googleId,
+        avatar: {
+          public_id: uploadResult.public_id,
+          url: uploadResult.secure_url,
+        },
         password: jwt.sign({ email }, process.env.JWT_SECRET), // dummy password
       });
     }
 
     // 4. Send token using consistent utility
     sendToken(user, 200, res);
+
   } catch (error) {
-    console.error('Google login error:', error);
-    res.status(401).json({ success: false, message: 'Google login failed' });
+    console.error("Google login error:", error);
+    res.status(401).json({ success: false, message: "Google login failed" });
   }
 };
-
 
 
 //Post /api/users/login

@@ -1,13 +1,26 @@
 import api from '../services/axiosInstance';
 
 // Register
+// export const registerUser = async (userData) => {
+//   const response = await api.post('/users/register', userData, {
+//     headers: { 'Content-Type': 'multipart/form-data' },
+//   });
+
+//   return response.data.user;
+// };
+
 export const registerUser = async (userData) => {
+  console.log("📤 Sending registerUser data:", userData); // log before sending
+
   const response = await api.post('/users/register', userData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 
+  console.log("📥 Received response from backend:", response.data); // log after receiving
   return response.data.user;
 };
+
+
 
 // login with Google
 export const loginWithGoogle = async (googleData) => {

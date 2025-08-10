@@ -10,6 +10,7 @@ This document provides a detailed overview of the frontend architecture for the 
 - **Axios:** A promise-based HTTP client for making API requests to the backend.
 - **Tailwind CSS:** A utility-first CSS framework for rapid UI development.
 - **PostCSS:** A tool for transforming CSS with JavaScript plugins.
+- **Workbox:** A library for adding offline support to web applications.
 
 ## Project Structure
 
@@ -28,7 +29,18 @@ frontend/
 │   │   ├── authActions.js  # Async actions related to user authentication.
 │   │   └── habitActions.js # Async actions related to habit management.
 │   ├── assets/           # Images, icons, and other static assets used within components.
+│   │   ├── celebrating_mascot.png
+│   │   ├── chill_mascot1.png
+│   │   ├── chill_mascot2.png
+│   │   ├── HiboMascot-1-removebg-preview.png
+│   │   ├── smiling_mascot.png
+│   │   ├── thinking_mascot.png
+│   │   └── waving_mascot.png
 │   ├── components/       # Reusable UI components.
+│   │   ├── auth/         # Components for user authentication.
+│   │   │   ├── EmailStep.jsx
+│   │   │   ├── PasswordStep.jsx
+│   │   │   └── ProfileStep.jsx
 │   │   ├── common/         # Generic, reusable components.
 │   │   │   ├── Alert.jsx
 │   │   │   ├── AssistBlock.jsx
@@ -39,6 +51,7 @@ frontend/
 │   │   │   ├── ProfileAvatar.jsx
 │   │   │   └── Tooltip.jsx
 │   │   ├── dashboard/      # Components for the user dashboard.
+│   │   │   ├── GoalCompletionPage.jsx
 │   │   │   ├── HabitCard.jsx
 │   │   │   ├── HabitList.jsx
 │   │   │   ├── ProgressRing.jsx
@@ -55,18 +68,20 @@ frontend/
 │   │   │   ├── TextArea.jsx
 │   │   │   └── TextInput.jsx
 │   │   ├── habits/         # Components related to habit management.
-│   │   │   ├── AllHabits.jsx
+��   │   │   ├── AllHabits.jsx
 │   │   │   ├── CreateHabitForm.jsx
 │   │   │   └── steps/      # Components for the multi-step habit creation form.
 │   │   │       ├── descriptionSuggestions.js
-│   │   │       ��── EmojiSelector.jsx
+│   │   │       ├── EmojiSelector.jsx
 │   │   │       ├── StepDescription.jsx
 │   │   │       ├── StepFrequency.jsx
+│   │   │       ├── StepGoal.jsx
 │   │   │       ├── StepReview.jsx
 │   │   │       └── StepTitle.jsx
 │   │   ├── layout/         # Components that define the page structure.
 │   │   │   ├── Footer.jsx
 │   │   │   ├── Navbar.jsx
+│   │   │   ├── OfflineBanner.jsx # A banner to indicate offline status.
 │   │   │   ├── PageLayout.jsx
 │   │   │   └── tabs/       # Tab components for navigation.
 │   │   │       ├── tabs.jsx
@@ -88,15 +103,20 @@ frontend/
 │   │       ├── ForgotPasswordPage.jsx
 │   │       ├── LoginPage.jsx
 │   │       ├── PasswordResetSent.jsx
+│   │       ├── Register.jsx
 │   │       ├── RegisterPage.jsx
 │   │       └── ResetPasswordPage.jsx
 │   ├── reducers/         # Redux reducers.
 │   │   ├── authReducer.js  # Reducer for managing authentication state.
-│   │   └── habitReducer.js # Reducer for managing habit state.
+│   │   ├── habitReducer.js # Reducer for managing habit state.
+│   │   └── offlineReducer.js # Reducer for managing offline state.
 │   ├── routes/           # Routing-related components.
 │   │   └── ProtectedRoute.jsx # A component to protect routes that require authentication.
 │   ├── services/         # Services for interacting with external APIs.
 │   │   └── axiosInstance.js # A pre-configured Axios instance for making API requests.
+│   ├── utils/            # Utility functions.
+│   │   ├── constants.js    # Application-wide constants.
+│   │   └── networkStatus.js# Functions for checking network status.
 │   ├── store.js          # Redux store configuration.
 │   ├── App.css           # Main application styles.
 │   ├── App.js            # The main application component, containing the router setup.
@@ -114,6 +134,7 @@ The application uses Redux Toolkit for efficient and predictable state managemen
 - **Reducers:** Pure functions that specify how the application's state changes in response to actions.
   - `authReducer`: Manages user authentication state, including loading and initialization status.
   - `habitReducer`: Manages the state for habits, including creating, reading, updating, and deleting habits.
+  - `offlineReducer`: Manages the application's offline state, including tracking offline status and queuing actions to be synced later.
 - **Actions:** Asynchronous actions, such as API calls, are handled using Thunks defined in the `src/actions/` directory. These thunks dispatch actions to the reducers to update the state.
 
 ## Habit Management
@@ -144,3 +165,12 @@ Routing is managed by `react-router-dom`.
 ## API Communication
 
 All communication with the backend API is handled through a pre-configured Axios instance in `src/services/axiosInstance.js`. This allows for centralized handling of API requests, including setting base URLs and automatically including authentication tokens in the headers of requests.
+
+## Offline Support
+
+The application provides offline support using a service worker and Redux for state management.
+
+- **Service Worker:** The service worker, configured in `workbox-config.js` and generated by Workbox, caches application assets and API responses to make the application available offline.
+- **Offline Reducer:** The `offlineReducer` manages the application's offline state, including tracking the online/offline status and queuing actions that are dispatched while the application is offline.
+- **Network Status:** The `utils/networkStatus.js` file contains functions to check the network status and dispatch actions accordingly.
+- **Offline Banner:** The `OfflineBanner.jsx` component is displayed when the application is offline to inform the user.

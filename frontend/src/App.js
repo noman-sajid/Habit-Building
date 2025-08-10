@@ -21,6 +21,7 @@ import AllHabits from './components/habits/AllHabits';
 import OfflineBanner from './components/layout/OfflineBanner';
 import { listenNetworkStatus } from './utils/networkStatus';
 import GoalCompletionPage from './components/dashboard/GoalCompletionPage';
+import Register from './pages/authPages/Register';
 
 
 function App() {
@@ -63,7 +64,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/test-landing" element={<LandingPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<Home />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
