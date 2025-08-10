@@ -121,6 +121,7 @@ import { login, loginGoogle } from "../../reducers/authReducer";
 import { GoogleLogin } from "@react-oauth/google";
 import { FcGoogle } from "react-icons/fc";
 import Loader from "../../components/common/Loader";
+import Button from "../../components/common/Button";
 
 function LoginPage() {
   const dispatch = useDispatch();
@@ -205,7 +206,9 @@ return (
             required
           />
           {errors.email && (
-            <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.email}</p>
+            <p className="text-red-500 dark:text-red-400 text-sm mt-1">
+              {errors.email}
+            </p>
           )}
         </div>
 
@@ -221,24 +224,25 @@ return (
             required
           />
           {errors.password && (
-            <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.password}</p>
+            <p className="text-red-500 dark:text-red-400 text-sm mt-1">
+              {errors.password}
+            </p>
           )}
         </div>
 
         {/* submit */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2 px-4 bg-amber-600 hover:bg-amber-700 text-white font-semibold rounded-md shadow-sm transition-colors disabled:opacity-70"
-        >
+       <Button type="submit" fullWidth disabled={loading}>
           {loading ? <Loader size="sm" /> : "Login"}
-        </button>
+        </Button>
       </form>
 
       {/* Register link */}
       <p className="mt-4 text-center text-sm">
         Don’t have an account?{" "}
-        <Link to="/register" className="font-medium text-amber-500 dark:text-amber-400 hover:underline">
+        <Link
+          to="/register"
+          className="font-medium text-amber-500 dark:text-amber-400 hover:underline"
+        >
           Sign up
         </Link>
       </p>
@@ -258,28 +262,36 @@ return (
       {/* Google button */}
       <div className="flex justify-center">
         {googleLoading ? (
-          <button
+          <Button
             disabled
-            className="w-full py-2 px-4 border border-stone-300 dark:border-stone-600 rounded-md flex items-center justify-center"
+            variant="outline"
+            className="w-full flex items-center justify-center"
           >
             <Loader size="sm" /> &nbsp; Signing in...
-          </button>
+          </Button>
         ) : googleReady ? (
           <div className="w-full">
-            <GoogleLogin onSuccess={handleGoogleSuccess} onError={handleGoogleFailure} useOneTap />
+            <GoogleLogin
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleFailure}
+              useOneTap
+            />
           </div>
         ) : (
-          <button
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full flex items-center justify-center"
             onClick={() => setGoogleReady(true)}
-            className="w-full py-2 px-4 border border-stone-300 dark:border-stone-600 rounded-md flex items-center justify-center hover:bg-stone-200 dark:hover:bg-stone-700 transition"
           >
             <FcGoogle size={20} className="mr-2" /> Continue with Google
-          </button>
+          </Button>
         )}
       </div>
     </div>
   </div>
 );
+
 
 }
 
