@@ -22,6 +22,7 @@ import OfflineBanner from './components/layout/OfflineBanner';
 import { listenNetworkStatus } from './utils/networkStatus';
 import GoalCompletionPage from './components/dashboard/GoalCompletionPage';
 import Register from './pages/authPages/Register';
+import ProfilePage from './pages/authPages/ProfilePage';
 
 
 function App() {
@@ -91,6 +92,16 @@ function App() {
                 </ProtectedRoute>
               }
             />
+              
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>  
+                    <ProfilePage />
+                  </ProtectedRoute>
+                }
+              />
+
             <Route
               path="/habits"
               element={

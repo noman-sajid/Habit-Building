@@ -7,6 +7,10 @@ import {
   resetPassword,
   loginWithGoogle,
   logoutUser,
+  updateProfile,
+  updatePassword,
+  requestEmailChange,
+  confirmEmailChange,
 } from '../actions/authActions';
 
 // Thunks
@@ -28,6 +32,10 @@ export const forgot = createAsyncThunk(
   }
 );
 export const reset = createAsyncThunk('auth/resetPassword', resetPassword);
+export const updateUserProfile = createAsyncThunk('auth/updateProfile', updateProfile);
+export const updateUserPassword = createAsyncThunk('auth/updatePassword', updatePassword);
+export const requestEmailUpdate = createAsyncThunk('auth/requestEmailChange', requestEmailChange);
+export const confirmEmailUpdate = createAsyncThunk('auth/confirmEmailChange', confirmEmailChange);
 
 // Initial State
 const initialState = {
@@ -174,6 +182,58 @@ const authSlice = createSlice({
       })
       .addCase(reset.rejected, (state, action) => {
         console.error('[REDUCER] Password reset failed:', action.error.message);
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // Update Profile
+      .addCase(updateUserProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateUserProfile.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+      })
+      .addCase(updateUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // Update Password
+      .addCase(updateUserPassword.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(updateUserPassword.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
+      })
+      .addCase(updateUserPassword.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // Request Email Change
+      .addCase(requestEmailUpdate.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(requestEmailUpdate.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
+      })
+      .addCase(requestEmailUpdate.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message;
+      })
+
+      // Confirm Email Change
+      .addCase(confirmEmailUpdate.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(confirmEmailUpdate.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
+      })
+      .addCase(confirmEmailUpdate.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
       });

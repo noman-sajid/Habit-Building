@@ -80,3 +80,29 @@ export const resetPassword = async ({ token, passwords }) => {
   }
 };
 
+// Update Profile
+export const updateProfile = async (userData) => {
+  const response = await api.patch('/users/update-profile', userData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return response.data.user;
+};
+
+// Update Password
+export const updatePassword = async (passwords) => {
+  const response = await api.patch('/users/update-password', passwords);
+  return response.data;
+};
+
+// Request Email Change
+export const requestEmailChange = async (email) => {
+  const response = await api.patch('/users/request-email-change', { email });
+  return response.data;
+};
+
+// Confirm Email Change
+export const confirmEmailChange = async (token) => {
+  const response = await api.patch(`/users/confirm-email/${token}`);
+  return response.data;
+};
+
