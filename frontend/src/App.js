@@ -23,6 +23,7 @@ import { listenNetworkStatus } from './utils/networkStatus';
 import GoalCompletionPage from './components/dashboard/GoalCompletionPage';
 import Register from './pages/authPages/Register';
 import ProfilePage from './pages/authPages/ProfilePage';
+import SettingsPage from './pages/SettingsPage';
 
 
 function App() {
@@ -107,6 +108,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AllHabits />
+                </ProtectedRoute>
+              }
+            />
+             <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <SettingsPage />
                 </ProtectedRoute>
               }
             />

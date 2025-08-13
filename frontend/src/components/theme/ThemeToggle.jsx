@@ -24,7 +24,7 @@ const ThemeToggle = () => {
       />
       <div className="w-full flex justify-between items-center">
         <Sun size={16} className="text-yellow-200 ml-1" />
-        <Moon size={16} className="text-slate-300 mr-1" />
+        <Moon size={16} className="text-slate-500 mr-1" />
       </div>
     </button>
   );
