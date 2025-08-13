@@ -13,7 +13,7 @@ const SettingsPage = () => {
   const isGoogleUser = !!user?.googleId;
 
   return (
-    <PageLayout>
+  
       <div className="max-w-2xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">Settings</h1>
         
@@ -47,7 +47,7 @@ const SettingsPage = () => {
           </section>
         </div>
       </div>
-    </PageLayout>
+  
   );
 };
 

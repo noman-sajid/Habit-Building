@@ -37,7 +37,9 @@ const ProfilePage = () => {
 
   const totalHabits = habits?.length || 0;
   const bestStreak = habits?.reduce((max, h) => (h.maxStreak > max ? h.maxStreak : max), 0) || 0;
-  const memberSince = user ? new Date(user.createdAt).toLocaleDateString() : 'N/A';
+const memberSince = user?.createdAt
+  ? new Date(user.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+  : "Unknown";
 
   return (
     <PageLayout>
