@@ -26,6 +26,9 @@ import ProfilePage from './pages/authPages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
 import OurMissionPage from './pages/static/OurMissionPage';
 import AboutHabisiumPage from './pages/static/AboutHabisiumPage';
+import ContactPage from './pages/static/ContactPage';
+import PrivacyPolicyPage from './pages/static/PrivacyPolicyPage';
+import TermsPage from './pages/static/TermsPage';
 
 
 function App() {
@@ -79,6 +82,9 @@ function App() {
             <Route path="/goal-complete" element={<GoalCompletionPage />} />
             <Route path="/mission" element={<OurMissionPage />} />
             <Route path="/about" element={<AboutHabisiumPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+            <Route path="/terms" element={<TermsPage />} />
 
             {/* Protected Routes */}
             <Route
