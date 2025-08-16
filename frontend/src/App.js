@@ -24,6 +24,8 @@ import GoalCompletionPage from './components/dashboard/GoalCompletionPage';
 import Register from './pages/authPages/Register';
 import ProfilePage from './pages/authPages/ProfilePage';
 import SettingsPage from './pages/SettingsPage';
+import OurMissionPage from './pages/static/OurMissionPage';
+import AboutHabisiumPage from './pages/static/AboutHabisiumPage';
 
 
 function App() {
@@ -75,6 +77,8 @@ function App() {
             <Route path="/password-reset-sent" element={<PasswordResetSent />} />
             <Route path="/reset/:token" element={<ResetPasswordPage />} />
             <Route path="/goal-complete" element={<GoalCompletionPage />} />
+            <Route path="/mission" element={<OurMissionPage />} />
+            <Route path="/about" element={<AboutHabisiumPage />} />
 
             {/* Protected Routes */}
             <Route
