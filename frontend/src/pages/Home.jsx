@@ -116,9 +116,9 @@ const Home = () => {
 
 {/* Why it Wors -Psychology Based */}
 <section className="bg-white dark:bg-stone-900 py-16 px-4 -mx-6 sm:-mx-8 lg:-mx-16">
-  <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center px-4 sm:px-8">
+  <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 items-center px-4 sm:px-8">
     {/* Left: Mascot Image */}
-    <div className="flex justify-center md:justify-center">
+    <div className="flex justify-center md:justify-center md:w-1/2">
       <img
         src={thinking}
         alt="Psychology Backed Mascot"
@@ -127,7 +127,7 @@ const Home = () => {
     </div>
 
     {/* Right: Text Content */}
-    <div className="text-left md:text-left mr-24">
+    <div className="text-left md:text-left md:w-1/2">
       <h2 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-stone-900 dark:text-white">
         Why it works — backed by psychology
       </h2>
@@ -154,10 +154,19 @@ const Home = () => {
 
 {/* It’s a journey, not perfection */}
 <section className="bg-neutral dark:bg-stone-900 py-16 px-4 -mx-6 sm:-mx-8 lg:-mx-16">
-  <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center px-4 sm:px-8">
+  <div className="max-w-7xl mx-auto flex flex-col md:flex-row-reverse gap-12 items-center px-4 sm:px-8">
     
+    {/* Right: Mascot Image */}
+    <div className="flex justify-center md:justify-center md:w-1/2">
+      <img
+        src={chill1}
+        alt="Mascot on the journey"
+        className="max-w-x w-full drop-shadow-xl"
+      />
+    </div>
+
     {/* Left: Text Content */}
-    <div className="text-left md:text-left md:pr-8">
+    <div className="text-left md:text-left md:w-1/2">
       <h2 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-primary dark:text-secondary">
         It’s a journey — not perfection
       </h2>
@@ -179,24 +188,15 @@ const Home = () => {
         </li>
       </ul>
     </div>
-
-    {/* Right: Mascot Image */}
-    <div className="flex justify-center md:justify-center">
-      <img
-        src={chill1}
-        alt="Mascot on the journey"
-        className="max-w-x w-full drop-shadow-xl"
-      />
-    </div>
   </div>
 </section>
 
 {/*It adapts with your ups and downs*/}
 <section className="bg-white dark:bg-stone-800 py-16 px-4 -mx-6 sm:-mx-8 lg:-mx-16">
-  <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 items-center px-4 sm:px-8">
+  <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 items-center px-4 sm:px-8">
     
     {/* Left: Mascot Image */}
-    <div className="flex justify-center md:justify-center">
+    <div className="flex justify-center md:justify-center md:w-1/2">
       <img
         src={chill2}
         alt="Hibo adjusting to ups and downs"
@@ -205,7 +205,7 @@ const Home = () => {
     </div>
 
     {/* Right: Text Content */}
-    <div className="text-left md:pl-8">
+    <div className="text-left md:w-1/2">
       <h2 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-stone-900 dark:text-white">
         It adapts with your ups and downs
       </h2>
