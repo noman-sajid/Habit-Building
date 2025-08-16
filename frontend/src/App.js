@@ -30,6 +30,7 @@ import ContactPage from './pages/static/ContactPage';
 import PrivacyPolicyPage from './pages/static/PrivacyPolicyPage';
 import TermsPage from './pages/static/TermsPage';
 import Disclaimer from './pages/static/Disclaimer';
+import FAQ from './pages/static/FAQ';
 
 
 function App() {
@@ -87,6 +88,7 @@ function App() {
             <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/disclaimer" element={<Disclaimer />} />
+            <Route path="/faq" element={<FAQ />} />
 
             {/* Protected Routes */}
             <Route
