@@ -14,6 +14,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   const handleLogout = async () => {
@@ -25,7 +26,7 @@ const Navbar = () => {
     }
   };
 
-  // Close dropdown when clicking outside
+  // Close profile dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -39,15 +40,18 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-white dark:bg-stone-900 shadow-light dark:shadow-dark border-b border-stone-200 dark:border-stone-700 sticky top-0 z-40">
+    <nav className="bg-white dark:bg-stone-900 shadow-light dark:shadow-dark border-b border-stone-200 dark:border-stone-700 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Left: Logo or Title */}
-        <Link to={isAuthenticated ? "/dashboard" : "/"} className="text-2xl font-bold text-primary dark:text-accent flex items-center gap-2">
+        {/* Left: Logo */}
+        <Link
+          to={isAuthenticated ? '/dashboard' : '/'}
+          className="text-2xl font-bold text-primary dark:text-accent flex items-center gap-2"
+        >
           <img src={logo} alt="Hibo Logo" className="h-8 w-8" />
         </Link>
 
-        {/* Right: Icons / Controls */}
-        <div className="flex items-center space-x-4">
+        {/* Desktop Controls */}
+        <div className="hidden md:flex items-center space-x-4">
           <ThemeToggle />
           {isAuthenticated ? (
             <div className="relative" ref={dropdownRef}>
@@ -81,18 +85,111 @@ const Navbar = () => {
             </div>
           ) : (
             <div className="flex items-center space-x-2">
-              <Link to="/login" className="flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-primary dark:hover:text-accent transition-colors px-3 py-2 rounded-md">
+              <Link
+                to="/login"
+                className="flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-primary dark:hover:text-accent transition-colors px-3 py-2 rounded-md"
+              >
                 <LogIn size={16} />
                 Login
               </Link>
-              <Link to="/register" className="flex items-center gap-2 bg-amber-500 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-amber-600 transition-colors">
+              <Link
+                to="/register"
+                className="flex items-center gap-2 bg-amber-500 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-amber-600 transition-colors"
+              >
                 <UserPlus size={16} />
                 Sign Up
               </Link>
             </div>
           )}
         </div>
+
+        {/* Mobile Hamburger */}
+        <div className="md:hidden flex items-center">
+          <ThemeToggle />
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="ml-3 flex flex-col justify-center items-center w-10 h-10 relative"
+          >
+            <motion.span
+              animate={isMobileMenuOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
+              className="block w-6 h-0.5 bg-stone-900 dark:bg-stone-100 mb-1"
+            />
+            <motion.span
+              animate={isMobileMenuOpen ? { opacity: 0 } : { opacity: 1 }}
+              className="block w-6 h-0.5 bg-stone-900 dark:bg-stone-100 mb-1"
+            />
+            <motion.span
+              animate={isMobileMenuOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
+              className="block w-6 h-0.5 bg-stone-900 dark:bg-stone-100"
+            />
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+            className="absolute top-16 left-0 w-full bg-white dark:bg-stone-900 shadow-lg md:hidden z-40"
+          >
+            <div className="flex flex-col space-y-4 p-4">
+              <Link
+                to="/about"
+                className="text-stone-700 dark:text-stone-300 hover:text-amber-600"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                About
+              </Link>
+              <Link
+                to="/contact"
+                className="text-stone-700 dark:text-stone-300 hover:text-amber-600"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Contact
+              </Link>
+              <Link
+                to="/faq"
+                className="text-stone-700 dark:text-stone-300 hover:text-amber-600"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                FAQ
+              </Link>
+              {!isAuthenticated ? (
+                <>
+                  <Link
+                    to="/login"
+                    className="flex items-center gap-2 text-sm font-medium text-stone-600 dark:text-stone-300 hover:text-primary dark:hover:text-accent transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <LogIn size={16} /> Login
+                  </Link>
+                  <Link
+                    to="/register"
+                    className="flex items-center gap-2 bg-amber-500 text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-amber-600 transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <UserPlus size={16} /> Sign Up
+                  </Link>
+                </>
+              ) : (
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="flex items-center gap-2 text-sm text-stone-700 dark:text-stone-200 hover:text-amber-600"
+                >
+                  <LogOut size={16} /> Logout
+                </button>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
