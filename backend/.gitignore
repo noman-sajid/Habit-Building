@@ -1,2 +1,17 @@
+# Dependencies
 /node_modules
+
+# Environment variables
 .env
+config/config.env
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE specific
+.vscode/
+.idea/
+
+# Test coverage
+coverage/
