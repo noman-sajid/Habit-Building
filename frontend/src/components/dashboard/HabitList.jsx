@@ -4,6 +4,7 @@ import HabitCard from "./HabitCard";
 import { CheckCircle2 } from "lucide-react"; // ✅ Install: npm install lucide-react
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti"; // ✅ Install: npm install canvas-confetti
+import { Link } from "react-router-dom";
 
 const HabitList = () => {
   const { habits, loading } = useSelector((state) => state.habits);
@@ -12,11 +13,21 @@ const HabitList = () => {
     return <p className="text-stone-500">Loading habits...</p>;
   }
 
+  // ✅ Empty state with CTA button
   if (!habits || habits.length === 0) {
     return (
-      <p className="text-stone-500 dark:text-stone-400 text-center">
-        No habits yet. Create one to get started!
-      </p>
+      <div className="text-center py-12 flex flex-col items-center">
+        <p className="text-stone-500 dark:text-stone-400 mb-4">
+          No habits yet. Start your journey by creating one!
+        </p>
+
+        <Link
+          to="/create-habit"
+          className="px-5 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg shadow transition"
+        >
+          Start Journey ✨
+        </Link>
+      </div>
     );
   }
 
@@ -40,43 +51,41 @@ const HabitList = () => {
     })
   );
 
-const triggerConfetti = () => {
-  const duration = 2 * 1000; // 2 seconds
-  const animationEnd = Date.now() + duration;
-  const defaults = {
-    startVelocity: 35,
-    spread: 360,
-    ticks: 60,
-    gravity: 0.9,
-    zIndex: 1000,
-    scalar: 1,
-    colors: ["#f59e0b", "#fbbf24", "#fde68a"], // Warm amber tones
-    shapes: ["square", "circle"],
+  const triggerConfetti = () => {
+    const duration = 2 * 1000; // 2 seconds
+    const animationEnd = Date.now() + duration;
+    const defaults = {
+      startVelocity: 35,
+      spread: 360,
+      ticks: 60,
+      gravity: 0.9,
+      zIndex: 1000,
+      scalar: 1,
+      colors: ["#f59e0b", "#fbbf24", "#fde68a"], // Warm amber tones
+      shapes: ["square", "circle"],
+    };
+
+    const randomInRange = (min, max) => Math.random() * (max - min) + min;
+
+    const interval = setInterval(() => {
+      const timeLeft = animationEnd - Date.now();
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50; // ✅ Reduced for mobile performance
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+      });
+      confetti({
+        ...defaults,
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+      });
+    }, 250);
   };
-
-  const randomInRange = (min, max) => Math.random() * (max - min) + min;
-
-  const interval = setInterval(() => {
-    const timeLeft = animationEnd - Date.now();
-    if (timeLeft <= 0) {
-      return clearInterval(interval);
-    }
-
-    const particleCount = 50; // ✅ Reduced for mobile performance
-    confetti({
-      ...defaults,
-      particleCount,
-      origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
-    });
-    confetti({
-      ...defaults,
-      particleCount,
-      origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
-    });
-  }, 250);
-};
-
-
 
   if (pendingHabits.length === 0) {
     return (

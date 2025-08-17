@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Github, Twitter, Mail } from "lucide-react";
-import logo from "../../assets/logoImage.png";
+import logo from "../../assets/hb_logo1.png";
 
 const Footer = () => {
   const footerSections = [
@@ -44,7 +44,7 @@ const Footer = () => {
           {/* Logo and Motto */}
           <div className="md:col-span-1 space-y-4">
             <Link to="/" className="flex items-center gap-2">
-              <img src={logo} alt="Habisium Logo" className="h-10 w-auto" />
+              <img src={logo} alt="Habisium Logo" className="h-12 w-auto" />
               <span className="text-2xl font-poppins font-bold text-stone-800 dark:text-stone-100">
                 Habisium
               </span>

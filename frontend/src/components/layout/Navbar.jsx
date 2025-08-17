@@ -7,7 +7,7 @@ import ThemeToggle from '../theme/ThemeToggle';
 import ProfileAvatar from '../common/ProfileAvatar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogIn, UserPlus, User, LogOut } from 'lucide-react';
-import logo from '../../assets/logoImage.png';
+import logo from '../../assets/hb_logo1.png';
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -47,7 +47,7 @@ const Navbar = () => {
           to={isAuthenticated ? '/dashboard' : '/'}
           className="text-2xl font-bold text-primary dark:text-accent flex items-center gap-2"
         >
-          <img src={logo} alt="Hibo Logo" className="h-8 w-8" />
+          <img src={logo} alt="Hibo Logo" className="h-12 w-12" />
         </Link>
 
         {/* Desktop Controls */}
