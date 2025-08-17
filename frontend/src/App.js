@@ -11,6 +11,7 @@ import Footer from './components/layout/Footer';
 import Home from './pages/Home';
 import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './routes/ProtectedRoute';
+import RedirectIfAuth from './routes/RedirectIfAuth';
 import Loader from './components/common/Loader';
 import api from './services/axiosInstance';
 import ForgotPasswordPage from './pages/authPages/ForgotPasswordPage';
@@ -30,6 +31,7 @@ import ContactPage from './pages/static/ContactPage';
 import PrivacyPolicyPage from './pages/static/PrivacyPolicyPage';
 import TermsPage from './pages/static/TermsPage';
 import Disclaimer from './pages/static/Disclaimer';
+import ApproachPage from './pages/static/ApproachPage';
 import FAQ from './pages/static/FAQ';
 
 
@@ -75,8 +77,8 @@ function App() {
         <main className="flex-grow">
           <Routes>
             <Route path="/test-landing" element={<LandingPage />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RedirectIfAuth><Register /></RedirectIfAuth>} />
+            <Route path="/login" element={<RedirectIfAuth><LoginPage /></RedirectIfAuth>} />
             <Route path="/" element={<Home />} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/password-reset-sent" element={<PasswordResetSent />} />
@@ -89,6 +91,7 @@ function App() {
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/disclaimer" element={<Disclaimer />} />
             <Route path="/faq" element={<FAQ />} />
+            <Route path="/approach" element={<ApproachPage />} />
 
             {/* Protected Routes */}
             <Route
