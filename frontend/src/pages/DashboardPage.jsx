@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { fetchHabits, fetchHabitSummary } from "../reducers/habitReducer";
 
 import WelcomeBanner from "../components/dashboard/WelcomeBanner";
+import WeeklyHabitTracker from "../components/dashboard/WeeklyHabitTracker";
 import StatsGrid from "../components/dashboard/StatsGrid";
 import SummaryChart from "../components/dashboard/SummaryChart";
 import ProgressRing from "../components/dashboard/ProgressRing";
@@ -27,6 +28,7 @@ const Dashboard = () => {
             <ProgressRing />
           </div>
           <HabitList />
+          <WeeklyHabitTracker />
         </div>
         <div className="space-y-6">
           <div className="hidden lg:block">
