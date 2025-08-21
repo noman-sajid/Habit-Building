@@ -1,3 +1,6 @@
+
+
+
 // import React from 'react';
 // import ReactDOM from 'react-dom/client';
 // import './index.css';
@@ -6,6 +9,7 @@
 // import { ThemeProvider } from './context/ThemeContext';
 // import { AlertProvider } from './context/AlertContext'; 
 // import { Provider } from 'react-redux';
+// import { GoogleOAuthProvider } from '@react-oauth/google';
 // import store from './store';
 
 // // 🌓 Apply saved theme before React renders
@@ -33,7 +37,9 @@
 //     <Provider store={store}>
 //       <AlertProvider>
 //         <ThemeProvider>
-//           <App />
+//           <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+//             <App />
+//           </GoogleOAuthProvider>
 //         </ThemeProvider>
 //       </AlertProvider>
 //     </Provider>
@@ -41,6 +47,7 @@
 // );
 
 // reportWebVitals();
+
 // console.log('NODE_ENV:', process.env.NODE_ENV);
 
 // // ✅ Register custom service worker
@@ -55,6 +62,9 @@
 
 
 
+
+
+// src/index.js
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
@@ -102,9 +112,7 @@ root.render(
 
 reportWebVitals();
 
-console.log('NODE_ENV:', process.env.NODE_ENV);
-
-// ✅ Register custom service worker
+// ✅ Register custom service worker in production
 if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker

@@ -4,7 +4,7 @@ import { load } from './reducers/authReducer';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
 import LandingPage from './pages/LandingPage';
-import RegisterPage from './pages/authPages/RegisterPage';
+
 import LoginPage from './pages/authPages/LoginPage';
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
@@ -33,6 +33,7 @@ import TermsPage from './pages/static/TermsPage';
 import Disclaimer from './pages/static/Disclaimer';
 import ApproachPage from './pages/static/ApproachPage';
 import FAQ from './pages/static/FAQ';
+import './App.css';
 
 
 function App() {
