@@ -35,8 +35,9 @@ if (process.env.NODE_ENV !== "production") {
 const corsConfig = {
   origin: process.env.FRONTEND_URL,
   credentials: true,
-  method: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
 };
+
 
 console.log("Configuring CORS...");
 app.options("", cors(corsConfig));
