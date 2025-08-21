@@ -33,10 +33,11 @@ if (process.env.NODE_ENV !== "production") {
 
 // CORS Configuration
 const corsConfig = {
-  origin: process.env.FRONTEND_URL || "https://habisium.vercel.app",
+  origin: process.env.FRONTEND_URL,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
 };
+
 
 console.log("Configuring CORS...");
 app.options("", cors(corsConfig));
