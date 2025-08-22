@@ -137,6 +137,15 @@ const Navbar = () => {
             className="absolute top-16 left-0 w-full bg-white dark:bg-stone-900 shadow-lg md:hidden z-40"
           >
             <div className="flex flex-col space-y-4 p-4">
+
+               <Link
+                to="/profile"
+                className="text-stone-700 dark:text-stone-300 hover:text-amber-600"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Profile
+              </Link>
+
               <Link
                 to="/about"
                 className="text-stone-700 dark:text-stone-300 hover:text-amber-600"
@@ -151,13 +160,7 @@ const Navbar = () => {
               >
                 Contact
               </Link>
-              <Link
-                to="/faq"
-                className="text-stone-700 dark:text-stone-300 hover:text-amber-600"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                FAQ
-              </Link>
+             
               {!isAuthenticated ? (
                 <>
                   <Link
