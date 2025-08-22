@@ -41,6 +41,7 @@ const memberSince = user?.createdAt
   ? new Date(user.createdAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
   : "Unknown";
 
+
   return (
     <PageLayout>
       <motion.div
