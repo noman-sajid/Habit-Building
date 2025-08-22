@@ -80,7 +80,7 @@ function App() {
             <Route path="/test-landing" element={<LandingPage />} />
             <Route path="/register" element={<RedirectIfAuth><Register /></RedirectIfAuth>} />
             <Route path="/login" element={<RedirectIfAuth><LoginPage /></RedirectIfAuth>} />
-            <Route path="/" element={<Home />} />
+            <Route path="/" element={<RedirectIfAuth><Home /></RedirectIfAuth>} />
             <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/password-reset-sent" element={<PasswordResetSent />} />
             <Route path="/reset/:token" element={<ResetPasswordPage />} />

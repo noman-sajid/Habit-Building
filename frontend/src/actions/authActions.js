@@ -10,13 +10,13 @@ import api from '../services/axiosInstance';
 // };
 
 export const registerUser = async (userData) => {
-  console.log("📤 Sending registerUser data:", userData); // log before sending
+  
 
   const response = await api.post('/users/register', userData, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 
-  console.log("📥 Received response from backend:", response.data); // log after receiving
+
   return response.data.user;
 };
 
@@ -48,13 +48,13 @@ export const logoutUser = async () => {
 
 export const loadUser = async () => {
   try {
-    console.log('[loadUser] Sending GET request to /profile...');
+ 
     const response = await api.get('/users/profile');
-    console.log('[loadUser] Response:', response.data);
+  
     return response.data.user;
   } catch (err) {
     if (err.response?.status === 401) {
-      console.log('[loadUser] Not logged in (401), skipping.');
+ 
       // Throwing a non-error (to skip error propagation in redux)
       throw new Error('NotLoggedIn');
     }
@@ -75,7 +75,7 @@ export const resetPassword = async ({ token, passwords }) => {
     return response.data;
   } catch (error) {
     const message = error.response?.data?.message || 'Reset failed';
-    console.error('[resetPassword ACTION] Error:', message);
+   
     throw new Error(message); // ensures reducer gets action.error.message
   }
 };
