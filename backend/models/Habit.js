@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const User = require('./User.js'); // ⬅️ make sure the path is correct
 
 const habitSchema = new mongoose.Schema(
   {
@@ -16,7 +17,6 @@ const habitSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
-    // ✅ NEW: Time range for notifications/reminders
     timeRange: {
       start: {
         type: String, // e.g., "07:00"
@@ -73,5 +73,17 @@ const habitSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// ✅ Hook: after saving a habit, push its ID into the user's habits array
+habitSchema.post("save", async function (doc, next) {
+  try {
+    await User.findByIdAndUpdate(doc.user, {
+      $addToSet: { habits: doc._id }, // addToSet avoids duplicates
+    });
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = mongoose.model('Habit', habitSchema);
