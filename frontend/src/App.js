@@ -34,12 +34,13 @@ import Disclaimer from './pages/static/Disclaimer';
 import ApproachPage from './pages/static/ApproachPage';
 import FAQ from './pages/static/FAQ';
 import './App.css';
+import InstallPrompt from "./components/InstallPrompt";
 
 
 function App() {
   const dispatch = useDispatch();
   const { initialized } = useSelector((state) => state.auth);
-
+  
   useEffect(() => {
     listenNetworkStatus(dispatch);
     const checkAuthThenLoad = async () => {
@@ -72,6 +73,7 @@ function App() {
       {/* ✅ Flex layout to push footer down */}
       <div className="flex flex-col min-h-screen transition-colors duration-300">
         <OfflineBanner />
+          <InstallPrompt />
         <Navbar />
 
         {/* ✅ Main grows to push footer */}
