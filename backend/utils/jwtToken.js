@@ -3,11 +3,12 @@ const sendToken = (user, statusCode, res) => {
     expiresIn: '7d'
   });
 
+  const isProd = process.env.NODE_ENV === 'production';
   const options = {
     expires: new Date(Date.now() + Number(process.env.COOKIE_EXPIRE) * 24 * 60 * 60 * 1000),
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-     sameSite: 'None', 
+     sameSite: isProd ? 'None' : 'Lax',
   };
 
   res.status(statusCode).cookie('token', token, options).json({
