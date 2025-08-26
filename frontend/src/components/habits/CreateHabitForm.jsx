@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import StepTitle from './steps/StepTitle';
 import StepDescription from './steps/StepDescription';
 import StepFrequency from './steps/StepFrequency';
-import StepGoal from './steps/StepGoal'; // ✅ NEW
+import StepGoal from './steps/StepGoal';
 import StepReview from './steps/StepReview';
 import { useDispatch, useSelector } from 'react-redux';
 import { addHabit, fetchHabits } from '../../reducers/habitReducer';
@@ -35,10 +35,10 @@ const CreateHabitForm = () => {
     description: '',
     frequency: 'daily',
     customDays: [],
-    duration: null,
-    goal: { type: '', value: '' },
-    startTime: '', // ✅ NEW
-    endTime: ''    // ✅ NEW
+    duration: null,                 // can stay if you plan to use it later
+    goal: { type: '', value: '' },  // UI shape
+    startTime: '',                  // <- flat in state
+    endTime: ''                     // <- flat in state
   });
 
   const [errors, setErrors] = useState({});
@@ -67,7 +67,22 @@ const CreateHabitForm = () => {
 
   const handleSubmit = async () => {
     try {
-      await dispatch(addHabit(formData)).unwrap();
+      // 🔑 Map UI state -> backend shape
+      const payload = {
+        title: formData.title?.trim(),
+        description: formData.description?.trim() || '',
+        frequency: formData.frequency,
+        emoji: formData.emoji || '🌱',
+        customDays: formData.frequency === 'custom' ? formData.customDays : [],
+        timeRange: {
+          start: formData.startTime,   // "HH:MM"
+          end: formData.endTime        // "HH:MM"
+        },
+        // Backend expects a Number for `goal`
+        goal: formData.goal?.value ? Number(formData.goal.value) : null
+      };
+
+      await dispatch(addHabit(payload)).unwrap();
       await dispatch(fetchHabits()).unwrap();
       showAlert('Habit created successfully!', 'success');
       navigate('/dashboard');
@@ -133,12 +148,11 @@ const CreateHabitForm = () => {
             error={errors}
             customDays={formData.customDays}
             onCustomDaysChange={(days) => handleChange('customDays', days)}
-            duration={formData.duration}
-            onDurationChange={(duration) => handleChange('duration', duration)}
-            startTime={formData.startTime} // ✅ NEW
-            onStartTimeChange={(time) => handleChange('startTime', time)} // ✅ NEW
-            endTime={formData.endTime} // ✅ NEW
-            onEndTimeChange={(time) => handleChange('endTime', time)} // ✅ NEW
+            // ✅ keep ONLY the props your original StepFrequency supports
+            startTime={formData.startTime}
+            onStartTimeChange={(time) => handleChange('startTime', time)}
+            endTime={formData.endTime}
+            onEndTimeChange={(time) => handleChange('endTime', time)}
           />
         );
       case 4:

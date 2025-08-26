@@ -19,6 +19,7 @@ const HabitCard = ({ habit }) => {
   });
 
   const progressPercent = Math.min((habit.progress / habit.goal) * 100, 100);
+  console.log(habit.timeRange)
 
   const handleComplete = async () => {
     if (!isCompletedToday) {
@@ -57,6 +58,7 @@ const HabitCard = ({ habit }) => {
           {habit.title}
         </strong>
         <p className="text-sm text-stone-500 dark:text-stone-400">{habit.frequency}</p>
+        
       </div>
 
       {/* Streak + Goal Progress */}
