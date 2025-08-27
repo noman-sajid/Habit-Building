@@ -165,6 +165,12 @@
 
 
 
+
+
+
+
+
+
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
 import HabitCard from "./HabitCard";
@@ -199,10 +205,14 @@ const HabitList = () => {
     );
   }
 
-  // ✅ Check if habit is completed today
+  // ✅ Today's date (ignore hours/minutes)
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const todayDay = days[new Date().getDay()];
+
+  // ✅ Check if habit is completed today
   const isCompletedToday = (habit) =>
     habit.completedDates?.some((date) => {
       const d = new Date(date);
@@ -210,10 +220,12 @@ const HabitList = () => {
       return d.getTime() === today.getTime();
     });
 
-  // ✅ Group habits by frequency
+  // ✅ Group habits by frequency (filter custom to today)
   const dailyHabits = habits.filter((h) => h.frequency === "daily");
   const weeklyHabits = habits.filter((h) => h.frequency === "weekly");
-  const customHabits = habits.filter((h) => h.frequency === "custom");
+  const customHabits = habits.filter(
+    (h) => h.frequency === "custom" && h.customDays?.includes(todayDay)
+  );
 
   // ✅ Split into pending and completed
   const splitHabits = (habitList) => {
@@ -282,7 +294,8 @@ const HabitList = () => {
     );
   };
 
-  const allDone = allCompleted.length === habits.length;
+  const allDone = allCompleted.length ===
+    (dailyHabits.length + weeklyHabits.length + customHabits.length);
 
   return (
     <div className="space-y-8">

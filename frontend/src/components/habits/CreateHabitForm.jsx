@@ -36,7 +36,7 @@ const CreateHabitForm = () => {
     frequency: 'daily',
     customDays: [],
     duration: null,                 // can stay if you plan to use it later
-    goal: { type: '', value: '' },  // UI shape
+     goal: null,    // UI shape
     startTime: '',                  // <- flat in state
     endTime: ''                     // <- flat in state
   });
@@ -79,7 +79,7 @@ const CreateHabitForm = () => {
           end: formData.endTime        // "HH:MM"
         },
         // Backend expects a Number for `goal`
-        goal: formData.goal?.value ? Number(formData.goal.value) : null
+         goal: formData.goal || null, 
       };
 
       await dispatch(addHabit(payload)).unwrap();
