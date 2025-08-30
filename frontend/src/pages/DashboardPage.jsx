@@ -92,7 +92,6 @@
 
 
 
-
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchHabits, fetchHabitSummary } from "../reducers/habitReducer";
@@ -110,26 +109,49 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const habits = useSelector((state) => state.habits.items || []);
 
-  // Fetch data
+  // ✅ Fetch dashboard data
   useEffect(() => {
     dispatch(fetchHabits());
     dispatch(fetchHabitSummary());
   }, [dispatch]);
 
-  // ✅ Hook automatically manages notifications
-  
-   scheduleNotification({
-  title: "⏰ Reminder",
-  body: "It’s 2:45 PM!",
-  hour: 14,
-  minute: 56,
-},[]);
+  // ✅ Notifications setup (recall from previous version)
+  useEffect(() => {
+    const notifications = [
+      {
+        title: "🌅 Morning Kickstart",
+        body: "Start your day strong! Review your habits now.",
+        hour: 8,
+        minute: 0,
+      },
+      {
+        title: "🌞 Midday Reminder",
+        body: "Stay on track! Check off some habits.",
+        hour: 12,
+        minute: 30,
+      },
+      {
+        title: "🌆 Evening Check-in",
+        body: "Wrap up your habits for today!",
+        hour: 20,
+        minute: 0,
+      },
+      {
+        title: "🌙 Night Reflection",
+        body: "Review your day and plan for tomorrow.",
+        hour: 22,
+        minute: 0,
+      },
+       
+    ];
+
+    notifications.forEach((notif) => scheduleNotification(notif));
+  }, []);
 
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-900 text-stone-800 dark:text-stone-200">
       <main className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6 py-6">
         <div className="lg:col-span-2 space-y-6">
-        
           <WelcomeBanner />
           <div className="lg:hidden">
             <ProgressRing />
