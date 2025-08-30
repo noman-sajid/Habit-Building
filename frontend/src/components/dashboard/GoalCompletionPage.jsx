@@ -1,5 +1,5 @@
 // src/components/dashboard/GoalCompletionPage.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -19,10 +19,10 @@ const GoalCompletionPage = () => {
     }
   }, [habit, navigate]);
 
-  // Confetti effect on page load
+  // Confetti celebration
   useEffect(() => {
     if (habit) {
-      const duration = 2 * 1000;
+      const duration = 2000;
       const end = Date.now() + duration;
       const colors = ["#f59e0b", "#fbbf24", "#fde68a"];
 
@@ -41,21 +41,39 @@ const GoalCompletionPage = () => {
           origin: { x: 1 },
           colors,
         });
-        if (Date.now() < end) {
-          requestAnimationFrame(frame);
-        }
+        if (Date.now() < end) requestAnimationFrame(frame);
       })();
     }
   }, [habit]);
 
-  const suggestedGoals = [3, 5, 7]; // days
+  // 🔥 Dynamic Goal Progression
+  const getNextGoals = (current) => {
+    if (current < 3) return [3, 5, 7];
+    if (current < 7) return [5, 7, 10];
+    if (current < 10) return [7, 10, 14];
+    if (current < 14) return [10, 14, 21];
+    if (current < 21) return [14, 21, 28];
+    if (current < 28) return [21, 28, 35];
+    if (current < 40) return [28, 35, 40];
+    if (current < 50) return [40, 50, 60];
+    if (current < 75) return [50, 60, 75];
+    if (current < 100) return [75, 100, 125];
+    if (current < 125) return [100, 125, 150];
+    if (current < 150) return [125, 150, 175];
+    if (current < 175) return [150, 175, 200];
+    return [current + 25, current + 50, current + 100];
+  };
+
+  const suggestedGoals = useMemo(() => {
+    return habit?.goal ? getNextGoals(habit.goal) : [3, 5, 7];
+  }, [habit]);
 
   const handleContinue = () => {
     if (habit && selectedGoal) {
       dispatch(
         editHabit({
           id: habit._id,
-          habitData: { goal: selectedGoal },
+          habitData: { goal: selectedGoal, progress: 0, goalAchieved: false },
         })
       ).then(() => {
         dispatch(setGoalCompletionHabit(null));
