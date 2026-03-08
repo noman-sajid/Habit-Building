@@ -55,16 +55,19 @@ The Habit Building App allows users to register, log in, and manage their habits
 ### Installation
 
 1.  **Clone the repository:**
+
     ```bash
     git clone <repository-url>
     cd habit-building-app
     ```
 
 2.  **Backend Setup:**
+
     ```bash
     cd backend
     npm install
     ```
+
     - Create a `.env` file in the `backend` directory and add the following environment variables:
       ```
       PORT=...
@@ -87,7 +90,12 @@ The Habit Building App allows users to register, log in, and manage their habits
       ```
 
 3.  **Frontend Setup:**
-    - (Instructions to be added once the frontend is developed)
+
+- **React:** A JavaScript library for building user interfaces.
+- **React Router:** For declarative routing in a React application.
+- **Redux:** For predictable state management.
+- **Axios:** A promise-based HTTP client for making API requests.
+- **Tailwind CSS:** A utility-first CSS framework for rapid UI development.
 
 ## API Endpoints
 
