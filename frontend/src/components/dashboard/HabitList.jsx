@@ -35,14 +35,14 @@ const HabitList = () => {
     );
   }
 
-  // ✅ Today's date (ignore hours/minutes)
+  // Today's date (ignore hours/minutes)
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const todayDay = days[new Date().getDay()];
 
-  // ✅ Check if habit is completed today
+  // Check if habit is completed today
   const isCompletedToday = (habit) =>
     habit.completedDates?.some((date) => {
       const d = new Date(date);
@@ -50,14 +50,14 @@ const HabitList = () => {
       return d.getTime() === today.getTime();
     });
 
-  // ✅ Group habits by frequency (filter custom to today)
+  //  Group habits by frequency (filter custom to today)
   const dailyHabits = habits.filter((h) => h.frequency === "daily");
   const weeklyHabits = habits.filter((h) => h.frequency === "weekly");
   const customHabits = habits.filter(
     (h) => h.frequency === "custom" && h.customDays?.includes(todayDay)
   );
 
-  // ✅ Split into pending and completed
+  // Split into pending and completed
   const splitHabits = (habitList) => {
     const pending = habitList.filter((h) => !isCompletedToday(h));
     const completed = habitList.filter((h) => isCompletedToday(h));
@@ -68,10 +68,10 @@ const HabitList = () => {
   const weekly = splitHabits(weeklyHabits);
   const custom = splitHabits(customHabits);
 
-  // ✅ Collect all completed habits together
+  //  Collect all completed habits together
   const allCompleted = [...daily.completed, ...weekly.completed, ...custom.completed];
 
-  // 🎉 Confetti trigger
+  //  Confetti trigger
   const triggerConfetti = () => {
     const duration = 2000;
     const animationEnd = Date.now() + duration;
@@ -106,7 +106,7 @@ const HabitList = () => {
     }, 250);
   };
 
-  // ✅ Render only pending habits per section
+  //  Render only pending habits per section
   const renderSection = (title, pendingList) => {
     if (!pendingList.length) return null;
 
@@ -129,7 +129,7 @@ const HabitList = () => {
 
   return (
     <div className="space-y-8">
-      {/* 🎉 Celebrate button on top & centered */}
+      {/* Celebrate button on top & centered */}
       {allDone && (
         <div className="flex justify-center mt-6">
           <button
@@ -145,7 +145,7 @@ const HabitList = () => {
       {renderSection("Weekly Habits", weekly.pending)}
       {renderSection("Custom Habits", custom.pending)}
 
-      {/* ✅ Completed habits collapsible */}
+      {/* Completed habits collapsible */}
       {allCompleted.length > 0 && (
         <motion.div
           className="mt-12"

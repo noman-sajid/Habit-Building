@@ -70,13 +70,13 @@ function App() {
 
   return (
     <Router>
-      {/* ✅ Flex layout to push footer down */}
+      {/*  Flex layout to push footer down */}
       <div className="flex flex-col min-h-screen transition-colors duration-300">
         <OfflineBanner />
           <InstallPrompt />
         <Navbar />
 
-        {/* ✅ Main grows to push footer */}
+        {/*  Main grows to push footer */}
         <main className="flex-grow">
           <Routes>
             <Route path="/test-landing" element={<LandingPage />} />

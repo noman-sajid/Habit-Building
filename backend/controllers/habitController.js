@@ -3,7 +3,7 @@ const User = require('../models/User');
 const catchAsyncErrors = require('../middleware/catchAsyncErrors');
 const ErrorHandler = require('../utils/errorhander');
 
-// ✅ Create a new habit
+//  Create a new habit
 const createHabit = catchAsyncErrors(async (req, res, next) => {
   const { title, description, frequency, emoji, timeRange, customDays, goal } = req.body;
 
@@ -13,8 +13,8 @@ const createHabit = catchAsyncErrors(async (req, res, next) => {
     description,
     frequency,
     emoji,
-    timeRange: timeRange || { start: null, end: null }, // ✅ NEW
-    customDays: customDays || [], // ✅ NEW
+    timeRange: timeRange || { start: null, end: null }, 
+    customDays: customDays || [], 
     goal: goal || null,
     progress: 0,
     goalAchieved: false,
@@ -36,7 +36,7 @@ const getUserHabits = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// ✅ Update habit details
+//  Update habit details
 const updateHabit = catchAsyncErrors(async (req, res, next) => {
   const habitId = req.params.id;
   const { title, description, frequency, timeRange, customDays, goal, emoji } = req.body;
@@ -46,7 +46,6 @@ const updateHabit = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Habit not found or unauthorized", 404));
   }
 
-  // ✅ Update fields if provided
   if (title) habit.title = title;
   if (description) habit.description = description;
   if (frequency) habit.frequency = frequency;
@@ -54,7 +53,7 @@ const updateHabit = catchAsyncErrors(async (req, res, next) => {
   if (timeRange && timeRange.start && timeRange.end) habit.timeRange = timeRange;
   if (emoji) habit.emoji = emoji;
 
-  // ✅ If goal is updated
+ 
   if (goal !== undefined) {
     habit.goal = goal;
 
@@ -76,7 +75,8 @@ const updateHabit = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// ✅ Mark habit as complete
+
+// Mark habit as complete
 const markHabitComplete = catchAsyncErrors(async (req, res, next) => {
   const habitId = req.params.id;
   const today = new Date();
@@ -88,7 +88,8 @@ const markHabitComplete = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Habit not found or unauthorized", 404));
   }
 
-  const alreadyCompletedToday = habit.completedDates.some(date => {
+  // 1. Check if already completed today
+  const alreadyCompletedToday = habit.completedDates.some((date) => {
     const d = new Date(date);
     d.setHours(0, 0, 0, 0);
     return d.getTime() === today.getTime();
@@ -98,20 +99,31 @@ const markHabitComplete = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Habit already marked as complete today", 400));
   }
 
-  // Add today's completion
-  habit.completedDates.push(today);
-
+  // 2. Determine if streak is continuous
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
   const last = habit.lastCompleted ? new Date(habit.lastCompleted) : null;
+  const isConsecutive = last && last.toDateString() === yesterday.toDateString();
 
-  // ✅ Update streak
-  habit.streak = last && last.toDateString() === yesterday.toDateString() ? habit.streak + 1 : 1;
+  // 3. Update Streak and Reset Progress if streak is broken
+  if (isConsecutive) {
+    habit.streak += 1;
+  } else {
+    // Streak broken: Reset both streak and goal progress
+    habit.streak = 1;
+    habit.progress = 0;
+    habit.goalAchieved = false;
+  }
+
+  // 4. Update metadata
+  habit.completedDates.push(today);
   habit.lastCompleted = today;
-  if (habit.streak > habit.maxStreak) habit.maxStreak = habit.streak;
+  if (habit.streak > habit.maxStreak) {
+    habit.maxStreak = habit.streak;
+  }
 
-  // ✅ Update goal progress if goal exists
-  if (habit.goal && !habit.goalAchieved) {
+  // 5. Update goal progress
+  if (habit.goal) {
     habit.progress += 1;
     if (habit.progress >= habit.goal) {
       habit.progress = habit.goal;
@@ -128,7 +140,7 @@ const markHabitComplete = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// ✅ Delete habit
+// Delete habit
 const deleteHabit = catchAsyncErrors(async (req, res, next) => {
   const habitId = req.params.id;
 
@@ -149,7 +161,7 @@ const deleteHabit = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// ✅ Get summary
+// Get summary
 const getHabitSummary = catchAsyncErrors(async (req, res, next) => {
   const habits = await Habit.find({ user: req.user._id });
 

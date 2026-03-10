@@ -28,7 +28,7 @@ const HabitCard = ({ habit }) => {
       if (completeHabit.fulfilled.match(resultAction)) {
         const updatedHabit = resultAction.payload.habit;
 
-        // ✅ Goal completion check
+        //  Goal completion check
         if (updatedHabit.goalAchieved) {
           dispatch(setGoalCompletionHabit(updatedHabit));
           navigate("/goal-complete");
