@@ -14,51 +14,59 @@ import SummaryChart from "../components/dashboard/SummaryChart";
 import ProgressRing from "../components/dashboard/ProgressRing";
 import HabitList from "../components/dashboard/HabitList";
 import QuickActionButton from "../components/dashboard/QuickActionButton";
-import { scheduleNotification } from "../hooks/useNotifications";
+import { scheduleReminder } from "../hooks/useNotifications";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
   const habits = useSelector((state) => state.habits.items || []);
 
-  // ✅ Fetch dashboard data
+  // Fetch dashboard data
   useEffect(() => {
     dispatch(fetchHabits());
     dispatch(fetchHabitSummary());
   }, [dispatch]);
 
-  // ✅ Notifications setup (recall from previous version)
-  useEffect(() => {
+  // Notifications setup (recall from previous version)
+
+useEffect(() => {
     const notifications = [
       {
-        title: "🌅 Morning Kickstart",
-        body: "Start your day strong! Review your habits now.",
-        hour: 8,
+        title: "🌅 Morning Commitment",
+        body: "Start your day with purpose. Remember the habits you've committed to!",
+        hour: 9,
         minute: 0,
       },
       {
-        title: "🌞 Midday Reminder",
-        body: "Stay on track! Check off some habits.",
-        hour: 12,
+        title: "🌞 Midday Check-in",
+        body: "Just a gentle reminder to stay consistent with your goals today.",
+        hour: 14,
         minute: 30,
       },
       {
-        title: "🌆 Evening Check-in",
-        body: "Wrap up your habits for today!",
+        title: "🌙 Evening Wrap-up",
+        body: "Take a moment for yourself. Have you checked your habits today?",
         hour: 20,
         minute: 0,
       },
-      {
-        title: "🌙 Night Reflection",
-        body: "Review your day and plan for tomorrow.",
-        hour: 22,
-        minute: 0,
-      },
-       
     ];
 
-    notifications.forEach((notif) => scheduleNotification(notif));
+    if ("Notification" in window) {
+      if (Notification.permission === "granted") {
+        // Fixed: Destructuring the object to match (hour, minute, title, body)
+        notifications.forEach(({ hour, minute, title, body }) => 
+          scheduleReminder(hour, minute, title, body)
+        );
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then((permission) => {
+          if (permission === "granted") {
+            notifications.forEach(({ hour, minute, title, body }) => 
+              scheduleReminder(hour, minute, title, body)
+            );
+          }
+        });
+      }
+    }
   }, []);
-
   return (
     <div className="min-h-screen bg-stone-50 dark:bg-stone-900 text-stone-800 dark:text-stone-200">
       <main className="grid grid-cols-1 lg:grid-cols-3 gap-6 px-6 py-6">
