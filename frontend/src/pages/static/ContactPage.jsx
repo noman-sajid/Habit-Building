@@ -31,13 +31,25 @@ const ContactPage = () => {
 
       {/* Socials */}
       <div className="flex gap-6">
-        <a href="#" className="text-stone-600 dark:text-stone-300 hover:text-amber-600 transition">
+        <a 
+          href="#!" 
+          aria-label="Twitter"
+          className="text-stone-600 dark:text-stone-300 hover:text-amber-600 transition"
+        >
           <Twitter className="w-6 h-6" />
         </a>
-        <a href="#" className="text-stone-600 dark:text-stone-300 hover:text-amber-600 transition">
+        <a 
+          href="#!" 
+          aria-label="Facebook"
+          className="text-stone-600 dark:text-stone-300 hover:text-amber-600 transition"
+        >
           <Facebook className="w-6 h-6" />
         </a>
-        <a href="#" className="text-stone-600 dark:text-stone-300 hover:text-amber-600 transition">
+        <a 
+          href="#!" 
+          aria-label="Instagram"
+          className="text-stone-600 dark:text-stone-300 hover:text-amber-600 transition"
+        >
           <Instagram className="w-6 h-6" />
         </a>
       </div>

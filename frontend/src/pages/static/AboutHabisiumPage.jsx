@@ -1,11 +1,9 @@
 // src/pages/static/AboutHabisiumPage.jsx
 import React from "react";
 import { Link } from "react-router-dom";
-import Card from "../../components/common/Card";
 import PageLayout from "../../components/layout/PageLayout";
 import thinking from "../../assets/aboutImage.png";
 import { motion } from "framer-motion";
-import { BookOpen, Compass, HeartHandshake } from "lucide-react";
 
 const AboutHabisiumPage = () => {
   return (
@@ -64,9 +62,6 @@ const AboutHabisiumPage = () => {
             </p>
           </motion.div>
         </div>
-
-  
-     
 
         {/* Closing Section */}
         <motion.div
