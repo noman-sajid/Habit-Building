@@ -36,7 +36,7 @@ const handleSubmit = async (e) => {
     console.error('[ForgotPasswordPage] Catch error:', err);
     showAlert(err.message || 'Something went wrong.', 'error');
   } finally {
-    setLoading(false); // ✅ Always re-enable the button
+    setLoading(false); // Always re-enable the button
   }
 };
 

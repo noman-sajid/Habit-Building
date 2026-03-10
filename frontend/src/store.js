@@ -1,13 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from './reducers/authReducer';
 import habitReducer from './reducers/habitReducer';
-import offlineReducer from './reducers/offlineReducer'; // ✅ Import new reducer
+import offlineReducer from './reducers/offlineReducer'; 
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
     habits: habitReducer,
-    offline: offlineReducer, // ✅ Add offline state
+    offline: offlineReducer, 
   },
   devTools: process.env.NODE_ENV !== 'production',
 });

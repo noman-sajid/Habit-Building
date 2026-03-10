@@ -26,7 +26,7 @@ const createHabit = catchAsyncErrors(async (req, res, next) => {
   });
 });
 
-// ✅ Get all habits of the logged-in user
+// Get all habits of the logged-in user
 const getUserHabits = catchAsyncErrors(async (req, res, next) => {
   const habits = await Habit.find({ user: req.user._id }).sort({ createdAt: -1 });
 

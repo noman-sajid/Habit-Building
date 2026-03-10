@@ -6,14 +6,14 @@ const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 const StepFrequency = ({
   value = '',
-  onChange = () => {}, // ✅ Default fallback
+  onChange = () => {}, 
   error = {},
   customDays = [],
-  onCustomDaysChange = () => {}, // ✅ Default fallback
+  onCustomDaysChange = () => {}, 
   startTime = '',
-  onStartTimeChange = () => {}, // ✅ Default fallback
+  onStartTimeChange = () => {}, 
   endTime = '',
-  onEndTimeChange = () => {} // ✅ Default fallback
+  onEndTimeChange = () => {} 
 }) => {
   const currentValue = typeof value === 'string' ? value.toLowerCase() : '';
 

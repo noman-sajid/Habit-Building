@@ -1,13 +1,5 @@
 import api from '../services/axiosInstance';
 
-// Register
-// export const registerUser = async (userData) => {
-//   const response = await api.post('/users/register', userData, {
-//     headers: { 'Content-Type': 'multipart/form-data' },
-//   });
-
-//   return response.data.user;
-// };
 
 export const registerUser = async (userData) => {
   
@@ -55,7 +47,7 @@ export const loadUser = async () => {
   } catch (err) {
     if (err.response?.status === 401) {
  
-      // Throwing a non-error (to skip error propagation in redux)
+      // Throwing a non-error 
       throw new Error('NotLoggedIn');
     }
     throw err;
@@ -76,7 +68,7 @@ export const resetPassword = async ({ token, passwords }) => {
   } catch (error) {
     const message = error.response?.data?.message || 'Reset failed';
    
-    throw new Error(message); // ensures reducer gets action.error.message
+    throw new Error(message);
   }
 };
 

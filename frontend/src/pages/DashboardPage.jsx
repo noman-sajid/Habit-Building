@@ -52,7 +52,7 @@ useEffect(() => {
 
     if ("Notification" in window) {
       if (Notification.permission === "granted") {
-        // Fixed: Destructuring the object to match (hour, minute, title, body)
+       
         notifications.forEach(({ hour, minute, title, body }) => 
           scheduleReminder(hour, minute, title, body)
         );

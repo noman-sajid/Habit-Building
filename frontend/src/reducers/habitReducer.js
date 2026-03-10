@@ -9,7 +9,7 @@ import {
   getHabitSummary,
 } from '../actions/habitActions';
 
-// ✅ Thunks
+// Thunks
 export const fetchHabits = createAsyncThunk('habits/fetchHabits', getHabits);
 export const addHabit = createAsyncThunk('habits/addHabit', createHabit);
 export const fetchHabitDetails = createAsyncThunk('habits/fetchHabitDetails', getHabitDetails);
@@ -30,7 +30,7 @@ const initialState = {
   isCompleted: false,
   successMessage: null,
 
-  // ✅ For full-page goal completion flow
+  // For full-page goal completion flow
   goalCompletion: {
     habit: null, // stores the habit that achieved the goal
   },
@@ -59,7 +59,7 @@ const habitSlice = createSlice({
       state.successMessage = null;
     },
 
-    // ✅ Manually set or reset goal completion habit
+    // Manually set or reset goal completion habit
     setGoalCompletionHabit: (state, action) => {
       state.goalCompletion.habit = action.payload; // habit object or null
     },

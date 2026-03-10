@@ -11,7 +11,7 @@ import { useAlert } from '../../context/AlertContext';
 import Loader from '../common/Loader';
 import { AnimatePresence, motion } from 'framer-motion';
 
-// ✅ Custom hook for dynamic height
+// Custom hook for dynamic height
 function useResizeHeight(ref) {
   const [height, setHeight] = useState('auto');
 
@@ -35,10 +35,10 @@ const CreateHabitForm = () => {
     description: '',
     frequency: 'daily',
     customDays: [],
-    duration: null,                 // can stay if you plan to use it later
-     goal: null,    // UI shape
-    startTime: '',                  // <- flat in state
-    endTime: ''                     // <- flat in state
+    duration: null,               
+     goal: null,    
+    startTime: '',                 
+    endTime: ''                    
   });
 
   const [errors, setErrors] = useState({});
@@ -67,7 +67,7 @@ const CreateHabitForm = () => {
 
   const handleSubmit = async () => {
     try {
-      // 🔑 Map UI state -> backend shape
+      //  Map UI state -> backend shape
       const payload = {
         title: formData.title?.trim(),
         description: formData.description?.trim() || '',
@@ -148,7 +148,6 @@ const CreateHabitForm = () => {
             error={errors}
             customDays={formData.customDays}
             onCustomDaysChange={(days) => handleChange('customDays', days)}
-            // ✅ keep ONLY the props your original StepFrequency supports
             startTime={formData.startTime}
             onStartTimeChange={(time) => handleChange('startTime', time)}
             endTime={formData.endTime}

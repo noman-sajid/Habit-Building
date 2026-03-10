@@ -66,7 +66,7 @@ const Home = () => {
                         variant="primary"
                         size="lg"
                         className="text-lg font-semibold"
-                        onClick={() => navigate('/register')} // Updated to use navigate
+                        onClick={() => navigate('/register')} 
                     >
                         Get Started
                     </Button>
@@ -235,7 +235,7 @@ const Home = () => {
                         variant="primary" 
                         size="lg"
                         className="text-lg font-semibold bg-white text-primary hover:bg-gray-100 dark:bg-white dark:text-accent border-none shadow-lg"
-                        onClick={() => navigate('/register')} // Updated to use navigate
+                        onClick={() => navigate('/register')} 
                     >
                         Join Habitium
                     </Button>

@@ -43,10 +43,10 @@ self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
     self.registration.showNotification(event.data.title, {
       body: event.data.body,
-      icon: '/icons/icon-192x192.png', // adjust to your path
-      badge: '/icons/icon-72x72.png', // optional small badge
-      vibrate: [200, 100, 200], // optional vibration
-      data: { url: '/' }, // can be used later in notificationclick
+      icon: '/icons/icon-192x192.png',
+      badge: '/icons/icon-72x72.png', 
+      vibrate: [200, 100, 200],
+      data: { url: '/' }, 
     });
   }
 });
@@ -56,13 +56,13 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-      // Focus on an open tab if available
+     
       for (const client of clientList) {
         if (client.url.includes('/') && 'focus' in client) {
           return client.focus();
         }
       }
-      // Otherwise, open a new one
+   
       if (clients.openWindow) {
         return clients.openWindow('/');
       }

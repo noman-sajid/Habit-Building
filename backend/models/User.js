@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Password is required'],
       minlength: 6,
-      select: false, // 🔒 Auto-hidden from queries
+      select: false,
     },
     avatar: {
       public_id: {
@@ -44,7 +44,7 @@ const userSchema = new mongoose.Schema(
         ref: 'Habit',
       },
     ],
-    // 🔐 Tokens & security-related
+    //  Tokens & security-related
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     emailChangeToken: String,
@@ -54,27 +54,27 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// 🔐 Pre-save password hashing
+//  Pre-save password hashing
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next(); // ✅ Added return
+  if (!this.isModified("password")) return next();
 
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
 
-// 🔑 JWT generation
+//  JWT generation
 userSchema.methods.getJWTToken = function () {
   return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
     expiresIn: process.env.JWT_EXPIRE,
   });
 };
 
-// 🔑 Compare password
+// Compare password
 userSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-// 🔐 Reset password token generator
+//  Reset password token generator
 userSchema.methods.getResetPasswordToken = function () {
   const { rawToken, hashedToken } = this.constructor.generateHashedToken();
   this.resetPasswordToken = hashedToken;
@@ -82,7 +82,7 @@ userSchema.methods.getResetPasswordToken = function () {
   return rawToken;
 };
 
-// 🧠 Static reusable token generator (used in email flow too)
+// Static reusable token generator (used in email flow too)
 userSchema.statics.generateHashedToken = function () {
   const rawToken = crypto.randomBytes(32).toString('hex');
   const hashedToken = crypto.createHash('sha256').update(rawToken).digest('hex');

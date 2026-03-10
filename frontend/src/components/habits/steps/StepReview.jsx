@@ -5,7 +5,7 @@ import AssistBlock from '../../common/AssistBlock';
 const StepReview = ({ formData, onBack, onSubmit, loading }) => {
   const { title, emoji, description, frequency, customDays, duration, goal, startTime, endTime } = formData;
 
-  // ✅ Format times (optional: remove seconds)
+  // Format times 
   const formatTime = (time) => {
     if (!time) return '';
     const [hour, minute] = time.split(':');

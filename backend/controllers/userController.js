@@ -9,36 +9,6 @@ const { OAuth2Client } = require('google-auth-library');
 const jwt = require('jsonwebtoken');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-// // POST /api/users/register
-// const registerUser = catchAsyncErrors(async (req, res, next) => {
-//    console.log(req.body);
-//   const { name, email, password } = req.body;
-
-//   const existingUser = await User.findOne({ email });
-//   if (existingUser) {
-//     return next(new ErrorHander("User already exists", 400));
-//   }
-
-//   const result = await cloudinary.uploader.upload(req.file.path, {
-//     folder: 'avatars',
-//     width: 150,
-//     crop: 'scale'
-//   });
-
-//   const user = await User.create({
-//     name,
-//     email,
-//     password,
-//     avatar: {
-//       public_id: result.public_id,
-//       url: result.secure_url
-//     }
-//   });
-
-//   sendToken(user, 201, res);
-// });
-
-
 
 const registerUser = catchAsyncErrors(async (req, res, next) => {
 
@@ -62,7 +32,7 @@ const registerUser = catchAsyncErrors(async (req, res, next) => {
     crop: 'scale'
   });
 
-  console.log("✅ Cloudinary upload success:", result);
+  console.log(" Cloudinary upload success:", result);
 
   const user = await User.create({
     name,
@@ -165,18 +135,6 @@ const logout = catchAsyncErrors(async (req, res, next) => {
     message: "Logged Out",
   });
 });
-
-
-// GET /api/users/profile
-// const getProfile = catchAsyncErrors(async (req, res, next) => {
-//    console.log('[getProfile] Authenticated user ID:', req.user._id);
-//   const user = await User.findById(req.user._id).populate('habits');
-//     console.log('[getProfile] Returning user:', user?.email || 'Not found');
-//   res.status(200).json({
-//     success: true,
-//     user,
-//   });
-// });
 
 
 
@@ -285,44 +243,6 @@ const resetUrl = `${process.env.FRONTEND_URL}/reset/${resetToken}`;
 });
 
 
-// PUT /api/users/reset/:token
-// const resetPassword = catchAsyncErrors(async (req, res, next) => {
-//   // Hash the token to compare with DB
-//   const resetPasswordToken = crypto
-//     .createHash('sha256')
-//     .update(req.params.token)
-//     .digest('hex');
-
-//   const user = await User.findOne({
-//     resetPasswordToken,
-//     resetPasswordExpire: { $gt: Date.now() },
-//   });
-
-//   if (!user) {
-//     return next(new ErrorHander("Invalid or expired reset token", 400));
-//   }
-
-//   const { password, confirmPassword } = req.body;
-
-//   if (!password || !confirmPassword) {
-//     return next(new ErrorHander("Please provide both fields", 400));
-//   }
-
-//   if (password !== confirmPassword) {
-//     return next(new ErrorHander("Passwords do not match", 400));
-//   }
-
-//   // ✅ Just assign — Mongoose will hash it via pre-save middleware
-//   user.password = password;
-
-//   // Clear reset fields
-//   user.resetPasswordToken = undefined;
-//   user.resetPasswordExpire = undefined;
-
-//   await user.save();
-
-//   sendToken(user, 200, res);
-// });
 
 const resetPassword = catchAsyncErrors(async (req, res, next) => {
   console.log('[BACKEND] Raw token from params:', req.params.token);
@@ -367,38 +287,6 @@ const resetPassword = catchAsyncErrors(async (req, res, next) => {
 
 
 
-// PATCH /api/users/update-password
-// const updatePassword = catchAsyncErrors(async (req, res, next) => {
-//   const user = await User.findById(req.user._id).select("+password");
-
-//   const isPasswordMatched = await user.comparePassword(req.body.oldPassword);
-//   if (!isPasswordMatched) {
-//     return next(new ErrorHander("Old password is incorrect", 400));
-//   }
-
-//   user.password = req.body.newPassword;
-//   await user.save();
-
-//   // Send security email after password change
-//   const recoveryLink = `${req.protocol}://${req.get("host")}/recover-account?email=${user.email}`;
-//   const message = `\nYour password was recently changed.\n\nIf you made this change, no action is required.\n\nIf you did NOT authorize this change, click the link below to recover your account:\n🔒 ${recoveryLink}\n\nRegards,\nThe Habit App Team\n  `;
-
-//   try {
-//     await sendEmail({
-//       email: user.email,
-//       subject: "Your Password Was Changed",
-//       message,
-//     });
-//   } catch (err) {
-//     console.error("Password change alert failed:", err.message);
-//     // Still continue, as password update was successful
-//   }
-
-//   res.status(200).json({
-//     success: true,
-//     message: "Password updated successfully",
-//   });
-// });
 
 
 const updatePassword = catchAsyncErrors(async (req, res, next) => {
@@ -558,7 +446,7 @@ const confirmEmailChange = catchAsyncErrors(async (req, res, next) => {
 
   await user.save();
 
-  // 📩 Send confirmation email to new address
+  //  Send confirmation email to new address
   const message = `\n🎉 Your email address has been successfully changed!\n\n🔐 New Email: ${newEmail}\n\nIf you did NOT authorize this change, reset your password immediately by visiting the forgot-password route.\n\nRegards,  \nThe Habit App Team\n  `;
 
   try {

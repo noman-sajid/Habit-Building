@@ -74,11 +74,11 @@ const habitSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// ✅ Hook: after saving a habit, push its ID into the user's habits array
+// Hook: after saving a habit, push its ID into the user's habits array
 habitSchema.post("save", async function (doc, next) {
   try {
     await User.findByIdAndUpdate(doc.user, {
-      $addToSet: { habits: doc._id }, // addToSet avoids duplicates
+      $addToSet: { habits: doc._id },
     });
     next();
   } catch (err) {

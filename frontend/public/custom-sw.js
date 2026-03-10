@@ -1,7 +1,6 @@
 /* eslint-disable no-restricted-globals */
 
-// A minimal service worker to test registration.
-console.log('[ServiceWorker] Hello from the minimal service worker!');
+
 
 self.addEventListener('install', (event) => {
   console.log('[ServiceWorker] Install event fired.');

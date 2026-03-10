@@ -17,7 +17,7 @@ const HabitList = () => {
     return <p className="text-stone-500">Loading habits...</p>;
   }
 
-  // ✅ Empty state with CTA button
+  // Empty state with CTA button
   if (!habits || habits.length === 0) {
     return (
       <div className="text-center py-12 flex flex-col items-center">

@@ -22,7 +22,7 @@ const Alert = ({
     let fadeTimer, hideTimer;
 
     if (duration > 0) {
-      // Start fade-out a bit earlier than hiding
+   
       fadeTimer = setTimeout(() => {
         setFadeOut(true);
       }, duration - 400); // 400ms before end

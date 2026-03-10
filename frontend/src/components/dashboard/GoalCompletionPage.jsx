@@ -46,7 +46,7 @@ const GoalCompletionPage = () => {
     }
   }, [habit]);
 
-  // 🔥 Dynamic Goal Progression
+  //  Dynamic Goal Progression
   const getNextGoals = (current) => {
     if (current < 3) return [3, 5, 7];
     if (current < 7) return [5, 7, 10];
