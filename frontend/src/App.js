@@ -35,6 +35,7 @@ import ApproachPage from './pages/static/ApproachPage';
 import FAQ from './pages/static/FAQ';
 import './App.css';
 import InstallPrompt from "./components/InstallPrompt";
+import ScrollToTop from './components/common/ScrollToTop';
 
 
 function App() {
@@ -70,6 +71,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       {/*  Flex layout to push footer down */}
       <div className="flex flex-col min-h-screen transition-colors duration-300">
         <OfflineBanner />

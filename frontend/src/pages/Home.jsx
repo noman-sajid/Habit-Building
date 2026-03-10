@@ -1,4 +1,6 @@
+// src/pages/Home.jsx
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; 
 import Button from '../components/common/Button';
 import Card from '../components/common/Card';
 import mascot from '../assets/smiling_mascot.png';
@@ -40,23 +42,22 @@ const features = [
 ];
 
 const Home = () => {
+    const navigate = useNavigate(); 
+
     return (
         <main className="min-h-screen bg-stone-100 dark:bg-stone-900 text-stone-900 dark:text-stone-100 px-6 sm:px-8 lg:px-16 py-12">
             {/* Hero Section */}
             <section className="relative max-w-7xl mx-auto pt-10 pb-14 px-6 grid grid-cols-1 md:grid-cols-2 items-center gap-12">
                 {/* Text Content - Left */}
                 <div className="z-10 px-2 md:px-6">
-                    <h1 className="text-5xl md:text-6xl font-extrabold font-poppins mb-4 leading-normal
- text-stone-900 dark:text-white">
+                    <h1 className="text-5xl md:text-6xl font-extrabold font-poppins mb-4 leading-normal text-stone-900 dark:text-white">
                         Your habit journey <span className="text-primary dark:text-accent leading-normal">begins here</span>.
                     </h1>
 
-                    {/* Tagline */}
                     <p className="text-xl md:text-2xl font-semibold font-poppins text-primary dark:text-accent mb-4">
                         Habitium — the element of building habits
                     </p>
 
-                    {/* Subheading */}
                     <p className="text-lg md:text-xl font-inter mb-8 text-gray-700 dark:text-white">
                         Track your progress, build powerful streaks, and achieve your goals with ease.
                     </p>
@@ -65,7 +66,7 @@ const Home = () => {
                         variant="primary"
                         size="lg"
                         className="text-lg font-semibold"
-                        onClick={() => window.location.href = '/register'}
+                        onClick={() => navigate('/register')} // Updated to use navigate
                     >
                         Get Started
                     </Button>
@@ -80,7 +81,6 @@ const Home = () => {
                     />
                 </div>
             </section>
-
 
             {/* Features Section */}
             <section className="max-w-7xl mx-auto py-16 ">
@@ -103,155 +103,144 @@ const Home = () => {
             </section>
 
             {/* Why Habitium Section */}
-<section className="bg-stone-200 dark:bg-stone-800 py-24 px-6 -mx-6 sm:-mx-8 lg:-mx-16 text-center">
-  <div className="max-w-4xl mx-auto px-4">
-    <h2 className="text-4xl md:text-5xl font-bold font-poppins mb-6 leading-10 text-stone-800 dark:text-white">
-      Habitium isn’t here to push you — it’s here to walk with you.
-    </h2>
-    <p className="text-lg md:text-xl font-inter text-gray-700 dark:text-gray-300">
-      Real change doesn’t come from pressure. It comes from presence, clarity, and compassion. That’s what we build into every pixel.
-    </p>
-  </div>
-</section>
+            <section className="bg-stone-200 dark:bg-stone-800 py-24 px-6 -mx-6 sm:-mx-8 lg:-mx-16 text-center">
+                <div className="max-w-4xl mx-auto px-4">
+                    <h2 className="text-4xl md:text-5xl font-bold font-poppins mb-6 leading-10 text-stone-800 dark:text-white">
+                        Habitium isn’t here to push you — it’s here to walk with you.
+                    </h2>
+                    <p className="text-lg md:text-xl font-inter text-gray-700 dark:text-gray-300">
+                        Real change doesn’t come from pressure. It comes from presence, clarity, and compassion. That’s what we build into every pixel.
+                    </p>
+                </div>
+            </section>
 
-{/* Why it Wors -Psychology Based */}
-<section className="bg-white dark:bg-stone-900 py-16 px-4 -mx-6 sm:-mx-8 lg:-mx-16">
-  <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 items-center px-4 sm:px-8">
-    {/* Left: Mascot Image */}
-    <div className="flex justify-center md:justify-center md:w-1/2">
-      <img
-        src={thinking}
-        alt="Psychology Backed Mascot"
-        className="max-w-x w-full drop-shadow-xl"
-      />
-    </div>
+            {/* Why it works - Psychology Based */}
+            <section className="bg-white dark:bg-stone-900 py-16 px-4 -mx-6 sm:-mx-8 lg:-mx-16">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 items-center px-4 sm:px-8">
+                    <div className="flex justify-center md:w-1/2">
+                        <img
+                            src={thinking}
+                            alt="Psychology Backed Mascot"
+                            className="max-w-sm w-full drop-shadow-xl"
+                        />
+                    </div>
 
-    {/* Right: Text Content */}
-    <div className="text-left md:text-left md:w-1/2">
-      <h2 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-stone-900 dark:text-white">
-        Why it works — backed by psychology
-      </h2>
-      <p className="text-lg md:text-xl font-inter text-gray-700 dark:text-gray-300 mb-6">
-        Habitium isn’t based on hustle culture. It’s built on science — the psychology of behavior, motivation, and long-term change.
-      </p>
-      <ul className="space-y-3 text-left">
-        <li className="flex items-start gap-2">
-          <span className="text-primary dark:text-accent">✔</span>
-          <span>Triggers, cues, and habit loops designed intentionally.</span>
-        </li>
-        <li className="flex items-start gap-2">
-          <span className="text-primary dark:text-accent">✔</span>
-          <span>Gentle reminders, not guilt-driven notifications.</span>
-        </li>
-        <li className="flex items-start gap-2">
-          <span className="text-primary dark:text-accent">✔</span>
-          <span>Celebrate consistency, not perfection.</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-</section>
+                    <div className="text-left md:w-1/2">
+                        <h2 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-stone-900 dark:text-white">
+                            Why it works — backed by psychology
+                        </h2>
+                        <p className="text-lg md:text-xl font-inter text-gray-700 dark:text-gray-300 mb-6">
+                            Habitium isn’t based on hustle culture. It’s built on science — the psychology of behavior, motivation, and long-term change.
+                        </p>
+                        <ul className="space-y-3 text-left">
+                            <li className="flex items-start gap-2">
+                                <span className="text-primary dark:text-accent">✔</span>
+                                <span>Triggers, cues, and habit loops designed intentionally.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="text-primary dark:text-accent">✔</span>
+                                <span>Gentle reminders, not guilt-driven notifications.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="text-primary dark:text-accent">✔</span>
+                                <span>Celebrate consistency, not perfection.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
 
-{/* It’s a journey, not perfection */}
-<section className="bg-neutral dark:bg-stone-900 py-16 px-4 -mx-6 sm:-mx-8 lg:-mx-16">
-  <div className="max-w-7xl mx-auto flex flex-col md:flex-row-reverse gap-12 items-center px-4 sm:px-8">
-    
-    {/* Right: Mascot Image */}
-    <div className="flex justify-center md:justify-center md:w-1/2">
-      <img
-        src={chill1}
-        alt="Mascot on the journey"
-        className="max-w-x w-full drop-shadow-xl"
-      />
-    </div>
+            {/* It’s a journey, not perfection */}
+            <section className="bg-neutral dark:bg-stone-900 py-16 px-4 -mx-6 sm:-mx-8 lg:-mx-16">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row-reverse gap-12 items-center px-4 sm:px-8">
+                    <div className="flex justify-center md:w-1/2">
+                        <img
+                            src={chill1}
+                            alt="Mascot on the journey"
+                            className="max-w-sm w-full drop-shadow-xl"
+                        />
+                    </div>
 
-    {/* Left: Text Content */}
-    <div className="text-left md:text-left md:w-1/2">
-      <h2 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-primary dark:text-secondary">
-        It’s a journey — not perfection
-      </h2>
-      <p className="text-lg md:text-xl font-inter text-gray-700 dark:text-gray-300 mb-6">
-        Most apps expect you to be perfect. But change doesn’t work that way. Habitium expects you to be human.
-      </p>
-      <ul className="space-y-3">
-        <li className="flex items-start gap-2">
-          <span className="text-primary dark:text-accent">✔</span>
-          <span>Missed a day? No problem — we track progress, not guilt.</span>
-        </li>
-        <li className="flex items-start gap-2">
-          <span className="text-primary dark:text-accent">✔</span>
-          <span>Restarting isn’t failure. It’s part of the process.</span>
-        </li>
-        <li className="flex items-start gap-2">
-          <span className="text-primary dark:text-accent">✔</span>
-          <span>Habitium celebrates effort, not pressure.</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-</section>
+                    <div className="text-left md:w-1/2">
+                        <h2 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-primary dark:text-secondary">
+                            It’s a journey — not perfection
+                        </h2>
+                        <p className="text-lg md:text-xl font-inter text-gray-700 dark:text-gray-300 mb-6">
+                            Most apps expect you to be perfect. But change doesn’t work that way. Habitium expects you to be human.
+                        </p>
+                        <ul className="space-y-3">
+                            <li className="flex items-start gap-2">
+                                <span className="text-primary dark:text-accent">✔</span>
+                                <span>Missed a day? No problem — we track progress, not guilt.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="text-primary dark:text-accent">✔</span>
+                                <span>Restarting isn’t failure. It’s part of the process.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="text-primary dark:text-accent">✔</span>
+                                <span>Habitium celebrates effort, not pressure.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
 
-{/*It adapts with your ups and downs*/}
-<section className="bg-white dark:bg-stone-800 py-16 px-4 -mx-6 sm:-mx-8 lg:-mx-16">
-  <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 items-center px-4 sm:px-8">
-    
-    {/* Left: Mascot Image */}
-    <div className="flex justify-center md:justify-center md:w-1/2">
-      <img
-        src={chill2}
-        alt="Hibo adjusting to ups and downs"
-        className="max-w w-full drop-shadow-xl"
-      />
-    </div>
+            {/* It adapts with your ups and downs */}
+            <section className="bg-white dark:bg-stone-800 py-16 px-4 -mx-6 sm:-mx-8 lg:-mx-16">
+                <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-12 items-center px-4 sm:px-8">
+                    <div className="flex justify-center md:w-1/2">
+                        <img
+                            src={chill2}
+                            alt="Hibo adjusting to ups and downs"
+                            className="max-w-sm w-full drop-shadow-xl"
+                        />
+                    </div>
 
-    {/* Right: Text Content */}
-    <div className="text-left md:w-1/2">
-      <h2 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-stone-900 dark:text-white">
-        It adapts with your ups and downs
-      </h2>
-      <p className="text-lg md:text-xl font-inter text-gray-700 dark:text-gray-300 mb-6">
-        Life changes — and your habit system should change with it. Habitium is built to flex, pivot, and grow alongside you.
-      </p>
-      <ul className="space-y-3">
-        <li className="flex items-start gap-2">
-          <span className="text-primary dark:text-accent">✔</span>
-          <span>Adjust your pace and frequency at any time.</span>
-        </li>
-        <li className="flex items-start gap-2">
-          <span className="text-primary dark:text-accent">✔</span>
-          <span>Track breaks as part of your progress — not a failure.</span>
-        </li>
-        <li className="flex items-start gap-2">
-          <span className="text-primary dark:text-accent">✔</span>
-          <span>Reflections and nudges help you realign when needed.</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-</section>
+                    <div className="text-left md:w-1/2">
+                        <h2 className="text-3xl md:text-4xl font-bold font-poppins mb-4 text-stone-900 dark:text-white">
+                            It adapts with your ups and downs
+                        </h2>
+                        <p className="text-lg md:text-xl font-inter text-gray-700 dark:text-gray-300 mb-6">
+                            Life changes — and your habit system should change with it. Habitium is built to flex, pivot, and grow alongside you.
+                        </p>
+                        <ul className="space-y-3">
+                            <li className="flex items-start gap-2">
+                                <span className="text-primary dark:text-accent">✔</span>
+                                <span>Adjust your pace and frequency at any time.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="text-primary dark:text-accent">✔</span>
+                                <span>Track breaks as part of your progress — not a failure.</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                                <span className="text-primary dark:text-accent">✔</span>
+                                <span>Reflections and nudges help you realign when needed.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
 
-{/*CTA section */}
-<section className="relative bg-primary dark:bg-accent text-white dark:text-stone-900 py-20 px-4 -mx-6 sm:-mx-8 lg:-mx-16">
-  <div className="max-w-3xl mx-auto px-4 sm:px-8 text-center">
-    <h2 className="text-4xl md:text-5xl font-bold font-poppins mb-4">
-      Ready to start your habit journey?
-    </h2>
-    <p className="text-lg md:text-xl font-inter mb-8">
-      Join Habitium today and start building consistent habits — your future self will thank you.
-    </p>
-    <Button
-      variant="stoned"
-      size="lg"
-      className="text-lg font-semibold bg-white text-primary hover:bg-gray-100 dark:bg-white dark:text-accent"
-      onClick={() => window.location.href = '/register'}
-    >
-      Join Habitium
-    </Button>
-  </div>
-</section>
-
-
-
+            {/* CTA section */}
+            <section className="relative bg-primary dark:bg-accent text-white dark:text-stone-900 py-20 px-4 -mx-6 sm:-mx-8 lg:-mx-16">
+                <div className="max-w-3xl mx-auto px-4 sm:px-8 text-center">
+                    <h2 className="text-4xl md:text-5xl font-bold font-poppins mb-4">
+                        Ready to start your habit journey?
+                    </h2>
+                    <p className="text-lg md:text-xl font-inter mb-8">
+                        Join Habitium today and start building consistent habits — your future self will thank you.
+                    </p>
+                    <Button
+                        variant="primary" 
+                        size="lg"
+                        className="text-lg font-semibold bg-white text-primary hover:bg-gray-100 dark:bg-white dark:text-accent border-none shadow-lg"
+                        onClick={() => navigate('/register')} // Updated to use navigate
+                    >
+                        Join Habitium
+                    </Button>
+                </div>
+            </section>
         </main>
     );
 };
