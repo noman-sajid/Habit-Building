@@ -118,7 +118,7 @@ Before you begin, ensure you have the following installed:
 
 ## 📸 Screenshots / Demo
 
-*(To be added: Include screenshots or a link to a live demo of the application here. Showcase key features like the dashboard, habit creation, and progress tracking.)*
+*(To be added)*
 
 ## 💡 Usage
 
@@ -140,7 +140,7 @@ This is a solo project for Chingu. While direct contributions are not expected, 
 
 ## 📄 License
 
-This project is licensed under the MIT License. See the `LICENSE` file for more details. 
+This project is licensed under the MIT License. See the [LICENSE](./LICENSE) file for more details. 
 
 
 
